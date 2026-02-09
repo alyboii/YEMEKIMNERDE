@@ -1,0 +1,13 @@
+Mobil Backend Görev Dağılımı
+
+# Ali Atabin Backend #
+1. Kayıt Ol
+2. Giriş Yap
+3. 2FA Sayfası
+4. .....
+5. .....
+
+
+# Ayşe Toputut Backend #
+1. ....
+2. ....

@@ -8,16 +8,18 @@
 
 **Referans Uygulama:** [abc.com](abc.com)
 
-**Uygulama Adresi:** [abc.com](abc.com)
+**Rest API Adresi:** [abc.com](abc.com)
+
+**Web Frontend Adresi:** [abc.com](abc.com)
 
 **Grup Adı:** Belirlediğiniz grup adı
 
 **Proje Ekibi:** Ali, Veli, Selami, Ayşe, Fatma, Hayriye
 
 1. [Gereksinim Analizi](Gereksinim-Analizi.md)
-2. [Durum Diyagramı](Durum-Diyagramı.md)
-3. [Durum Senaryoları](Durum-Senaryoları.md)
-4. [Front-End](Front-End.md)
-5. [Back-End](Back-End.md)
+2. [Backend (REST API)](Rest-API.md)
+3. [Web Front-End](WebFrontEnd.md)
+4. [Mobil Front-End](MobilFrontEnd.md)
+5. [Mobil Backend (REST API Bağlantısı)](MobilBackEnd.md)
 6. [Video Sunum](Sunum.md)
 
