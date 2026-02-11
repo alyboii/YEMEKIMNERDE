@@ -8,18 +8,19 @@
 
 **Referans Uygulama:** [abc.com](abc.com)
 
-**Rest API Adresi:** [abc.com](abc.com)
+**Rest API Adresi:** [api.yazmuh.com](https://api.yazmuh.com)
 
-**Web Frontend Adresi:** [abc.com](abc.com)
+**Web Frontend Adresi:** [frontend.yazmuh.com](https://frontend.yazmuh.com)
 
 **Grup Adı:** Belirlediğiniz grup adı
 
 **Proje Ekibi:** Ali, Veli, Selami, Ayşe, Fatma, Hayriye
 
 1. [Gereksinim Analizi](Gereksinim-Analizi.md)
-2. [Backend (REST API)](Rest-API.md)
-3. [Web Front-End](WebFrontEnd.md)
-4. [Mobil Front-End](MobilFrontEnd.md)
-5. [Mobil Backend (REST API Bağlantısı)](MobilBackEnd.md)
-6. [Video Sunum](Sunum.md)
+2. [Rest API Tasarımı](API-Tasarimi.md)
+3. [Backend (REST API)](Rest-API.md)
+4. [Web Front-End](WebFrontEnd.md)
+5. [Mobil Front-End](MobilFrontEnd.md)
+6. [Mobil Backend (REST API Bağlantısı)](MobilBackEnd.md)
+7. [Video Sunum](Sunum.md)
 
