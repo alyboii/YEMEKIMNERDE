@@ -52,3 +52,81 @@ Proje dokümantasyonuna aşağıdaki linklerden erişebilirsiniz:
 5. [Mobil Front-End](MobilFrontEnd.md)
 6. [Mobil Backend (REST API Bağlantısı)](MobilBackEnd.md)
 7. [Video Sunum](Sunum.md)
+
+---
+
+## Projeyi Fork Etme ve Düzenleme
+
+**ÖNEMLİ:** Bu projeyi kullanmak için fork yapmak zorunludur. Fork işlemini sadece grup lideri veya grup tarafından seçilen bir üye yapmalıdır.
+
+### Fork Etme (Grup Lideri veya Seçilen Üye)
+
+**Adım 1: Fork İşlemi**
+1. GitHub'da proje sayfasına gidin
+2. Sağ üst köşedeki **"Fork"** butonuna tıklayın
+3. Fork'u kendi GitHub hesabınıza oluşturun
+
+**Adım 2: Repo Adını Değiştirme**
+1. Fork yaptıktan sonra, GitHub'da fork'u açın
+2. **Settings** sekmesine gidin
+3. **Repository name** bölümünden repo adını **proje adınız** ile değiştirin
+4. **Rename** butonuna tıklayın
+
+**Adım 3: Diğer Grup Üyelerini Collaborator Olarak Ekleme**
+1. Fork'u yapan kişi, GitHub repo sayfasında **Settings** sekmesine gidin
+2. Sol menüden **Collaborators** seçeneğine tıklayın
+3. **Add people** butonuna tıklayın
+4. Diğer grup üyelerinin GitHub kullanıcı adlarını veya email adreslerini girin
+5. Her bir grup üyesini **collaborator** olarak ekleyin
+6. Eklenen üyelere GitHub üzerinden davet gönderilecektir
+7. Her grup üyesi email'deki daveti kabul etmelidir
+
+**Adım 4: Projeyi Yerel Bilgisayara Clone Etme**
+Fork'u yapan kişi ve collaborator olarak eklenen tüm grup üyeleri:
+
+```bash
+git clone https://github.com/fork-yapan-kisinin-kullanici-adi/proje-adi.git
+```
+### Projeyi Düzenleme
+
+Fork yaptıktan sonra projeyi kendi bilgilerinizle güncellemeniz gerekmektedir:
+
+1. **Proje Bilgilerini Güncelleme:**
+   - `Readme.md` dosyasındaki proje adı, grup adı, ekip üyeleri
+   - Proje tanımı ve kategorisi
+   - Referans uygulama bilgisi
+
+2. **Gereksinimleri Ekleme:**
+   - `Gereksinim-Analizi.md` dosyasına kendi gereksinimlerinizi ekleyin
+   - Her ekip üyesi için gereksinim dosyası oluşturun (örn: `Ali-Atabak-Gereksinimler.md`)
+   - Gereksinim sayılarına dikkat edin (Gereksinim-Analizi.md dosyasındaki kurallara göre)
+
+3. **Dokümantasyonu Güncelleme:**
+   - Tüm dokümantasyon dosyalarını kendi projenize göre düzenleyin
+   - Ekip üyelerinin görevlerini güncelleyin
+   - API endpoint'lerini ve açıklamalarını kontrol edin
+
+4. **Değişiklikleri Kaydetme:**
+   ```bash
+   git add .
+   git commit -m "Proje bilgileri güncellendi"
+   git push origin main
+   ```
+
+### Notlar
+
+- **Fork işlemi:** Sadece grup lideri veya seçilen bir üye fork yapmalıdır. Tüm grup üyelerinin ayrı ayrı fork yapmasına gerek yoktur.
+- **Collaborator ekleme:** Fork'u yapan kişi, diğer tüm grup üyelerini collaborator olarak eklemelidir.
+- **Repo adı:** Fork yaptıktan sonra repo adını proje adınız ile değiştirmeyi unutmayın.
+- **Tüm placeholder'ları değiştirin:** (örn: [Grup Üyesi 2], [Soyisim], PROJE ADI vb.) kendi bilgilerinizle değiştirin
+- **Dokümantasyon:** Tüm dokümantasyon dosyalarını eksiksiz doldurun
+- **Görev dağılımı:** Her ekip üyesi kendi görevlerini tamamlamalıdır
+- **İşbirliği:** Collaborator olarak eklenen üyeler, projeye doğrudan commit ve push yapabilirler
+
+---
+
+## Notlar
+
+- Tüm dokümantasyon dosyaları proje kök dizininde bulunmaktadır.
+- Her dokümantasyon dosyası ilgili bölümün detaylı açıklamalarını içermektedir.
+- Proje geliştirme sürecinde dokümantasyonlar güncel tutulmalıdır.
