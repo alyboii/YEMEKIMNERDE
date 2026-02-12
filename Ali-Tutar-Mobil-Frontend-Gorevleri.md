@@ -1,4 +1,4 @@
-# Ali Atabak'ın Mobil Frontend Görevleri
+# Ali Tutar'ın Mobil Frontend Görevleri
 
 ## 1. Üye Olma (Kayıt) Ekranı
 - **API Endpoint:** `POST /auth/register`

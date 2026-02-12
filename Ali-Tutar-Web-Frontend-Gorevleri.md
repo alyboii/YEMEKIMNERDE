@@ -1,4 +1,4 @@
-# Ali Atabak'ın Web Frontend Görevleri
+# Ali Tutar'ın Web Frontend Görevleri
 
 ## 1. Üye Olma (Kayıt) Sayfası
 - **API Endpoint:** `POST /auth/register`

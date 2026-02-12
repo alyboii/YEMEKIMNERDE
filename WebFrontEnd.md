@@ -8,7 +8,7 @@ Bu dokümanda, web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı den
 
 ## Grup Üyelerinin Web Frontend Görevleri
 
-1. [Ali Atabak'ın Web Frontend Görevleri](Ali-Web-Frontend-Gorevleri.md)
+1. [Ali Tutar'ın Web Frontend Görevleri](Ali-Tutar-Web-Frontend-Gorevleri.md)
 2. [Grup Üyesi 2'nin Web Frontend Görevleri](Grup-Uyesi-2-Frontend-Gorevleri.md)
 3. [Grup Üyesi 3'ün Web Frontend Görevleri](Grup-Uyesi-3-Frontend-Gorevleri.md)
 4. [Grup Üyesi 4'ün Web Frontend Görevleri](Grup-Uyesi-4-Frontend-Gorevleri.md)
