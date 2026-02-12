@@ -1,4 +1,4 @@
-# Ali Atabak'ın Mobil Backend Görevleri
+# Ali Tutar'ın Mobil Backend Görevleri
 
 ## 1. Üye Olma (Kayıt) Servisi
 - **API Endpoint:** `POST /auth/register`

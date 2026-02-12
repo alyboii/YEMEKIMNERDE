@@ -44,7 +44,7 @@ Her ekip üyesi için aşağıdaki yapı takip edilecektir:
 
 ### 3. Ekip Üyeleri Sunum Sırası
 
-#### Ali Atabak
+#### Ali Tutar
 **Kişisel Tanıtım:**
 - İsim: Ali Tutar
 

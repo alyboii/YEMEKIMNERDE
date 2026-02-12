@@ -1,4 +1,4 @@
-# Ali Atabak'ın REST API Metotları
+# Ali Tutar'ın REST API Metotları
 
 ## 1. Üye Olma
 - **Endpoint:** `POST /auth/register`

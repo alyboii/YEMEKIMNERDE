@@ -98,7 +98,7 @@ Fork yaptıktan sonra projeyi kendi bilgilerinizle güncellemeniz gerekmektedir:
 
 2. **Gereksinimleri Ekleme:**
    - `Gereksinim-Analizi.md` dosyasına kendi gereksinimlerinizi ekleyin
-   - Her ekip üyesi için gereksinim dosyası oluşturun (örn: `Ali-Atabak-Gereksinimler.md`)
+   - Her ekip üyesi için gereksinim dosyası oluşturun (örn: `Ali-Tutar-Gereksinimler.md`)
    - Gereksinim sayılarına dikkat edin (Gereksinim-Analizi.md dosyasındaki kurallara göre)
 
 3. **Dokümantasyonu Güncelleme:**
