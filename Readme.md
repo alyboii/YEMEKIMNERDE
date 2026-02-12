@@ -98,11 +98,17 @@ Fork yaptıktan sonra projeyi kendi bilgilerinizle güncellemeniz gerekmektedir:
 
 2. **Gereksinimleri Ekleme:**
    - `Gereksinim-Analizi.md` dosyasına kendi gereksinimlerinizi ekleyin
-   - Her ekip üyesi için gereksinim dosyası oluşturun (örn: `Ali-Tutar-Gereksinimler.md`)
+   - Her ekip üyesi için bir klasör oluşturun (örn: `Ali-Tutar/`)
+   - Her ekip üyesinin klasörüne gereksinim dosyası ekleyin (örn: `Ali-Tutar/Ali-Tutar-Gereksinimler.md`)
    - Gereksinim sayılarına dikkat edin (Gereksinim-Analizi.md dosyasındaki kurallara göre)
 
 3. **Dokümantasyonu Güncelleme:**
    - Tüm dokümantasyon dosyalarını kendi projenize göre düzenleyin
+   - Her ekip üyesinin klasörüne görev dosyalarını ekleyin:
+     - `[İsim-Soyisim]/[İsim-Soyisim]-Rest-API-Gorevleri.md`
+     - `[İsim-Soyisim]/[İsim-Soyisim]-Web-Frontend-Gorevleri.md`
+     - `[İsim-Soyisim]/[İsim-Soyisim]-Mobil-Frontend-Gorevleri.md`
+     - `[İsim-Soyisim]/[İsim-Soyisim]-Mobil-Backend-Gorevleri.md`
    - Ekip üyelerinin görevlerini güncelleyin
    - API endpoint'lerini ve açıklamalarını kontrol edin
 
