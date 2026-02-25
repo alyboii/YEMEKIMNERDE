@@ -23,13 +23,9 @@ Tüm gereksinimlerinizi çıkardıktan sonra beraber tartışıyoruz ve son gere
 # Tüm Gereksinimler 
 
 1. **Giriş Yapma** (Ali Tutar)
-   - **API Metodu:** `POST /auth/login`
-   - **Açıklama:** Kullanıcıların sisteme giriş yaparak hizmetlere erişmesini sağlar. Email adresi ve şifre ile kimlik doğrulama yapılır. Başarılı giriş sonrası kullanıcıya erişim izni verilir ve kişisel verilerin güvenliği sağlanır.
-
 2. **Üye Olma** (Ali Tutar)
-   - **API Metodu:** `POST /auth/register`
-   - **Açıklama:** Kullanıcıların yeni hesaplar oluşturarak sisteme kayıt olmasını sağlar. Kişisel bilgilerin toplanmasını ve hesap oluşturma işlemlerini içerir. Kullanıcılar email adresi ve şifre belirleyerek hesap oluşturur.
-
+3. ..
+4. ..
 # Gereksinim Dağılımları
 
 1. [Ali Tutar'ın Gereksinimleri](Ali-Tutar/Ali-Tutar-Gereksinimler.md)

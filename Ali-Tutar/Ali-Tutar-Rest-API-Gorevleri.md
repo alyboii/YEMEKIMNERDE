@@ -1,8 +1,9 @@
 # Ali Tutar'ın REST API Metotları
 
+**API Test Videosu:** [Link buraya eklenecek](https://example.com)
+
 ## 1. Üye Olma
 - **Endpoint:** `POST /auth/register`
-- **Açıklama:** Kullanıcıların yeni hesaplar oluşturarak hizmetin tüm özelliklerine erişmelerini ve etkileşimde bulunmalarını sağlar. Kullanıcıların kişisel bilgilerinin toplanmasını ve hesap doğrulama işlemlerinin yapılmasını içerir.
 - **Request Body:** 
   ```json
   {
@@ -16,7 +17,6 @@
 
 ## 2. Kullanıcı Bilgilerini Görüntüleme
 - **Endpoint:** `GET /users/{userId}`
-- **Açıklama:** Belirli bir kullanıcının detay bilgilerini getirir. Kullanıcı ID'si ile kullanıcının profil bilgileri, kişisel verileri ve hesap durumu gibi detaylı bilgilere erişim sağlar.
 - **Path Parameters:** 
   - `userId` (string, required) - Kullanıcı ID'si
 - **Authentication:** Bearer Token gerekli
@@ -24,7 +24,6 @@
 
 ## 3. Kullanıcı Bilgilerini Güncelleme
 - **Endpoint:** `PUT /users/{userId}`
-- **Açıklama:** Kullanıcı bilgilerini güncelleme işlemini sağlar. Kullanıcılar ad, soyad, email, telefon gibi kişisel bilgilerini güncelleyebilir veya profil ayarlarını değiştirebilir.
 - **Path Parameters:** 
   - `userId` (string, required) - Kullanıcı ID'si
 - **Request Body:** 
@@ -41,7 +40,6 @@
 
 ## 4. Kullanıcı Silme
 - **Endpoint:** `DELETE /users/{userId}`
-- **Açıklama:** Kullanıcıyı sistemden kalıcı olarak silme işlemini sağlar. Kullanıcı hesabını kapatmak istediğinde veya yönetici tarafından hesap kapatılması gerektiğinde kullanılır.
 - **Path Parameters:** 
   - `userId` (string, required) - Kullanıcı ID'si
 - **Authentication:** Bearer Token gerekli (Yönetici yetkisi veya kendi hesabını silme yetkisi)
