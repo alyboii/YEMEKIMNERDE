@@ -1,6 +1,6 @@
 # 🍴 Restoran & Menü Yönetimi - Gereksinimler
 
-Bu bölüm, uygulamanın restoran kayıt, menü listeleme ve AI tabanlı öneri sistemlerini kapsayan teknik gereksinimlerini içerir.
+Bu bölüm, uygulamanın restoran kayıt, menü listeleme sistemlerini kapsayan teknik gereksinimlerini içerir.
 
 ---
 
