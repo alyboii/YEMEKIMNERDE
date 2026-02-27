@@ -46,6 +46,4 @@ Bu bölüm, uygulamanın restoran kayıt, menü listeleme ve AI tabanlı öneri 
 
 ---
 
-### 8. AI Tabanlı Kişiselleştirilmiş Öneri (Bonus AI Bölümü)
-**API Metodu:** `GET /api/ai/recommendations/{userId}`  
-**Açıklama:** Kullanıcının geçmiş sipariş verilerini ve beğendiği yemek etiketlerini analiz ederek, o an açık olan restoranlardan en uygun yemekleri öneren bir hibrit filtreleme algoritması çalıştırır.
+
