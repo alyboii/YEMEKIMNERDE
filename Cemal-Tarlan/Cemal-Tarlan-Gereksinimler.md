@@ -12,7 +12,7 @@ Bu bölüm, uygulamanın restoran kayıt, menü listeleme sistemlerini kapsayan 
 
 ### 2. Restoran Listeleme
 **API Metodu:** `GET /api/restaurants`  
-**Açıklama:** Sistemdeki tüm aktif restoranları listeler. Kullanıcı konumuna göre mesafe sıralaması ve mutfak tipine göre filtreleme özelliklerini destekler.
+**Açıklama:** Restoranlar sadece alfabetik veya puana göre dizilmez. AI, kullanıcının geçmiş sipariş hızını, sevdiği mutfakları ve o anki konumunu analiz ederek kullanıcıya en uygun "Sana Özel" sıralamasını saniyeler içinde oluşturur.
 
 ---
 
