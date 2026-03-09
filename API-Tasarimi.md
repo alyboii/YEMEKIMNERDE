@@ -661,7 +661,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: JWT token ile kimlik doğrulama. "Authorization: Bearer <token>" formatında gönderilmelidir.
+      description: JWT token ile kimlik doğrulama.
 
   parameters:
     KullaniciId:
