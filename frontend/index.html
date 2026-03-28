@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YEMEKİMNEREDE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-orange-50 flex items-center justify-center min-h-screen">
+  <div class="text-center">
+    <h1 class="text-4xl font-bold text-orange-600 mb-4">🍔 YEMEKİMNEREDE</h1>
+    <p class="text-gray-600 mb-8">Yemeğinizi saniyeler içinde bulun</p>
+    <div class="space-x-4">
+      <a href="login.html" class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600">Giriş Yap</a>
+      <a href="register.html" class="border border-orange-500 text-orange-500 px-6 py-3 rounded-lg hover:bg-orange-50">Kayıt Ol</a>
+    </div>
+  </div>
+  <script>
+    if (localStorage.getItem('token')) window.location.href = 'profile.html';
+  </script>
+</body>
+</html>

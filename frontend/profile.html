@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profilim — YEMEKİMNEREDE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-orange-50 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow px-6 py-4 flex justify-between items-center">
+    <span class="text-orange-600 font-bold text-xl">🍔 YEMEKİMNEREDE</span>
+    <button onclick="cikisYap()" class="text-sm text-gray-500 hover:text-red-500">Çıkış Yap</button>
+  </nav>
+
+  <div class="max-w-lg mx-auto mt-10 space-y-6 px-4">
+
+    <!-- Profil Kartı -->
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Profil Bilgileri</h2>
+      <div id="profilBilgi" class="text-gray-600 space-y-1 text-sm mb-4"></div>
+
+      <h3 class="font-semibold text-gray-700 mb-2">Bilgileri Güncelle</h3>
+      <form id="guncelleForm" class="space-y-3">
+        <input id="ad" type="text" placeholder="Ad"
+          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        <input id="soyad" type="text" placeholder="Soyad"
+          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        <input id="telefon" type="tel" placeholder="Telefon"
+          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        <button type="submit"
+          class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 text-sm font-semibold">
+          Güncelle
+        </button>
+      </form>
+      <div id="guncelleMsg" class="hidden mt-2 text-sm text-green-600"></div>
+    </div>
+
+    <!-- Şifre Güncelle -->
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Şifre Güncelle</h2>
+      <form id="sifreForm" class="space-y-3">
+        <input id="mevcutSifre" type="password" placeholder="Mevcut Şifre"
+          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        <input id="yeniSifre" type="password" placeholder="Yeni Şifre"
+          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
+        <button type="submit"
+          class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 text-sm font-semibold">
+          Şifreyi Güncelle
+        </button>
+      </form>
+      <div id="sifreMsg" class="hidden mt-2 text-sm"></div>
+    </div>
+
+    <!-- Hesap Sil -->
+    <div class="bg-white rounded-2xl shadow p-6">
+      <h2 class="text-lg font-bold text-red-600 mb-2">Hesabı Sil</h2>
+      <p class="text-sm text-gray-500 mb-4">Bu işlem geri alınamaz.</p>
+      <button onclick="hesapSil()"
+        class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 text-sm font-semibold">
+        Hesabımı Sil
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const API = 'https://api.yemekimnerede.com/v1';
+    const token = localStorage.getItem('token');
+    const kullaniciId = localStorage.getItem('kullaniciId');
+
+    if (!token || !kullaniciId) window.location.href = 'login.html';
+
+    const authHeader = () => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` });
+
+    async function profilYukle() {
+      const res = await fetch(`${API}/users/${kullaniciId}`, { headers: authHeader() });
+      if (res.status === 401) { cikisYap(); return; }
+      const kullanici = await res.json();
+      document.getElementById('profilBilgi').innerHTML = `
+        <p><strong>Ad Soyad:</strong> ${kullanici.ad} ${kullanici.soyad}</p>
+        <p><strong>E-posta:</strong> ${kullanici.email}</p>
+        <p><strong>Telefon:</strong> ${kullanici.telefon || '-'}</p>
+      `;
+      document.getElementById('ad').value = kullanici.ad;
+      document.getElementById('soyad').value = kullanici.soyad;
+      document.getElementById('telefon').value = kullanici.telefon || '';
+    }
+
+    document.getElementById('guncelleForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await fetch(`${API}/users/${kullaniciId}`, {
+        method: 'PUT',
+        headers: authHeader(),
+        body: JSON.stringify({
+          ad: document.getElementById('ad').value,
+          soyad: document.getElementById('soyad').value,
+          telefon: document.getElementById('telefon').value,
+        }),
+      });
+      const msg = document.getElementById('guncelleMsg');
+      if (res.ok) {
+        msg.textContent = 'Profil güncellendi.';
+        msg.className = 'mt-2 text-sm text-green-600';
+        profilYukle();
+      } else {
+        msg.textContent = 'Güncelleme başarısız.';
+        msg.className = 'mt-2 text-sm text-red-600';
+      }
+      msg.classList.remove('hidden');
+    });
+
+    document.getElementById('sifreForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await fetch(`${API}/users/${kullaniciId}/password`, {
+        method: 'PUT',
+        headers: authHeader(),
+        body: JSON.stringify({
+          mevcutSifre: document.getElementById('mevcutSifre').value,
+          yeniSifre: document.getElementById('yeniSifre').value,
+        }),
+      });
+      const data = await res.json();
+      const msg = document.getElementById('sifreMsg');
+      msg.textContent = res.ok ? 'Şifre güncellendi.' : (data.hata || 'Hata oluştu.');
+      msg.className = `mt-2 text-sm ${res.ok ? 'text-green-600' : 'text-red-600'}`;
+      msg.classList.remove('hidden');
+    });
+
+    async function hesapSil() {
+      if (!confirm('Hesabınızı silmek istediğinizden emin misiniz?')) return;
+      const res = await fetch(`${API}/users/${kullaniciId}`, {
+        method: 'DELETE',
+        headers: authHeader(),
+      });
+      if (res.ok) { localStorage.clear(); window.location.href = 'index.html'; }
+    }
+
+    function cikisYap() {
+      localStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    profilYukle();
+  </script>
+</body>
+</html>

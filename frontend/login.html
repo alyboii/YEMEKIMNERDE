@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giriş Yap — YEMEKİMNEREDE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-orange-50 flex items-center justify-center min-h-screen">
+  <div class="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-orange-600 mb-6 text-center">🍔 Giriş Yap</h1>
+    <div id="hata" class="hidden bg-red-100 text-red-700 rounded-lg p-3 mb-4 text-sm"></div>
+    <form id="girisForm" class="space-y-4">
+      <input id="email" type="email" placeholder="E-posta" required
+        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+      <input id="sifre" type="password" placeholder="Şifre" required
+        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+      <button type="submit"
+        class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 font-semibold">
+        Giriş Yap
+      </button>
+    </form>
+    <p class="text-center text-sm text-gray-500 mt-4">
+      Hesabın yok mu? <a href="register.html" class="text-orange-500 hover:underline">Kayıt Ol</a>
+    </p>
+  </div>
+
+  <script>
+    const API = 'https://api.yemekimnerede.com/v1';
+
+    document.getElementById('girisForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const hataDiv = document.getElementById('hata');
+      hataDiv.classList.add('hidden');
+
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value,
+            sifre: document.getElementById('sifre').value,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.hata || 'Giriş başarısız');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('kullaniciId', data.kullanici._id);
+        window.location.href = 'profile.html';
+      } catch (err) {
+        hataDiv.textContent = err.message;
+        hataDiv.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
