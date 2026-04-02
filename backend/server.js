@@ -14,8 +14,8 @@ app.use('/v1/users', require('./routes/users'));
 // Cemal'ın route'ları buraya eklenecek:
 // app.use('/v1/restaurants', require('./routes/restaurants'));
 // Abdullah'ın route'ları buraya eklenecek:
-// app.use('/v1/cart', require('./routes/cart'));
-// app.use('/v1/orders', require('./routes/orders'));
+ app.use('/v1/cart', require('./routes/cart'));
+ app.use('/v1/orders', require('./routes/orders'));
 
 app.get('/', (req, res) => {
   res.json({ mesaj: 'YEMEKİMNEREDE API çalışıyor' });
