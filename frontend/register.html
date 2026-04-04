@@ -166,24 +166,24 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div class="space-y-2">
 <label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Ad</label>
-<input class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Can" type="text"/>
+<input id="regAd" class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Can" type="text"/>
 </div>
 <div class="space-y-2">
 <label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Soyad</label>
-<input class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Yılmaz" type="text"/>
+<input id="regSoyad" class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Yılmaz" type="text"/>
 </div>
 </div>
 <!-- Full Width Email -->
 <div class="space-y-2">
 <label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">E-posta</label>
-<input class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="ornek@mail.com" type="email"/>
+<input id="regEmail" class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="ornek@mail.com" type="email"/>
 </div>
 <!-- Phone with Prefix -->
 <div class="space-y-2">
 <label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Telefon</label>
 <div class="flex">
 <span class="bg-surface-container-highest flex items-center px-4 rounded-l-lg text-on-surface-variant font-bold text-sm border-r border-white/5">+90</span>
-<input class="w-full bg-surface-container-high border-none rounded-r-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="5XX XXX XX XX" type="tel"/>
+<input id="regTelefon" class="w-full bg-surface-container-high border-none rounded-r-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="5XX XXX XX XX" type="tel"/>
 </div>
 </div>
 <!-- Grid 2-Column Password -->
@@ -191,7 +191,7 @@
 <div class="space-y-2">
 <label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Şifre</label>
 <div class="relative">
-<input class="w-full bg-surface-container-high border-none rounded-lg p-4 pr-12 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="••••••••" type="password"/>
+<input id="regSifre" class="w-full bg-surface-container-high border-none rounded-lg p-4 pr-12 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="••••••••" type="password"/>
 <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer text-xl">visibility</span>
 </div>
 </div>
@@ -234,7 +234,6 @@
 const API = 'https://yemekimnerde-production.up.railway.app/v1';
 document.querySelector('form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const inputs = e.target.querySelectorAll('input');
   const btn = e.target.querySelector('button[type="submit"]');
   btn.disabled = true;
   btn.textContent = 'Kayıt yapılıyor...';
@@ -243,11 +242,11 @@ document.querySelector('form').addEventListener('submit', async (e) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ad: inputs[0].value,
-        soyad: inputs[1].value,
-        email: inputs[2].value,
-        telefon: inputs[3] ? inputs[3].value : '',
-        sifre: inputs[inputs.length - 2].value,
+        ad: document.getElementById('regAd').value,
+        soyad: document.getElementById('regSoyad').value,
+        email: document.getElementById('regEmail').value,
+        telefon: '+90' + document.getElementById('regTelefon').value,
+        sifre: document.getElementById('regSifre').value,
       }),
     });
     const data = await res.json();
