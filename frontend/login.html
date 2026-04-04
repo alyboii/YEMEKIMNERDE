@@ -162,31 +162,49 @@
                         <span class="material-symbols-outlined">arrow_forward</span>
 </button>
 </form>
-<!-- Social Divider -->
-<div class="flex items-center my-10">
-<div class="flex-1 h-[1px] bg-white/5"></div>
-<span class="px-4 text-[0.65rem] font-label font-bold text-outline-variant tracking-widest uppercase">veya</span>
-<div class="flex-1 h-[1px] bg-white/5"></div>
-</div>
-<!-- Social Buttons -->
-<div class="grid grid-cols-2 gap-4">
-<button class="flex items-center justify-center gap-3 h-12 rounded-full bg-surface-container-highest border border-white/5 hover:bg-surface-bright transition-colors">
-<img alt="Google Logo" class="w-5 h-5" data-alt="Official Google logo emblem in vibrant colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4BPK6uCOKS_KTaJFX--P79GiFqnk2rsyOoAiRl-O1JBFVQKvjatpe6Z9p3VsIlVeWiqpjVIIWCf3CxwTpILr06o3suzY93O6wdYi8gpDgcjVljKaI6a3xpA4yyhDYRh1vRkfXoQ1ec3SQP5gEV2--thizA0kgOeUxcG8bqTFqDbfB-8yxvqe1hW_zR-p7dft1q4SJuK1hL8oG5x8mBxw-S0f51Nyc6RUtg-10LQvEqMzm-c8EeMyQ41PQcUisrxXikdltT2jS3pk"/>
-<span class="text-sm font-medium">Google</span>
-</button>
-<button class="flex items-center justify-center gap-3 h-12 rounded-full bg-surface-container-highest border border-white/5 hover:bg-surface-bright transition-colors">
-<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">ios</span>
-<span class="text-sm font-medium">Apple</span>
-</button>
-</div>
 <!-- Signup Redirect -->
 <footer class="mt-10 text-center">
 <p class="text-on-surface-variant text-sm">
-                        Hesabınız yok mu? 
-                        <a class="text-primary font-bold ml-1 hover:underline underline-offset-4" href="#">Kayıt Ol</a>
+                        Hesabınız yok mu?
+                        <a class="text-primary font-bold ml-1 hover:underline underline-offset-4" href="register.html">Kayıt Ol</a>
 </p>
 </footer>
 </div>
 </section>
 </main>
+<script>
+const API = 'https://yemekimnerde-production.up.railway.app/v1';
+document.querySelector('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Giriş yapılıyor...';
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: e.target.querySelector('input[type="email"]').value,
+        sifre: e.target.querySelector('input[type="password"]').value,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.hata || 'Giriş başarısız');
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('kullaniciId', data.kullanici._id);
+    window.location.href = 'profile.html';
+  } catch (err) {
+    alert(err.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Giriş Yap <span class="material-symbols-outlined">arrow_forward</span>';
+  }
+});
+// Şifre göster/gizle
+document.querySelector('button[type="button"]').addEventListener('click', function() {
+  const input = this.previousElementSibling;
+  const icon = this.querySelector('.material-symbols-outlined');
+  if (input.type === 'password') { input.type = 'text'; icon.textContent = 'visibility_off'; }
+  else { input.type = 'password'; icon.textContent = 'visibility'; }
+});
+</script>
 </body></html>
