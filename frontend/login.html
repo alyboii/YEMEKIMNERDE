@@ -1,261 +1,192 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Giriş Yap — YEMEKİMNEREDE</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --orange: #f97316;
-      --orange-dark: #ea580c;
-      --bg: #0a0a0a;
-      --card: rgba(255,255,255,0.04);
-      --border: rgba(255,255,255,0.08);
-      --text: #f5f5f5;
-      --muted: #888;
-      --input-bg: rgba(255,255,255,0.05);
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-    }
-
-    .bg-glow {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background:
-        radial-gradient(ellipse 70% 70% at 10% 50%, rgba(249,115,22,0.1) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 90% 20%, rgba(234,88,12,0.07) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    /* Left panel */
-    .left-panel {
-      display: none;
-      flex: 1;
-      position: relative;
-      background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.05));
-      border-right: 1px solid var(--border);
-      padding: 60px;
-      flex-direction: column;
-      justify-content: center;
-      z-index: 1;
-    }
-
-    @media (min-width: 900px) { .left-panel { display: flex; } }
-
-    .left-logo {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--orange);
-      margin-bottom: 60px;
-    }
-
-    .left-heading {
-      font-size: 2.8rem;
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      line-height: 1.1;
-      margin-bottom: 20px;
-    }
-
-    .gradient-text {
-      background: linear-gradient(135deg, var(--orange), #fbbf24);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .left-sub { color: var(--muted); line-height: 1.7; font-size: 1rem; margin-bottom: 48px; }
-
-    .testimonial {
-      padding: 24px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-    }
-    .testimonial-text { font-size: 0.95rem; color: #ccc; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
-    .testimonial-author { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
-
-    /* Right panel */
-    .right-panel {
-      flex: 0 0 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    @media (min-width: 900px) { .right-panel { flex: 0 0 480px; } }
-
-    .form-container { width: 100%; max-width: 400px; }
-
-    .mobile-logo {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--orange);
-      text-align: center;
-      margin-bottom: 36px;
-      display: block;
-    }
-    @media (min-width: 900px) { .mobile-logo { display: none; } }
-
-    .form-title {
-      font-size: 1.75rem;
-      font-weight: 800;
-      letter-spacing: -0.75px;
-      margin-bottom: 8px;
-    }
-    .form-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 36px; }
-
-    .input-group { margin-bottom: 16px; }
-    .input-label { font-size: 0.8rem; font-weight: 600; color: #ccc; margin-bottom: 8px; display: block; letter-spacing: 0.3px; }
-
-    input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
-      width: 100%;
-      padding: 13px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--input-bg);
-      color: var(--text);
-      font-size: 0.95rem;
-      font-family: 'Inter', sans-serif;
-      outline: none;
-      transition: all 0.2s;
-    }
-    input:focus {
-      border-color: var(--orange);
-      background: rgba(249,115,22,0.05);
-      box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
-    }
-    input::placeholder { color: #555; }
-
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      background: linear-gradient(135deg, var(--orange), var(--orange-dark));
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: all 0.2s;
-      box-shadow: 0 4px 20px rgba(249,115,22,0.3);
-    }
-    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(249,115,22,0.4); }
-    .btn-submit:active { transform: translateY(0); }
-    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-    .error-box {
-      display: none;
-      padding: 12px 16px;
-      border-radius: 10px;
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.2);
-      color: #f87171;
-      font-size: 0.875rem;
-      margin-bottom: 16px;
-    }
-
-    .divider {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin: 28px 0;
-    }
-
-    .form-footer {
-      text-align: center;
-      font-size: 0.875rem;
-      color: var(--muted);
-      margin-top: 24px;
-    }
-    .form-footer a { color: var(--orange); text-decoration: none; font-weight: 600; }
-    .form-footer a:hover { text-decoration: underline; }
-  </style>
-</head>
-<body>
-  <div class="bg-glow"></div>
-
-  <div class="left-panel">
-    <div class="left-logo">🍔 YEMEKİMNEREDE</div>
-    <h2 class="left-heading">Tekrar<br><span class="gradient-text">Hoş Geldiniz</span></h2>
-    <p class="left-sub">Yüzlerce restorana erişin, siparişlerinizi takip edin ve en iyi yemek deneyimini yaşayın.</p>
-    <div class="testimonial">
-      <p class="testimonial-text">"YEMEKİMNEREDE sayesinde artık ne yiyeceğime karar vermek çok kolay. Harika bir uygulama!"</p>
-      <p class="testimonial-author">— Mehmet K., İstanbul</p>
-    </div>
-  </div>
-
-  <div class="right-panel">
-    <div class="form-container">
-      <span class="mobile-logo">🍔 YEMEKİMNEREDE</span>
-      <h1 class="form-title">Giriş Yap</h1>
-      <p class="form-sub">Hesabınıza erişmek için bilgilerinizi girin</p>
-
-      <div id="hata" class="error-box"></div>
-
-      <form id="girisForm">
-        <div class="input-group">
-          <label class="input-label">E-posta</label>
-          <input id="email" type="email" placeholder="ornek@mail.com" required />
-        </div>
-        <div class="input-group">
-          <label class="input-label">Şifre</label>
-          <input id="sifre" type="password" placeholder="••••••••" required />
-        </div>
-        <button type="submit" class="btn-submit" id="submitBtn">Giriş Yap</button>
-      </form>
-
-      <p class="form-footer">Hesabın yok mu? <a href="register.html">Ücretsiz Kayıt Ol</a></p>
-    </div>
-  </div>
-
-  <script>
-    const API = 'https://yemekimnerde-production.up.railway.app/v1';
-
-    document.getElementById('girisForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const hataDiv = document.getElementById('hata');
-      const btn = document.getElementById('submitBtn');
-      hataDiv.style.display = 'none';
-      btn.disabled = true;
-      btn.textContent = 'Giriş yapılıyor...';
-
-      try {
-        const res = await fetch(`${API}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: document.getElementById('email').value,
-            sifre: document.getElementById('sifre').value,
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.hata || 'Giriş başarısız');
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('kullaniciId', data.kullanici._id);
-        window.location.href = 'profile.html';
-      } catch (err) {
-        hataDiv.textContent = err.message;
-        hataDiv.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = 'Giriş Yap';
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ff7351",
+                    "on-secondary-container": "#fff6f2",
+                    "surface-container-highest": "#262626",
+                    "outline-variant": "#494847",
+                    "on-background": "#ffffff",
+                    "surface-bright": "#2c2c2c",
+                    "on-secondary-fixed-variant": "#7e4000",
+                    "inverse-on-surface": "#565554",
+                    "tertiary-container": "#febb28",
+                    "surface": "#0e0e0e",
+                    "on-primary-fixed": "#000000",
+                    "on-primary-container": "#3f1700",
+                    "primary-dim": "#fd761a",
+                    "surface-dim": "#0e0e0e",
+                    "primary-fixed-dim": "#f06c0b",
+                    "surface-container-high": "#201f1f",
+                    "inverse-primary": "#9e4400",
+                    "on-tertiary-fixed-variant": "#614400",
+                    "on-secondary-fixed": "#542900",
+                    "on-error": "#450900",
+                    "error-dim": "#d53d18",
+                    "tertiary-fixed-dim": "#efad16",
+                    "secondary-container": "#924c00",
+                    "surface-container-lowest": "#000000",
+                    "on-surface": "#ffffff",
+                    "secondary": "#fd9436",
+                    "primary-fixed": "#ff7a23",
+                    "surface-tint": "#ff9153",
+                    "on-error-container": "#ffd2c8",
+                    "error-container": "#b92902",
+                    "on-surface-variant": "#adaaaa",
+                    "secondary-fixed": "#ffc69d",
+                    "on-secondary": "#4b2400",
+                    "tertiary-dim": "#efad16",
+                    "secondary-dim": "#ec872a",
+                    "primary": "#ff9153",
+                    "on-primary-fixed-variant": "#4e1e00",
+                    "on-tertiary-fixed": "#3c2900",
+                    "secondary-fixed-dim": "#ffb379",
+                    "inverse-surface": "#fcf8f8",
+                    "tertiary": "#ffcd72",
+                    "primary-container": "#ff7a23",
+                    "on-primary": "#511f00",
+                    "background": "#0e0e0e",
+                    "tertiary-fixed": "#febb28",
+                    "surface-container-low": "#131313",
+                    "surface-variant": "#262626",
+                    "outline": "#777575",
+                    "surface-container": "#1a1919",
+                    "on-tertiary": "#614400",
+                    "on-tertiary-container": "#563b00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
       }
-    });
-  </script>
-</body>
-</html>
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .signature-glow {
+            background: linear-gradient(135deg, #ff9153 0%, #fd761a 100%);
+        }
+        .ghost-border {
+            border: 1px solid rgba(73, 72, 71, 0.15);
+        }
+        .glass-panel {
+            background: rgba(38, 38, 38, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased overflow-hidden">
+<!-- Suppression of TopNavBar and Footer as per Navigation Shell Mandate (Transactional Flow) -->
+<main class="flex min-h-screen w-full">
+<!-- Left Side: Cinematic Visual -->
+<section class="hidden md:flex relative w-1/2 overflow-hidden items-center justify-center">
+<img alt="Gourmet Burger" class="absolute inset-0 h-full w-full object-cover" data-alt="Close-up of a gourmet double cheeseburger with melting cheese, fresh lettuce, and steam rising against a dark, moody restaurant background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjf59GZIsqHJ1Au40S9VbSlkfjKyf_kUOdAD5VFkj4yvr-OoKP83TlmCyFA5UxHQjfcHOeqBRMMYTy7Y0OgYRv1XQzkg9PcdRFtq2zhhfUOJaNFgmQqBtvzzrIXBZ8IXmxL55iD6jk_lswMC8YUdUaAHF_1j2WSFTtge7QJ708F-TTbw1YqXcHjZR83Onidq_E3AsA4PAV8G2RMk5alInN3tkEjeEp6huKP5jGm4Eud4AzoDbILNKRHx5KuAidoVrlfz_3KuOCTng"/>
+<!-- Deep dark overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-surface/60 to-transparent"></div>
+<div class="relative z-10 text-center px-12">
+<h2 class="text-white font-headline text-[3.5rem] font-black leading-none tracking-tighter mb-4 drop-shadow-2xl">
+                    YEMEKİMNEREDE
+                </h2>
+<p class="text-white/90 font-label text-xl font-medium tracking-[0.2em] uppercase">
+                    Lezzetin Adresi
+                </p>
+</div>
+</section>
+<!-- Right Side: Login Canvas -->
+<section class="w-full md:w-1/2 bg-[#0a0a0a] relative flex items-center justify-center px-6 md:px-12">
+<!-- Ambient Glow -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="glass-panel w-full max-w-md rounded-xl p-8 md:p-12 shadow-[0_20px_40px_rgba(0,0,0,0.6)] relative z-10 border border-white/5">
+<header class="mb-10 text-center">
+<h1 class="text-on-surface font-headline text-3xl font-bold mb-2">Giriş Yap</h1>
+<p class="text-on-surface-variant font-body">Hesabınıza giriş yapın</p>
+</header>
+<form class="space-y-6">
+<!-- Email Input -->
+<div class="space-y-2">
+<label class="block text-[0.75rem] font-label font-bold uppercase tracking-widest text-on-surface-variant ml-1">E-POSTA</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">mail</span>
+<input class="w-full h-14 bg-surface-container-high/50 rounded-full pl-12 pr-6 border-none outline-none ring-1 ring-white/10 focus:ring-primary/100 transition-all text-on-surface placeholder:text-outline" placeholder="E-posta adresiniz" type="email"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-2">
+<div class="flex justify-between items-center ml-1">
+<label class="text-[0.75rem] font-label font-bold uppercase tracking-widest text-on-surface-variant">ŞİFRE</label>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">lock</span>
+<input class="w-full h-14 bg-surface-container-high/50 rounded-full pl-12 pr-12 border-none outline-none ring-1 ring-white/10 focus:ring-primary/100 transition-all text-on-surface placeholder:text-outline" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Options -->
+<div class="flex items-center justify-between">
+<label class="flex items-center cursor-pointer group">
+<input class="hidden peer" type="checkbox"/>
+<div class="w-5 h-5 rounded border border-outline-variant peer-checked:bg-primary peer-checked:border-primary flex items-center justify-center transition-all mr-3">
+<span class="material-symbols-outlined text-[1rem] text-on-primary font-bold opacity-0 peer-checked:opacity-100">check</span>
+</div>
+<span class="text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Beni Hatırla</span>
+</label>
+<a class="text-sm text-primary hover:text-primary-dim transition-colors font-medium" href="#">Şifremi Unuttum?</a>
+</div>
+<!-- Primary Action -->
+<button class="signature-glow w-full h-14 rounded-full text-on-primary font-headline font-bold text-lg shadow-[0_10px_20px_rgba(253,118,26,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" type="submit">
+                        Giriş Yap
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</form>
+<!-- Social Divider -->
+<div class="flex items-center my-10">
+<div class="flex-1 h-[1px] bg-white/5"></div>
+<span class="px-4 text-[0.65rem] font-label font-bold text-outline-variant tracking-widest uppercase">veya</span>
+<div class="flex-1 h-[1px] bg-white/5"></div>
+</div>
+<!-- Social Buttons -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 h-12 rounded-full bg-surface-container-highest border border-white/5 hover:bg-surface-bright transition-colors">
+<img alt="Google Logo" class="w-5 h-5" data-alt="Official Google logo emblem in vibrant colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4BPK6uCOKS_KTaJFX--P79GiFqnk2rsyOoAiRl-O1JBFVQKvjatpe6Z9p3VsIlVeWiqpjVIIWCf3CxwTpILr06o3suzY93O6wdYi8gpDgcjVljKaI6a3xpA4yyhDYRh1vRkfXoQ1ec3SQP5gEV2--thizA0kgOeUxcG8bqTFqDbfB-8yxvqe1hW_zR-p7dft1q4SJuK1hL8oG5x8mBxw-S0f51Nyc6RUtg-10LQvEqMzm-c8EeMyQ41PQcUisrxXikdltT2jS3pk"/>
+<span class="text-sm font-medium">Google</span>
+</button>
+<button class="flex items-center justify-center gap-3 h-12 rounded-full bg-surface-container-highest border border-white/5 hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">ios</span>
+<span class="text-sm font-medium">Apple</span>
+</button>
+</div>
+<!-- Signup Redirect -->
+<footer class="mt-10 text-center">
+<p class="text-on-surface-variant text-sm">
+                        Hesabınız yok mu? 
+                        <a class="text-primary font-bold ml-1 hover:underline underline-offset-4" href="#">Kayıt Ol</a>
+</p>
+</footer>
+</div>
+</section>
+</main>
+</body></html>

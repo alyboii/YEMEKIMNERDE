@@ -1,17 +1,261 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sepetim - YEMEKIMNERDE</title>
-</head>
-<body>
-    <h1>Sepetim</h1>
-    
-    <div id="cart-container">
-        <p>Sepetinizde ürün bulunmamaktadır.</p>
-    </div>
 
-    <button onclick="alert('Siparişi tamamlama ekranına yönlendiriliyorsunuz...')">Siparişi Tamamla</button>
-</body>
-</html>
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#511f00",
+                    "on-primary-fixed-variant": "#4e1e00",
+                    "secondary": "#fd9436",
+                    "surface-bright": "#2c2c2c",
+                    "secondary-dim": "#ec872a",
+                    "on-tertiary-fixed": "#3c2900",
+                    "tertiary-container": "#febb28",
+                    "surface": "#0e0e0e",
+                    "outline-variant": "#494847",
+                    "surface-variant": "#262626",
+                    "background": "#0e0e0e",
+                    "surface-dim": "#0e0e0e",
+                    "on-tertiary": "#614400",
+                    "error-dim": "#d53d18",
+                    "on-primary-container": "#3f1700",
+                    "secondary-fixed-dim": "#ffb379",
+                    "secondary-container": "#924c00",
+                    "on-primary-fixed": "#000000",
+                    "tertiary": "#ffcd72",
+                    "on-surface": "#ffffff",
+                    "surface-container-low": "#131313",
+                    "on-secondary-fixed": "#542900",
+                    "surface-tint": "#ff9153",
+                    "primary-dim": "#fd761a",
+                    "inverse-primary": "#9e4400",
+                    "tertiary-fixed-dim": "#efad16",
+                    "error": "#ff7351",
+                    "outline": "#777575",
+                    "surface-container": "#1a1919",
+                    "primary": "#ff9153",
+                    "on-secondary-fixed-variant": "#7e4000",
+                    "on-tertiary-container": "#563b00",
+                    "secondary-fixed": "#ffc69d",
+                    "on-error-container": "#ffd2c8",
+                    "error-container": "#b92902",
+                    "tertiary-dim": "#efad16",
+                    "primary-fixed": "#ff7a23",
+                    "inverse-surface": "#fcf8f8",
+                    "on-secondary-container": "#fff6f2",
+                    "on-surface-variant": "#adaaaa",
+                    "on-error": "#450900",
+                    "tertiary-fixed": "#febb28",
+                    "on-tertiary-fixed-variant": "#614400",
+                    "on-secondary": "#4b2400",
+                    "surface-container-highest": "#262626",
+                    "surface-container-high": "#201f1f",
+                    "primary-fixed-dim": "#f06c0b",
+                    "on-background": "#ffffff",
+                    "surface-container-lowest": "#000000",
+                    "primary-container": "#ff7a23",
+                    "inverse-on-surface": "#565554"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0e0e0e; color: #ffffff; }
+        .glass-card { background: rgba(38, 38, 38, 0.4); backdrop-filter: blur(20px); }
+        .primary-gradient { background: linear-gradient(135deg, #ff9153 0%, #fd761a 100%); }
+        .ghost-border { border: 1px solid rgba(73, 72, 71, 0.15); }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-neutral-950/60 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="flex justify-between items-center px-8 py-4 w-full max-w-7xl mx-auto font-['Inter'] tracking-tight">
+<div class="text-2xl font-black tracking-tighter text-white uppercase">YEMEKİMNEREDE</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-neutral-400 font-medium hover:text-white transition-colors hover:bg-white/5 px-3 py-1 rounded-full" href="#">Kategoriler</a>
+<a class="text-neutral-400 font-medium hover:text-white transition-colors hover:bg-white/5 px-3 py-1 rounded-full" href="#">Kampanyalar</a>
+<a class="text-neutral-400 font-medium hover:text-white transition-colors hover:bg-white/5 px-3 py-1 rounded-full" href="#">Restoranlar</a>
+<a class="text-orange-500 font-bold border-b-2 border-orange-500 pb-1" href="#">Sepetim</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-white/5 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined text-white" data-icon="person">person</span>
+</button>
+<button class="p-2 hover:bg-white/5 rounded-full transition-all active:scale-95 relative">
+<span class="material-symbols-outlined text-orange-500" data-icon="shopping_cart">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-orange-500 text-on-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full">4</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow pt-32 pb-20 px-8 w-full max-w-7xl mx-auto">
+<!-- Page Header -->
+<div class="flex items-baseline gap-4 mb-12">
+<h1 class="text-[3.5rem] font-extrabold tracking-tighter leading-none">Sepetim</h1>
+<div class="bg-primary-container/20 text-primary border border-primary/20 px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase">4 Ürün</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Left Column: Cart Items -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Item 1: Adana Kebap -->
+<div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
+<div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0">
+<img alt="Adana Kebap" class="w-full h-full object-cover" data-alt="Close-up of a perfectly charred Adana Kebap skewer on a bed of flatbread with grilled peppers and sumac onions" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCETfIk4oc1Qy4w6fIbGGYZUqQLUjYhAAoJepYjKOTqrWjHP1F-PzilJD9y-uI5eVy2SuQdE6KzNA_8YCP-BNW-eMERmQzgWuU4TSV8c3vVn2hE8vGjj7E32kjVYufQ3nRXv2ygF5vpIS-A19yViqT3aEV2qR_-PE3HACpKnjWNlw2GQs43C2-imyDgO4dirMh4QHGuzkcZDQPA7pg0nNX_pgJA5MGx-J7PqkLheBkCXAG4FWyeNI1tLVhx8jmj5Ip94C5hY0qPXHw"/>
+</div>
+<div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+<div class="text-center sm:text-left">
+<h3 class="text-xl font-bold text-on-surface tracking-tight">Adana Kebap</h3>
+<p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">Kebapçı Hasan Usta</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
+<span class="mx-4 font-bold w-4 text-center">1</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
+</div>
+<div class="text-xl font-bold text-primary">₺180.00</div>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 2: Mercimek Çorbası -->
+<div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
+<div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0">
+<img alt="Mercimek Çorbası" class="w-full h-full object-cover" data-alt="Rich golden lentil soup in a rustic bowl garnished with a swirl of chili oil and fresh lemon wedge" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxhmNNu6zyG_vL-s9-mgPVitXIcG2-0b8Jsw4vup-QBZuegzQd5i7wBax0vXg3mM3nMu_1GPGpsyx8okgK86tq74VDyw8UjUlLB7DBlXKSJChprMM8hNwS7ImkOYci7gQu2DF022hmu0DFBDOJpBVfFAXUr5YKPXZaG_lO8-JHZznzaCebMxeIuKtdXy5dXNxR5xn0bOMpvPKvsRI29sAZvHmyYlVkzLtahBPc55VKqIBJt57jNwt72gWuQMAsBJiQ_5xkxddt6qI"/>
+</div>
+<div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+<div class="text-center sm:text-left">
+<h3 class="text-xl font-bold text-on-surface tracking-tight">Mercimek Çorbası</h3>
+<p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">Çorba Dünyası</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
+<span class="mx-4 font-bold w-4 text-center">1</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
+</div>
+<div class="text-xl font-bold text-primary">₺65.00</div>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 3: İskender -->
+<div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
+<div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0">
+<img alt="İskender" class="w-full h-full object-cover" data-alt="Traditional Iskender kebab with thin slices of doner meat, rich tomato sauce, melted butter, and creamy yogurt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6xpeDawSiCzaVWQwuHjHojdkSBnASHWTnQ2hf-amMWrwstjJc21b_Emc_WOCo103C53gZpiqG90hTsSAjtgFcocmgeUY7y0iDMccj_zJ8iHYn5VmR_spHwYEFHRdcy7woc73q2DYP0gQU_v2efVs8q-9Mjf1pCrbeARHvdK14uSQquO1l_z6wJgI889vYFlpGOvxxLmHMgQlbsA-CpWhfd1a6fcPph3bW2jb_Lr5b1RKHXVnKeQ84S875UQaDkXAlWnihfX4K9oY"/>
+</div>
+<div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+<div class="text-center sm:text-left">
+<h3 class="text-xl font-bold text-on-surface tracking-tight">İskender</h3>
+<p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">Bursa Saray</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
+<span class="mx-4 font-bold w-4 text-center">1</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
+</div>
+<div class="text-xl font-bold text-primary">₺265.00</div>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 4: Ayran -->
+<div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
+<div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0">
+<img alt="Ayran" class="w-full h-full object-cover" data-alt="Frothy chilled traditional Turkish Ayran yogurt drink in a copper cup with bubbles on top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjUNh6RPCzfwRi5LDRuL_T5BYGNqbltd-MeZfEWiY3-4dO_eP7BFVPm1Qmrr0uqvvFNd3cHYnJwK6F9ruF-5jemoMO1W7Zk3CJRsaaCXcN8BTZYHIinlSvmazxFMZGB88RlsHt244inf5JjNzo-_ArWL6IgDzmrgnNnkdrAGbZ-g83yi1Kt2jMfuBTMDehnnK4kRnsql9Yw93c7vpKy_MKEf5wLcgF1IApYh0Blk7PlfgN63o_Fr6i4kbSXTD5QUmpoc7lEV8Z_OU"/>
+</div>
+<div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+<div class="text-center sm:text-left">
+<h3 class="text-xl font-bold text-on-surface tracking-tight">Ayran</h3>
+<p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">Sütaş Doğal</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
+<span class="mx-4 font-bold w-4 text-center">1</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
+</div>
+<div class="text-xl font-bold text-primary">₺30.00</div>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Order Summary -->
+<div class="lg:col-span-4 sticky top-32">
+<div class="glass-card ghost-border rounded-xl p-8 flex flex-col gap-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<h2 class="text-2xl font-bold tracking-tight border-b border-outline-variant/10 pb-4">Sipariş Özeti</h2>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-medium uppercase text-xs tracking-widest">Ara Toplam</span>
+<span class="text-lg font-semibold">₺540.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-medium uppercase text-xs tracking-widest">Teslimat Ücreti</span>
+<span class="text-lg font-semibold text-secondary">₺15.00</span>
+</div>
+<div class="flex items-center gap-2 bg-primary/5 p-3 rounded-lg border border-primary/10">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="schedule">schedule</span>
+<span class="text-sm font-bold text-primary uppercase tracking-wider">Tahmini Teslimat: 25-35 dk</span>
+</div>
+</div>
+<div class="pt-6 border-t border-outline-variant/20 flex justify-between items-end">
+<span class="text-sm font-bold text-on-surface uppercase tracking-[0.2em]">Toplam</span>
+<span class="text-3xl font-black text-white tracking-tighter">₺555.00</span>
+</div>
+<button class="primary-gradient w-full py-5 rounded-full text-on-primary font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(253,118,26,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300">
+                        Siparişi Onayla
+                        <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center gap-2 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-sm" data-icon="shield_check">shield</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Güvenli Ödeme 256-bit SSL</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-neutral-950 w-full py-12 mt-auto border-t border-white/5">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 w-full font-['Inter'] text-sm uppercase tracking-widest">
+<div class="text-lg font-bold text-white mb-6 md:mb-0">YEMEKİMNEREDE</div>
+<div class="flex gap-8 mb-6 md:mb-0">
+<a class="text-neutral-500 hover:text-white transition-colors" href="#">Hakkımızda</a>
+<a class="text-neutral-500 hover:text-white transition-colors" href="#">Kullanım Koşulları</a>
+<a class="text-neutral-500 hover:text-white transition-colors" href="#">Gizlilik Politikası</a>
+<a class="text-neutral-500 hover:text-white transition-colors" href="#">İletişim</a>
+</div>
+<div class="text-neutral-500">© 2024 YEMEKİMNEREDE. Hyper-Focus Editorial Dining.</div>
+</div>
+</footer>
+</body></html>
