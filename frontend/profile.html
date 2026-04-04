@@ -4,65 +4,355 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profilim — YEMEKİMNEREDE</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-orange-50 min-h-screen">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  <!-- Navbar -->
-  <nav class="bg-white shadow px-6 py-4 flex justify-between items-center">
-    <span class="text-orange-600 font-bold text-xl">🍔 YEMEKİMNEREDE</span>
-    <button onclick="cikisYap()" class="text-sm text-gray-500 hover:text-red-500">Çıkış Yap</button>
+    :root {
+      --orange: #f97316;
+      --orange-dark: #ea580c;
+      --bg: #0a0a0a;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --text: #f5f5f5;
+      --muted: #888;
+      --input-bg: rgba(255,255,255,0.05);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(249,115,22,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 40px;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo { font-size: 1.2rem; font-weight: 800; color: var(--orange); text-decoration: none; }
+
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px 6px 6px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+
+    .avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+
+    .btn-logout {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(239,68,68,0.2);
+      background: rgba(239,68,68,0.05);
+      color: #f87171;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.4); }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .page-header { margin-bottom: 40px; }
+    .page-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 6px; }
+    .page-header p { color: var(--muted); font-size: 0.9rem; }
+
+    /* Profile summary */
+    .profile-summary {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 28px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      margin-bottom: 24px;
+    }
+
+    .profile-avatar {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(249,115,22,0.3);
+    }
+
+    .profile-info h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+    .profile-info p { font-size: 0.875rem; color: var(--muted); }
+
+    .profile-badge {
+      margin-left: auto;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(249,115,22,0.1);
+      border: 1px solid rgba(249,115,22,0.2);
+      color: var(--orange);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Cards */
+    .card {
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 28px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: rgba(255,255,255,0.12); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(249,115,22,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+
+    .card-title { font-size: 1rem; font-weight: 700; }
+    .card-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 500px) { .input-row { grid-template-columns: 1fr; } }
+
+    .input-group { margin-bottom: 14px; }
+    .input-label { font-size: 0.78rem; font-weight: 600; color: #aaa; margin-bottom: 8px; display: block; letter-spacing: 0.3px; }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus {
+      border-color: var(--orange);
+      background: rgba(249,115,22,0.05);
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+    }
+    input::placeholder { color: #444; }
+
+    .btn-save {
+      padding: 11px 24px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(249,115,22,0.25);
+    }
+    .btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.35); }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .success-msg {
+      display: none;
+      font-size: 0.8rem;
+      color: #4ade80;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(74,222,128,0.08);
+      border: 1px solid rgba(74,222,128,0.15);
+    }
+
+    .error-msg {
+      display: none;
+      font-size: 0.8rem;
+      color: #f87171;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.15);
+    }
+
+    /* Danger zone */
+    .danger-card {
+      border-radius: 20px;
+      border: 1px solid rgba(239,68,68,0.15);
+      background: rgba(239,68,68,0.03);
+      padding: 28px;
+    }
+
+    .danger-card .card-icon { background: rgba(239,68,68,0.1); }
+    .danger-card .card-title { color: #f87171; }
+
+    .danger-desc { font-size: 0.875rem; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+
+    .btn-danger {
+      padding: 11px 24px;
+      border-radius: 10px;
+      border: 1px solid rgba(239,68,68,0.3);
+      background: rgba(239,68,68,0.08);
+      color: #f87171;
+      font-size: 0.875rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.5); }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <nav>
+    <a href="index.html" class="logo">🍔 YEMEKİMNEREDE</a>
+    <div class="nav-right">
+      <div class="user-badge">
+        <div class="avatar" id="navAvatar">?</div>
+        <span class="user-name" id="navName">Yükleniyor...</span>
+      </div>
+      <button class="btn-logout" onclick="cikisYap()">Çıkış Yap</button>
+    </div>
   </nav>
 
-  <div class="max-w-lg mx-auto mt-10 space-y-6 px-4">
+  <div class="page">
+    <div class="page-header">
+      <h1>Profilim</h1>
+      <p>Hesap bilgilerinizi görüntüleyin ve yönetin</p>
+    </div>
 
-    <!-- Profil Kartı -->
-    <div class="bg-white rounded-2xl shadow p-6">
-      <h2 class="text-lg font-bold text-gray-800 mb-4">Profil Bilgileri</h2>
-      <div id="profilBilgi" class="text-gray-600 space-y-1 text-sm mb-4"></div>
+    <!-- Profil Özeti -->
+    <div class="profile-summary">
+      <div class="profile-avatar" id="profileAvatar">?</div>
+      <div class="profile-info">
+        <h2 id="profileName">Yükleniyor...</h2>
+        <p id="profileEmail">—</p>
+      </div>
+      <div class="profile-badge">Aktif Üye</div>
+    </div>
 
-      <h3 class="font-semibold text-gray-700 mb-2">Bilgileri Güncelle</h3>
-      <form id="guncelleForm" class="space-y-3">
-        <input id="ad" type="text" placeholder="Ad"
-          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-        <input id="soyad" type="text" placeholder="Soyad"
-          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-        <input id="telefon" type="tel" placeholder="Telefon"
-          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-        <button type="submit"
-          class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 text-sm font-semibold">
-          Güncelle
-        </button>
+    <!-- Bilgileri Güncelle -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">👤</div>
+        <div>
+          <div class="card-title">Kişisel Bilgiler</div>
+          <div class="card-sub">Ad, soyad ve telefon bilgilerinizi güncelleyin</div>
+        </div>
+      </div>
+      <form id="guncelleForm">
+        <div class="input-row">
+          <div class="input-group">
+            <label class="input-label">Ad</label>
+            <input id="ad" type="text" placeholder="Adınız" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Soyad</label>
+            <input id="soyad" type="text" placeholder="Soyadınız" />
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Telefon</label>
+          <input id="telefon" type="tel" placeholder="+905551234567" />
+        </div>
+        <button type="submit" class="btn-save" id="guncelleBtn">Kaydet</button>
+        <div id="guncelleMsg" class="success-msg"></div>
+        <div id="guncelleErr" class="error-msg"></div>
       </form>
-      <div id="guncelleMsg" class="hidden mt-2 text-sm text-green-600"></div>
     </div>
 
     <!-- Şifre Güncelle -->
-    <div class="bg-white rounded-2xl shadow p-6">
-      <h2 class="text-lg font-bold text-gray-800 mb-4">Şifre Güncelle</h2>
-      <form id="sifreForm" class="space-y-3">
-        <input id="mevcutSifre" type="password" placeholder="Mevcut Şifre"
-          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-        <input id="yeniSifre" type="password" placeholder="Yeni Şifre"
-          class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400" />
-        <button type="submit"
-          class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 text-sm font-semibold">
-          Şifreyi Güncelle
-        </button>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔒</div>
+        <div>
+          <div class="card-title">Şifre Güncelle</div>
+          <div class="card-sub">Güvenliğiniz için şifrenizi düzenli değiştirin</div>
+        </div>
+      </div>
+      <form id="sifreForm">
+        <div class="input-group">
+          <label class="input-label">Mevcut Şifre</label>
+          <input id="mevcutSifre" type="password" placeholder="••••••••" />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Yeni Şifre</label>
+          <input id="yeniSifre" type="password" placeholder="En az 8 karakter" />
+        </div>
+        <button type="submit" class="btn-save" id="sifreBtn">Şifreyi Güncelle</button>
+        <div id="sifreMsg" class="success-msg"></div>
+        <div id="sifreErr" class="error-msg"></div>
       </form>
-      <div id="sifreMsg" class="hidden mt-2 text-sm"></div>
     </div>
 
     <!-- Hesap Sil -->
-    <div class="bg-white rounded-2xl shadow p-6">
-      <h2 class="text-lg font-bold text-red-600 mb-2">Hesabı Sil</h2>
-      <p class="text-sm text-gray-500 mb-4">Bu işlem geri alınamaz.</p>
-      <button onclick="hesapSil()"
-        class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 text-sm font-semibold">
-        Hesabımı Sil
-      </button>
+    <div class="danger-card">
+      <div class="card-header">
+        <div class="card-icon">⚠️</div>
+        <div>
+          <div class="card-title">Hesabı Sil</div>
+          <div class="card-sub">Bu işlem geri alınamaz</div>
+        </div>
+      </div>
+      <p class="danger-desc">Hesabınızı sildiğinizde tüm verileriniz, siparişleriniz ve profil bilgileriniz kalıcı olarak silinecektir.</p>
+      <button class="btn-danger" onclick="hesapSil()">Hesabımı Kalıcı Olarak Sil</button>
     </div>
-
   </div>
 
   <script>
@@ -74,22 +364,35 @@
 
     const authHeader = () => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` });
 
+    function initials(ad, soyad) {
+      return ((ad?.[0] || '') + (soyad?.[0] || '')).toUpperCase() || '?';
+    }
+
     async function profilYukle() {
-      const res = await fetch(`${API}/users/${kullaniciId}`, { headers: authHeader() });
-      if (res.status === 401) { cikisYap(); return; }
-      const kullanici = await res.json();
-      document.getElementById('profilBilgi').innerHTML = `
-        <p><strong>Ad Soyad:</strong> ${kullanici.ad} ${kullanici.soyad}</p>
-        <p><strong>E-posta:</strong> ${kullanici.email}</p>
-        <p><strong>Telefon:</strong> ${kullanici.telefon || '-'}</p>
-      `;
-      document.getElementById('ad').value = kullanici.ad;
-      document.getElementById('soyad').value = kullanici.soyad;
-      document.getElementById('telefon').value = kullanici.telefon || '';
+      try {
+        const res = await fetch(`${API}/users/${kullaniciId}`, { headers: authHeader() });
+        if (res.status === 401) { cikisYap(); return; }
+        const k = await res.json();
+        const ini = initials(k.ad, k.soyad);
+        document.getElementById('profileAvatar').textContent = ini;
+        document.getElementById('navAvatar').textContent = ini;
+        document.getElementById('profileName').textContent = `${k.ad} ${k.soyad}`;
+        document.getElementById('profileEmail').textContent = k.email;
+        document.getElementById('navName').textContent = k.ad;
+        document.getElementById('ad').value = k.ad || '';
+        document.getElementById('soyad').value = k.soyad || '';
+        document.getElementById('telefon').value = k.telefon || '';
+      } catch {}
     }
 
     document.getElementById('guncelleForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btn = document.getElementById('guncelleBtn');
+      const msg = document.getElementById('guncelleMsg');
+      const err = document.getElementById('guncelleErr');
+      msg.style.display = 'none'; err.style.display = 'none';
+      btn.disabled = true; btn.textContent = 'Kaydediliyor...';
+
       const res = await fetch(`${API}/users/${kullaniciId}`, {
         method: 'PUT',
         headers: authHeader(),
@@ -99,20 +402,26 @@
           telefon: document.getElementById('telefon').value,
         }),
       });
-      const msg = document.getElementById('guncelleMsg');
+
       if (res.ok) {
-        msg.textContent = 'Profil güncellendi.';
-        msg.className = 'mt-2 text-sm text-green-600';
+        msg.textContent = '✓ Profil başarıyla güncellendi';
+        msg.style.display = 'block';
         profilYukle();
       } else {
-        msg.textContent = 'Güncelleme başarısız.';
-        msg.className = 'mt-2 text-sm text-red-600';
+        err.textContent = 'Güncelleme başarısız, tekrar deneyin.';
+        err.style.display = 'block';
       }
-      msg.classList.remove('hidden');
+      btn.disabled = false; btn.textContent = 'Kaydet';
     });
 
     document.getElementById('sifreForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btn = document.getElementById('sifreBtn');
+      const msg = document.getElementById('sifreMsg');
+      const err = document.getElementById('sifreErr');
+      msg.style.display = 'none'; err.style.display = 'none';
+      btn.disabled = true; btn.textContent = 'Güncelleniyor...';
+
       const res = await fetch(`${API}/users/${kullaniciId}/password`, {
         method: 'PUT',
         headers: authHeader(),
@@ -122,25 +431,25 @@
         }),
       });
       const data = await res.json();
-      const msg = document.getElementById('sifreMsg');
-      msg.textContent = res.ok ? 'Şifre güncellendi.' : (data.hata || 'Hata oluştu.');
-      msg.className = `mt-2 text-sm ${res.ok ? 'text-green-600' : 'text-red-600'}`;
-      msg.classList.remove('hidden');
+
+      if (res.ok) {
+        msg.textContent = '✓ Şifre başarıyla güncellendi';
+        msg.style.display = 'block';
+        document.getElementById('sifreForm').reset();
+      } else {
+        err.textContent = data.hata || 'Şifre güncellenemedi.';
+        err.style.display = 'block';
+      }
+      btn.disabled = false; btn.textContent = 'Şifreyi Güncelle';
     });
 
     async function hesapSil() {
-      if (!confirm('Hesabınızı silmek istediğinizden emin misiniz?')) return;
-      const res = await fetch(`${API}/users/${kullaniciId}`, {
-        method: 'DELETE',
-        headers: authHeader(),
-      });
+      if (!confirm('Hesabınızı kalıcı olarak silmek istediğinizden emin misiniz?\nBu işlem geri alınamaz.')) return;
+      const res = await fetch(`${API}/users/${kullaniciId}`, { method: 'DELETE', headers: authHeader() });
       if (res.ok) { localStorage.clear(); window.location.href = 'index.html'; }
     }
 
-    function cikisYap() {
-      localStorage.clear();
-      window.location.href = 'login.html';
-    }
+    function cikisYap() { localStorage.clear(); window.location.href = 'login.html'; }
 
     profilYukle();
   </script>

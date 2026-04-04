@@ -4,25 +4,224 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Giriş Yap — YEMEKİMNEREDE</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #f97316;
+      --orange-dark: #ea580c;
+      --bg: #0a0a0a;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --text: #f5f5f5;
+      --muted: #888;
+      --input-bg: rgba(255,255,255,0.05);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 70% at 10% 50%, rgba(249,115,22,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 90% 20%, rgba(234,88,12,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Left panel */
+    .left-panel {
+      display: none;
+      flex: 1;
+      position: relative;
+      background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.05));
+      border-right: 1px solid var(--border);
+      padding: 60px;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    @media (min-width: 900px) { .left-panel { display: flex; } }
+
+    .left-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--orange);
+      margin-bottom: 60px;
+    }
+
+    .left-heading {
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--orange), #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .left-sub { color: var(--muted); line-height: 1.7; font-size: 1rem; margin-bottom: 48px; }
+
+    .testimonial {
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+    .testimonial-text { font-size: 0.95rem; color: #ccc; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+    .testimonial-author { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+
+    /* Right panel */
+    .right-panel {
+      flex: 0 0 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (min-width: 900px) { .right-panel { flex: 0 0 480px; } }
+
+    .form-container { width: 100%; max-width: 400px; }
+
+    .mobile-logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--orange);
+      text-align: center;
+      margin-bottom: 36px;
+      display: block;
+    }
+    @media (min-width: 900px) { .mobile-logo { display: none; } }
+
+    .form-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.75px;
+      margin-bottom: 8px;
+    }
+    .form-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 36px; }
+
+    .input-group { margin-bottom: 16px; }
+    .input-label { font-size: 0.8rem; font-weight: 600; color: #ccc; margin-bottom: 8px; display: block; letter-spacing: 0.3px; }
+
+    input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus {
+      border-color: var(--orange);
+      background: rgba(249,115,22,0.05);
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+    }
+    input::placeholder { color: #555; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(249,115,22,0.3);
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(249,115,22,0.4); }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .error-box {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      color: #f87171;
+      font-size: 0.875rem;
+      margin-bottom: 16px;
+    }
+
+    .divider {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin: 28px 0;
+    }
+
+    .form-footer {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-top: 24px;
+    }
+    .form-footer a { color: var(--orange); text-decoration: none; font-weight: 600; }
+    .form-footer a:hover { text-decoration: underline; }
+  </style>
 </head>
-<body class="bg-orange-50 flex items-center justify-center min-h-screen">
-  <div class="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
-    <h1 class="text-2xl font-bold text-orange-600 mb-6 text-center">🍔 Giriş Yap</h1>
-    <div id="hata" class="hidden bg-red-100 text-red-700 rounded-lg p-3 mb-4 text-sm"></div>
-    <form id="girisForm" class="space-y-4">
-      <input id="email" type="email" placeholder="E-posta" required
-        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-      <input id="sifre" type="password" placeholder="Şifre" required
-        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-      <button type="submit"
-        class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 font-semibold">
-        Giriş Yap
-      </button>
-    </form>
-    <p class="text-center text-sm text-gray-500 mt-4">
-      Hesabın yok mu? <a href="register.html" class="text-orange-500 hover:underline">Kayıt Ol</a>
-    </p>
+<body>
+  <div class="bg-glow"></div>
+
+  <div class="left-panel">
+    <div class="left-logo">🍔 YEMEKİMNEREDE</div>
+    <h2 class="left-heading">Tekrar<br><span class="gradient-text">Hoş Geldiniz</span></h2>
+    <p class="left-sub">Yüzlerce restorana erişin, siparişlerinizi takip edin ve en iyi yemek deneyimini yaşayın.</p>
+    <div class="testimonial">
+      <p class="testimonial-text">"YEMEKİMNEREDE sayesinde artık ne yiyeceğime karar vermek çok kolay. Harika bir uygulama!"</p>
+      <p class="testimonial-author">— Mehmet K., İstanbul</p>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="form-container">
+      <span class="mobile-logo">🍔 YEMEKİMNEREDE</span>
+      <h1 class="form-title">Giriş Yap</h1>
+      <p class="form-sub">Hesabınıza erişmek için bilgilerinizi girin</p>
+
+      <div id="hata" class="error-box"></div>
+
+      <form id="girisForm">
+        <div class="input-group">
+          <label class="input-label">E-posta</label>
+          <input id="email" type="email" placeholder="ornek@mail.com" required />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Şifre</label>
+          <input id="sifre" type="password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn-submit" id="submitBtn">Giriş Yap</button>
+      </form>
+
+      <p class="form-footer">Hesabın yok mu? <a href="register.html">Ücretsiz Kayıt Ol</a></p>
+    </div>
   </div>
 
   <script>
@@ -31,7 +230,10 @@
     document.getElementById('girisForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const hataDiv = document.getElementById('hata');
-      hataDiv.classList.add('hidden');
+      const btn = document.getElementById('submitBtn');
+      hataDiv.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Giriş yapılıyor...';
 
       try {
         const res = await fetch(`${API}/auth/login`, {
@@ -49,7 +251,9 @@
         window.location.href = 'profile.html';
       } catch (err) {
         hataDiv.textContent = err.message;
-        hataDiv.classList.remove('hidden');
+        hataDiv.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Giriş Yap';
       }
     });
   </script>
