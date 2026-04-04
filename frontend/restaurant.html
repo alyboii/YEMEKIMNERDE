@@ -427,6 +427,11 @@
     } else {
       cart.push({ ...item, qty: 1, restaurantId });
     }
+    // Teslimat ücretini sepet sayfasının okuyabilmesi için kaydet
+    if (currentRestaurant) {
+      localStorage.setItem('cartDeliveryFee', currentRestaurant.deliveryFee);
+      localStorage.setItem('cartRestaurantName', currentRestaurant.name);
+    }
     saveCart();
     renderCartSidebar();
     showToast();
