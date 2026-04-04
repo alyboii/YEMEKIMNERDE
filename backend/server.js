@@ -11,8 +11,8 @@ app.use(express.json());
 // Routes
 app.use('/v1/auth', require('./routes/auth'));
 app.use('/v1/users', require('./routes/users'));
-// Cemal'ın route'ları buraya eklenecek:
-// app.use('/v1/restaurants', require('./routes/restaurants'));
+// Cemal Tarlan'ın route'ları
+app.use('/v1/restaurants', require('./routes/restaurants'));
 // Abdullah'ın route'ları buraya eklenecek:
  app.use('/v1/cart', require('./routes/cart'));
  app.use('/v1/orders', require('./routes/orders'));
