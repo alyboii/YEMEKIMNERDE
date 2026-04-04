@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Restoran Menüsü | YEMEKİMNEREDE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#ff9153",
+          "primary-container": "#ff7a23",
+          "on-primary": "#511f00",
+          "on-primary-fixed": "#000000",
+          "surface": "#0e0e0e",
+          "surface-container": "#1a1919",
+          "surface-container-low": "#131313",
+          "surface-container-high": "#201f1f",
+          "surface-container-highest": "#262626",
+          "surface-bright": "#2c2c2c",
+          "on-surface": "#ffffff",
+          "on-surface-variant": "#adaaaa",
+          "outline": "#777575",
+          "outline-variant": "#494847",
+          "background": "#0e0e0e",
+        },
+        borderRadius: {
+          "DEFAULT": "1rem",
+          "lg": "2rem",
+          "xl": "3rem",
+          "full": "9999px"
+        },
+        fontFamily: {
+          "headline": ["Inter"],
+          "body": ["Inter"],
+          "label": ["Inter"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .glass-card { background: rgba(38, 38, 38, 0.4); backdrop-filter: blur(20px); }
+  .menu-item { transition: transform 0.15s, box-shadow 0.15s; }
+  .menu-item:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .cart-panel { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+  #toast { transition: opacity 0.3s, transform 0.3s; }
+</style>
+</head>
+<body class="selection:bg-primary/30">
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] bg-primary text-black font-bold px-6 py-3 rounded-full shadow-lg opacity-0 pointer-events-none translate-y-4 text-sm">
+  ✓ Sepete eklendi!
+</div>
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-neutral-900/60 backdrop-blur-xl rounded-full mt-4 mx-auto w-[95%] max-w-7xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] font-['Inter'] tracking-tight">
+  <a href="index.html" class="text-2xl font-bold tracking-tighter text-white">🍔 YEMEKİMNEREDE</a>
+  <div class="hidden md:flex items-center gap-8">
+    <a class="text-neutral-400 hover:text-white transition-colors duration-300" href="index.html">Ana Sayfa</a>
+    <a class="text-orange-500 font-semibold hover:text-orange-400 transition-colors duration-300" href="restaurants.html">Restoranlar</a>
+    <a class="text-neutral-400 hover:text-white transition-colors duration-300" href="#">Kampanyalar</a>
+  </div>
+  <div class="flex items-center gap-4">
+    <button onclick="window.location.href='cart.html'" class="relative text-neutral-400 hover:text-primary transition-colors">
+      <span class="material-symbols-outlined text-2xl">shopping_cart</span>
+      <span id="cart-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-black text-xs font-black rounded-full flex items-center justify-center hidden">0</span>
+    </button>
+    <button class="text-white font-medium hover:text-orange-500 transition-colors duration-300" onclick="window.location.href='login.html'">Giriş Yap</button>
+  </div>
+</nav>
+
+<main class="pt-28 pb-20 min-h-screen bg-surface">
+  <div class="container mx-auto px-4 md:px-8 max-w-7xl">
+
+    <!-- Back -->
+    <a href="restaurants.html" class="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors mb-8 text-sm font-medium">
+      <span class="material-symbols-outlined text-base">arrow_back</span>
+      Restoranlara Dön
+    </a>
+
+    <!-- Restaurant Header -->
+    <div id="restaurant-header" class="mb-10"></div>
+
+    <!-- Layout: Menu + Cart -->
+    <div class="flex gap-8 items-start">
+      <!-- Menu Column -->
+      <div class="flex-1 min-w-0">
+        <!-- Category tabs -->
+        <div class="flex gap-3 overflow-x-auto pb-2 mb-8 scrollbar-hide" id="category-tabs"></div>
+        <!-- Menu Items -->
+        <div id="menu-container"></div>
+      </div>
+
+      <!-- Cart Sidebar -->
+      <div class="hidden lg:block w-80 sticky top-28">
+        <div class="glass-card rounded-xl border border-white/5 p-6">
+          <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">shopping_cart</span>
+            Sepetim
+          </h3>
+          <div id="cart-items-list" class="space-y-3 mb-4 min-h-[60px]">
+            <p class="text-neutral-500 text-sm text-center py-4">Sepetiniz boş</p>
+          </div>
+          <div id="cart-summary" class="hidden border-t border-white/10 pt-4 space-y-2 mb-4">
+            <div class="flex justify-between text-sm text-neutral-400">
+              <span>Ara toplam</span>
+              <span id="subtotal">₺0</span>
+            </div>
+            <div class="flex justify-between text-sm text-neutral-400">
+              <span>Teslimat ücreti</span>
+              <span id="delivery-fee-display">₺0</span>
+            </div>
+            <div class="flex justify-between font-bold text-white pt-2 border-t border-white/10">
+              <span>Toplam</span>
+              <span id="total">₺0</span>
+            </div>
+          </div>
+          <button id="checkout-btn" onclick="window.location.href='cart.html'" class="w-full bg-gradient-to-r from-primary to-primary-container text-black font-bold py-3 rounded-full text-sm transition-all hover:shadow-[0_0_20px_rgba(255,145,83,0.4)] hidden">
+            Siparişi Tamamla →
+          </button>
+          <p id="min-order-warning" class="text-xs text-neutral-500 text-center mt-2 hidden"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Mobile Cart Bar -->
+<div id="mobile-cart-bar" class="lg:hidden fixed bottom-0 left-0 right-0 z-50 hidden">
+  <div class="m-4 bg-primary rounded-2xl px-6 py-4 flex items-center justify-between shadow-[0_0_30px_rgba(255,145,83,0.4)]">
+    <div class="flex items-center gap-2 text-black font-bold">
+      <span class="material-symbols-outlined">shopping_cart</span>
+      <span id="mobile-cart-count">0 ürün</span>
+    </div>
+    <button onclick="window.location.href='cart.html'" class="text-black font-black text-sm">
+      Sepete Git →
+    </button>
+    <div class="text-black font-black" id="mobile-cart-total">₺0</div>
+  </div>
+</div>
+
+<script>
+  // ---- DATA ----
+  const restaurantData = {
+    1: {
+      id: 1, name: "Burger House", emoji: "🍔", category: "Burger",
+      description: "Özenle seçilmiş malzemelerle hazırlanan gurme burgerler. Her lokma bir deneyim.",
+      rating: 4.8, reviews: 1240, deliveryTime: "20-30 dk", minOrder: 80, deliveryFee: 15,
+      badge: "Çok Popüler", badgeColor: "bg-orange-500/20 text-orange-400",
+      menu: [
+        {
+          category: "Burgerler",
+          emoji: "🍔",
+          items: [
+            { id: "b1", name: "Classic Smash Burger", desc: "200gr dana eti, çedar peyniri, özel sos, turşu, domates, marul", price: 185, emoji: "🍔", popular: true },
+            { id: "b2", name: "BBQ Bacon Burger", desc: "200gr dana eti, çıtır bacon, BBQ sos, soğan halkası, jalapeno", price: 210, emoji: "🥓", popular: false },
+            { id: "b3", name: "Double Smash", desc: "2x150gr dana eti, double çedar, özel sos, karamelize soğan", price: 260, emoji: "🍔", popular: true },
+            { id: "b4", name: "Mushroom Swiss Burger", desc: "200gr dana eti, sautéed mantar, İsviçre peyniri, trüf mayonez", price: 230, emoji: "🍄", popular: false },
+            { id: "b5", name: "Vegan Black Bean", desc: "Siyah fasulye pattie, avokado, domates salsa, vegan mayonez", price: 175, emoji: "🥑", popular: false },
+          ]
+        },
+        {
+          category: "Yanlar",
+          emoji: "🍟",
+          items: [
+            { id: "b6", name: "Klasik Patates Kızartması", desc: "Crispy çubuk patates, özel bahar", price: 60, emoji: "🍟", popular: true },
+            { id: "b7", name: "Soğan Halkası", desc: "Çıtır unlu soğan halkası, ranch sos", price: 75, emoji: "🧅", popular: false },
+            { id: "b8", name: "Mozarella Sticks", desc: "6 adet çıtır mozarella, marina sos", price: 90, emoji: "🧀", popular: false },
+          ]
+        },
+        {
+          category: "İçecekler",
+          emoji: "🥤",
+          items: [
+            { id: "b9", name: "Milkshake", desc: "Çikolata / Çilek / Vanilya seçenekli", price: 85, emoji: "🥛", popular: false },
+            { id: "b10", name: "Taze Sıkılmış Portakal", desc: "300ml taze sıkılmış", price: 55, emoji: "🍊", popular: false },
+            { id: "b11", name: "Cola / Sprite / Fanta", desc: "330ml kutu", price: 35, emoji: "🥤", popular: false },
+          ]
+        }
+      ]
+    },
+    2: {
+      id: 2, name: "Sushi Palace", emoji: "🍱", category: "Sushi",
+      description: "Japonya'nın geleneksel tatlarını İstanbul'a taşıyan otantik sushi deneyimi.",
+      rating: 4.9, reviews: 875, deliveryTime: "30-45 dk", minOrder: 150, deliveryFee: 20,
+      badge: "Premium", badgeColor: "bg-purple-500/20 text-purple-400",
+      menu: [
+        {
+          category: "Maki & Nigiri",
+          emoji: "🍣",
+          items: [
+            { id: "s1", name: "Salmon Nigiri (4 adet)", desc: "Taze somon, sushi pirinci, wasabi", price: 145, emoji: "🍣", popular: true },
+            { id: "s2", name: "Tuna Maki (8 adet)", desc: "Ton balığı, avokado, nori", price: 130, emoji: "🐟", popular: false },
+            { id: "s3", name: "Spicy Salmon Roll (8 adet)", desc: "Somon, sriracha mayo, salatalık, tobiko", price: 155, emoji: "🌶️", popular: true },
+            { id: "s4", name: "Rainbow Roll (8 adet)", desc: "Ton, somon, hamachi, avokado, salatalık", price: 195, emoji: "🌈", popular: true },
+            { id: "s5", name: "Shrimp Tempura Roll (6 adet)", desc: "Tempura karides, avokado, sos", price: 175, emoji: "🍤", popular: false },
+          ]
+        },
+        {
+          category: "Ramen & Soup",
+          emoji: "🍜",
+          items: [
+            { id: "s6", name: "Tonkotsu Ramen", desc: "Domuz suyu bazlı, chashu, yumurta, nori, menma", price: 220, emoji: "🍜", popular: true },
+            { id: "s7", name: "Miso Soup", desc: "Beyaz miso, tofu, wakame, yeşil soğan", price: 65, emoji: "🥣", popular: false },
+            { id: "s8", name: "Edamame", desc: "Tuzlu haşlanmış soya fasulyesi", price: 55, emoji: "🫛", popular: false },
+          ]
+        },
+        {
+          category: "İçecekler",
+          emoji: "🍵",
+          items: [
+            { id: "s9", name: "Yeşil Çay (Sıcak)", desc: "Japon matcha çayı", price: 45, emoji: "🍵", popular: false },
+            { id: "s10", name: "Yuzu Lemonade", desc: "Japon yuzu limonata, buz", price: 75, emoji: "🍋", popular: false },
+          ]
+        }
+      ]
+    },
+    3: {
+      id: 3, name: "Pizza Roma", emoji: "🍕", category: "Pizza",
+      description: "Taş fırında pişirilmiş, İtalyan usulü ince hamurlu pizzalar.",
+      rating: 4.7, reviews: 2100, deliveryTime: "25-35 dk", minOrder: 100, deliveryFee: 12,
+      badge: "Yeni", badgeColor: "bg-green-500/20 text-green-400",
+      menu: [
+        {
+          category: "Pizzalar",
+          emoji: "🍕",
+          items: [
+            { id: "p1", name: "Margherita", desc: "San Marzano domates, mozzarella di bufala, fesleğen, zeytinyağı", price: 160, emoji: "🍕", popular: true },
+            { id: "p2", name: "Diavola", desc: "Domates, mozzarella, acı sucuk, jalapeno, kırmızı biber", price: 195, emoji: "🌶️", popular: true },
+            { id: "p3", name: "Quattro Stagioni", desc: "4 mevsim pizzası: mantar, ham, enginar, zeytin", price: 210, emoji: "🍄", popular: false },
+            { id: "p4", name: "Truffle Funghi", desc: "Krem trüf sos, mantar karışımı, parmigiano, roka", price: 245, emoji: "🫕", popular: true },
+            { id: "p5", name: "Prosciutto e Rucola", desc: "Prosciutto crudo, taze roka, parmigiano reggiano", price: 230, emoji: "🥩", popular: false },
+            { id: "p6", name: "Vegan Primavera", desc: "Domates sos, mevsim sebzeleri, vegan peynir", price: 175, emoji: "🌿", popular: false },
+          ]
+        },
+        {
+          category: "Makarnalar",
+          emoji: "🍝",
+          items: [
+            { id: "p7", name: "Cacio e Pepe", desc: "Spaghetti, pecorino romano, taze karabiber", price: 150, emoji: "🍝", popular: true },
+            { id: "p8", name: "Carbonara", desc: "Spaghetti, guanciale, yumurta sarısı, pecorino", price: 175, emoji: "🥚", popular: false },
+            { id: "p9", name: "Penne Arrabbiata", desc: "Penne, acı domates sos, sarımsak, fesleğen", price: 140, emoji: "🍅", popular: false },
+          ]
+        },
+        {
+          category: "Tatlılar",
+          emoji: "🍮",
+          items: [
+            { id: "p10", name: "Tiramisu", desc: "Klasik İtalyan tiramisu, mascarpone, kahve", price: 95, emoji: "☕", popular: true },
+            { id: "p11", name: "Panna Cotta", desc: "Vanilya panna cotta, çilek coulis", price: 85, emoji: "🍮", popular: false },
+          ]
+        }
+      ]
+    },
+    4: {
+      id: 4, name: "Kebap Dünyası", emoji: "🥙", category: "Kebap",
+      description: "Antep'ten gelen ustalar eliyle hazırlanan geleneksel Türk kebapları.",
+      rating: 4.6, reviews: 3400, deliveryTime: "15-25 dk", minOrder: 60, deliveryFee: 10,
+      badge: "Yerel Lezzet", badgeColor: "bg-red-500/20 text-red-400",
+      menu: [
+        {
+          category: "Kebaplar",
+          emoji: "🥩",
+          items: [
+            { id: "k1", name: "Adana Kebap", desc: "Kıymalı acılı kebap, lavaş, közlenmiş domates ve biber", price: 145, emoji: "🥩", popular: true },
+            { id: "k2", name: "Urfa Kebap", desc: "Kıymalı sade kebap, lavaş, sumak soğan", price: 140, emoji: "🫕", popular: true },
+            { id: "k3", name: "Tavuk Şiş", desc: "Marine tavuk şiş, pilav, közlenmiş sebze", price: 125, emoji: "🍗", popular: false },
+            { id: "k4", name: "Kuzu Şiş", desc: "Taze kuzu but şiş, basmati pilav, yoğurt sos", price: 175, emoji: "🐑", popular: true },
+            { id: "k5", name: "Karışık Izgara", desc: "Adana + Tavuk şiş + Kuzu pirzola, pilav, salata", price: 280, emoji: "🍢", popular: false },
+            { id: "k6", name: "Lahmacun (3 adet)", desc: "İnce hamurun üzerinde kıymalı harç, limon, maydanoz", price: 90, emoji: "🫓", popular: true },
+          ]
+        },
+        {
+          category: "Mezeler",
+          emoji: "🥗",
+          items: [
+            { id: "k7", name: "Humus", desc: "Ev yapımı humus, zeytinyağı, pul biber, pita", price: 65, emoji: "🧆", popular: false },
+            { id: "k8", name: "Cacık", desc: "Yoğurt, salatalık, sarımsak, nane", price: 45, emoji: "🥒", popular: false },
+            { id: "k9", name: "Patlıcan Salatası", desc: "Közlenmiş patlıcan, sarımsak, limon", price: 70, emoji: "🍆", popular: false },
+          ]
+        },
+        {
+          category: "İçecekler & Tatlılar",
+          emoji: "🥛",
+          items: [
+            { id: "k10", name: "Ayran", desc: "Köy yapımı ayran, 400ml", price: 30, emoji: "🥛", popular: true },
+            { id: "k11", name: "Şalgam", desc: "Acı / sade şalgam suyu", price: 30, emoji: "🫙", popular: false },
+            { id: "k12", name: "Baklava (4 dilim)", desc: "Antep fıstıklı geleneksel baklava", price: 110, emoji: "🍯", popular: true },
+          ]
+        }
+      ]
+    },
+    5: {
+      id: 5, name: "Wok Express", emoji: "🥢", category: "Asya",
+      description: "Çin, Tayland ve Vietnam mutfaklarından seçmeler. Asya sokak lezzetleri.",
+      rating: 4.5, reviews: 680, deliveryTime: "20-30 dk", minOrder: 90, deliveryFee: 15,
+      badge: "Vegane Seçenek", badgeColor: "bg-emerald-500/20 text-emerald-400",
+      menu: [
+        {
+          category: "Wok Yemekleri",
+          emoji: "🥘",
+          items: [
+            { id: "w1", name: "Pad Thai (Tavuk)", desc: "Rice noodle, tavuk, yumurta, fıstık, yeşil soğan, tamarind sos", price: 155, emoji: "🍜", popular: true },
+            { id: "w2", name: "Pad Thai (Karides)", desc: "Rice noodle, jumbo karides, fıstık, tamarind sos", price: 185, emoji: "🦐", popular: true },
+            { id: "w3", name: "Kung Pao Chicken", desc: "Tavuk, yer fıstığı, kuru biber, Sichuan sos", price: 160, emoji: "🌶️", popular: false },
+            { id: "w4", name: "Green Curry", desc: "Yeşil köri, hindistancevizi sütü, sebze, jasmine pirinç", price: 150, emoji: "🍛", popular: false },
+            { id: "w5", name: "Vegan Tofu Stir Fry", desc: "Crispy tofu, karışık sebze, soya sos, susam yağı", price: 140, emoji: "🫘", popular: false },
+          ]
+        },
+        {
+          category: "Dim Sum & Başlangıçlar",
+          emoji: "🥟",
+          items: [
+            { id: "w6", name: "Gyoza (6 adet)", desc: "Buharda veya kızarmış, tavuk + lahana, ponzu sos", price: 95, emoji: "🥟", popular: true },
+            { id: "w7", name: "Spring Roll (4 adet)", desc: "Çıtır bahar rulo, sebze dolgusu, tatlı acı sos", price: 80, emoji: "🌿", popular: false },
+            { id: "w8", name: "Edamame", desc: "Deniz tuzlu haşlanmış edamame", price: 55, emoji: "🫛", popular: false },
+          ]
+        },
+        {
+          category: "İçecekler",
+          emoji: "🧋",
+          items: [
+            { id: "w9", name: "Bubble Tea (Taro)", desc: "Taro sütlü çay, tapioka inci", price: 85, emoji: "🧋", popular: true },
+            { id: "w10", name: "Thai Iced Tea", desc: "Siyah çay, yoğunlaştırılmış süt, buz", price: 70, emoji: "🍵", popular: false },
+            { id: "w11", name: "Lychee Soda", desc: "Liçi aromalı gazlı içecek", price: 45, emoji: "🥤", popular: false },
+          ]
+        }
+      ]
+    },
+    6: {
+      id: 6, name: "Taco Loco", emoji: "🌮", category: "Meksika",
+      description: "Meksika sokaklarından ilham alan otantik tacos, burrito ve nacho tarifleri.",
+      rating: 4.4, reviews: 520, deliveryTime: "20-35 dk", minOrder: 75, deliveryFee: 18,
+      badge: "Acılı Seçenek", badgeColor: "bg-rose-500/20 text-rose-400",
+      menu: [
+        {
+          category: "Tacos",
+          emoji: "🌮",
+          items: [
+            { id: "t1", name: "Carne Asada Tacos (3 adet)", desc: "Izgara dana eti, salsa verde, soğan, kişniş, lime", price: 145, emoji: "🌮", popular: true },
+            { id: "t2", name: "Al Pastor Tacos (3 adet)", desc: "Ananaslı pork, chipotle sos, kişniş, soğan", price: 140, emoji: "🍍", popular: true },
+            { id: "t3", name: "Fish Tacos (3 adet)", desc: "Panko kaplamalı balık, lahana slaw, avokado kreması", price: 155, emoji: "🐟", popular: false },
+            { id: "t4", name: "Vegan Black Bean Tacos (3 adet)", desc: "Siyah fasulye, mango salsa, guacamole, lime", price: 125, emoji: "🥑", popular: false },
+          ]
+        },
+        {
+          category: "Burrito & Nachos",
+          emoji: "🌯",
+          items: [
+            { id: "t5", name: "Chicken Burrito", desc: "Tavuk, pirinç, fasulye, çedar, ekşi krema, guacamole", price: 175, emoji: "🌯", popular: true },
+            { id: "t6", name: "Beef Burrito Supreme", desc: "Dana kıyma, pirinç, pinto fasulye, 3 peynir, pico de gallo", price: 195, emoji: "🫔", popular: false },
+            { id: "t7", name: "Loaded Nachos", desc: "Tortilla cips, 3 peynir, jalapeño, guacamole, sour cream", price: 130, emoji: "🧀", popular: true },
+          ]
+        },
+        {
+          category: "Yanlar & İçecekler",
+          emoji: "🍹",
+          items: [
+            { id: "t8", name: "Guacamole & Chips", desc: "Taze avokado guacamole, tortilla cips", price: 85, emoji: "🥑", popular: false },
+            { id: "t9", name: "Horchata", desc: "Geleneksel Meksika pirinç içeceği, tarçın, vanilya", price: 55, emoji: "🥛", popular: false },
+            { id: "t10", name: "Mango Limonata", desc: "Taze mango, limon, sparkling su", price: 60, emoji: "🥭", popular: false },
+          ]
+        }
+      ]
+    },
+    7: {
+      id: 7, name: "Akdeniz Sofrası", emoji: "🫒", category: "Akdeniz",
+      description: "Ege ve Akdeniz'in en taze malzemeleriyle hazırlanan sağlıklı ve lezzetli tabaklar.",
+      rating: 4.7, reviews: 1050, deliveryTime: "25-40 dk", minOrder: 110, deliveryFee: 14,
+      badge: "Sağlıklı", badgeColor: "bg-teal-500/20 text-teal-400",
+      menu: [
+        {
+          category: "Ana Yemekler",
+          emoji: "🍽️",
+          items: [
+            { id: "a1", name: "Levrek Izgara", desc: "Taze levrek, ızgara sebze, limon, dereotu yoğurt sos", price: 285, emoji: "🐟", popular: true },
+            { id: "a2", name: "Ahtapot Izgara", desc: "Tenderize ahtapot, kaparili zeytinyağı, taze kekik", price: 320, emoji: "🐙", popular: true },
+            { id: "a3", name: "Lamb Chops", desc: "Kuzupirzola, nane yoğurt, közlenmiş patlıcan, bulgur", price: 340, emoji: "🥩", popular: false },
+            { id: "a4", name: "Falafel Tabağı", desc: "Ev yapımı falafel, humus, tabule, pita, harissa", price: 165, emoji: "🧆", popular: false },
+          ]
+        },
+        {
+          category: "Salatalar & Mezeler",
+          emoji: "🥗",
+          items: [
+            { id: "a5", name: "Fattoush Salatası", desc: "Roka, domates, salatalık, nar ekşisi, pita cipsi, sumak", price: 95, emoji: "🥗", popular: true },
+            { id: "a6", name: "Yunan Salatası", desc: "Domates, salatalık, kırmızı soğan, zeytin, beyaz peynir", price: 110, emoji: "🫒", popular: false },
+            { id: "a7", name: "Hummus Tabağı", desc: "Krema humus, ezme domates, çam fıstığı, pita", price: 85, emoji: "🫓", popular: true },
+            { id: "a8", name: "Kalamar Tava", desc: "Çıtır kalamar, limon, tartar sos", price: 150, emoji: "🦑", popular: false },
+          ]
+        },
+        {
+          category: "Tatlılar & İçecekler",
+          emoji: "☕",
+          items: [
+            { id: "a9", name: "Kadayıf", desc: "Antepfıstıklı tel kadayıf, kaymak", price: 90, emoji: "🍯", popular: true },
+            { id: "a10", name: "Türk Kahvesi", desc: "Geleneksel fincan Türk kahvesi", price: 40, emoji: "☕", popular: false },
+            { id: "a11", name: "Ayran", desc: "Ev yapımı soğuk ayran", price: 30, emoji: "🥛", popular: false },
+            { id: "a12", name: "Taze Nane Limonata", desc: "Taze nane, limon, soda, buz", price: 55, emoji: "🍋", popular: false },
+          ]
+        }
+      ]
+    }
+  };
+
+  // ---- CART ----
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  let currentRestaurant = null;
+
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  function addToCart(restaurantId, item) {
+    const existing = cart.find(c => c.id === item.id);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ ...item, qty: 1, restaurantId });
+    }
+    saveCart();
+    renderCartSidebar();
+    showToast();
+  }
+
+  function removeFromCart(itemId) {
+    const idx = cart.findIndex(c => c.id === itemId);
+    if (idx > -1) {
+      if (cart[idx].qty > 1) cart[idx].qty -= 1;
+      else cart.splice(idx, 1);
+    }
+    saveCart();
+    renderCartSidebar();
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.style.opacity = '1';
+    t.style.transform = 'translateY(0) translateX(-50%)';
+    setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateY(16px) translateX(-50%)';
+    }, 1800);
+  }
+
+  function renderCartSidebar() {
+    const list = document.getElementById('cart-items-list');
+    const summary = document.getElementById('cart-summary');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const badge = document.getElementById('cart-badge');
+    const warning = document.getElementById('min-order-warning');
+    const mobileBar = document.getElementById('mobile-cart-bar');
+
+    const totalQty = cart.reduce((s, c) => s + c.qty, 0);
+    const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+    const fee = currentRestaurant ? currentRestaurant.deliveryFee : 0;
+
+    badge.textContent = totalQty;
+    badge.classList.toggle('hidden', totalQty === 0);
+
+    if (cart.length === 0) {
+      list.innerHTML = '<p class="text-neutral-500 text-sm text-center py-4">Sepetiniz boş</p>';
+      summary.classList.add('hidden');
+      checkoutBtn.classList.add('hidden');
+      warning.classList.add('hidden');
+      mobileBar.classList.add('hidden');
+    } else {
+      list.innerHTML = cart.map(c => `
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-white truncate">${c.emoji} ${c.name}</div>
+            <div class="text-xs text-neutral-500">₺${c.price} × ${c.qty}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="removeFromCart('${c.id}')" class="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm flex items-center justify-center transition-all">−</button>
+            <span class="text-sm font-bold w-4 text-center">${c.qty}</span>
+            <button onclick="addToCart(${currentRestaurant.id}, {id:'${c.id}',name:'${c.name}',price:${c.price},emoji:'${c.emoji}'})" class="w-6 h-6 rounded-full bg-primary/20 hover:bg-primary/40 text-primary text-sm flex items-center justify-center transition-all">+</button>
+          </div>
+        </div>
+      `).join('');
+      summary.classList.remove('hidden');
+      document.getElementById('subtotal').textContent = `₺${subtotal}`;
+      document.getElementById('delivery-fee-display').textContent = `₺${fee}`;
+      document.getElementById('total').textContent = `₺${subtotal + fee}`;
+
+      const minOrder = currentRestaurant ? currentRestaurant.minOrder : 0;
+      if (subtotal >= minOrder) {
+        checkoutBtn.classList.remove('hidden');
+        warning.classList.add('hidden');
+      } else {
+        checkoutBtn.classList.add('hidden');
+        warning.textContent = `Min. sipariş tutarı ₺${minOrder} (₺${minOrder - subtotal} eksik)`;
+        warning.classList.remove('hidden');
+      }
+
+      // mobile bar
+      mobileBar.classList.remove('hidden');
+      document.getElementById('mobile-cart-count').textContent = `${totalQty} ürün`;
+      document.getElementById('mobile-cart-total').textContent = `₺${subtotal + fee}`;
+    }
+  }
+
+  // ---- RENDER ----
+  function renderPage(restaurant) {
+    document.title = `${restaurant.name} | YEMEKİMNEREDE`;
+
+    // Header
+    document.getElementById('restaurant-header').innerHTML = `
+      <div class="glass-card rounded-xl border border-white/5 p-8 flex flex-col md:flex-row gap-6 items-start md:items-center">
+        <div class="w-24 h-24 rounded-2xl bg-surface-container-highest flex items-center justify-center text-5xl flex-shrink-0">${restaurant.emoji}</div>
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-3 mb-2">
+            <h1 class="text-3xl font-black">${restaurant.name}</h1>
+            <span class="text-xs px-3 py-1 rounded-full font-bold ${restaurant.badgeColor}">${restaurant.badge}</span>
+          </div>
+          <p class="text-on-surface-variant mb-4">${restaurant.description}</p>
+          <div class="flex flex-wrap gap-6 text-sm">
+            <span class="flex items-center gap-1 text-yellow-400 font-bold">★ ${restaurant.rating} <span class="text-neutral-500 font-normal">(${restaurant.reviews.toLocaleString('tr-TR')} değerlendirme)</span></span>
+            <span class="flex items-center gap-2 text-neutral-400"><span class="material-symbols-outlined text-primary text-base">schedule</span>${restaurant.deliveryTime}</span>
+            <span class="flex items-center gap-2 text-neutral-400"><span class="material-symbols-outlined text-primary text-base">payments</span>Min. ₺${restaurant.minOrder}</span>
+            <span class="flex items-center gap-2 text-neutral-400"><span class="material-symbols-outlined text-primary text-base">local_shipping</span>₺${restaurant.deliveryFee} teslimat</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Category tabs
+    const tabs = document.getElementById('category-tabs');
+    tabs.innerHTML = restaurant.menu.map((cat, i) => `
+      <button onclick="scrollToCategory('cat-${i}')"
+        class="flex-shrink-0 px-5 py-2 rounded-full border border-white/10 text-neutral-400 font-semibold text-sm hover:border-primary hover:text-primary transition-all whitespace-nowrap">
+        ${cat.emoji} ${cat.category}
+      </button>
+    `).join('');
+
+    // Menu
+    const container = document.getElementById('menu-container');
+    container.innerHTML = restaurant.menu.map((cat, i) => `
+      <div id="cat-${i}" class="mb-10">
+        <h2 class="text-xl font-bold mb-5 flex items-center gap-2">
+          <span>${cat.emoji}</span> ${cat.category}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          ${cat.items.map(item => `
+            <div class="menu-item glass-card rounded-xl border border-white/5 p-5 flex gap-4">
+              <div class="w-16 h-16 rounded-xl bg-surface-container-highest flex items-center justify-center text-3xl flex-shrink-0">${item.emoji}</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between gap-2 mb-1">
+                  <div>
+                    <span class="font-semibold text-white">${item.name}</span>
+                    ${item.popular ? '<span class="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary font-bold uppercase">Popüler</span>' : ''}
+                  </div>
+                </div>
+                <p class="text-xs text-neutral-500 leading-relaxed mb-3">${item.desc}</p>
+                <div class="flex items-center justify-between">
+                  <span class="text-primary font-black text-lg">₺${item.price}</span>
+                  <button
+                    onclick="addToCart(${restaurant.id}, {id:'${item.id}',name:'${item.name}',price:${item.price},emoji:'${item.emoji}'})"
+                    class="flex items-center gap-1 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 px-4 py-1.5 rounded-full text-sm font-bold transition-all">
+                    <span class="material-symbols-outlined text-sm">add</span>
+                    Ekle
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function scrollToCategory(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ---- INIT ----
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id'));
+  currentRestaurant = restaurantData[id];
+
+  if (!currentRestaurant) {
+    document.getElementById('restaurant-header').innerHTML = `
+      <div class="text-center py-20">
+        <div class="text-6xl mb-4">😕</div>
+        <h2 class="text-2xl font-bold mb-2">Restoran bulunamadı</h2>
+        <a href="restaurants.html" class="text-primary hover:underline">Restoranlara dön</a>
+      </div>`;
+    document.getElementById('menu-container').innerHTML = '';
+    document.getElementById('category-tabs').innerHTML = '';
+  } else {
+    renderPage(currentRestaurant);
+    renderCartSidebar();
+  }
+</script>
+</body>
+</html>
