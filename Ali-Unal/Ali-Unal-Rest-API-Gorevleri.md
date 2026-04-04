@@ -2,6 +2,8 @@
 
 **Video:** *(YouTube linki buraya eklenecek)*
 
+**API Base URL:** `https://yemekimnerde-production.up.railway.app`
+
 **Konu:** Kullanıcı kaydı, girişi ve profil yönetimi
 
 ---

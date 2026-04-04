@@ -160,7 +160,7 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://localhost:3000",
+			"value": "https://yemekimnerde-production.up.railway.app",
 			"type": "string"
 		},
 		{
