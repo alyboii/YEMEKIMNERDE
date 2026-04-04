@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restoranlar — YEMEKİMNEREDE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --surface:            #0e0e0e;
+      --surface-low:        #131313;
+      --surface-container:  #1a1919;
+      --surface-high:       #201f1f;
+      --surface-highest:    #262626;
+      --primary:            #ff9153;
+      --primary-dark:       #fd761a;
+      --primary-dim:        rgba(255,145,83,0.14);
+      --on-surface:         #ffffff;
+      --on-surface-variant: #adaaaa;
+      --on-primary:         #1a0a00;
+      --grad:               linear-gradient(135deg,#ff9153 0%,#fd761a 100%);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--surface); color:var(--on-surface); min-height:100vh; overflow-x:hidden; }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      padding:18px 48px; display:flex; align-items:center; justify-content:space-between;
+      background:rgba(38,38,38,0.55); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+      transition:background .3s;
+    }
+    nav.scrolled { background:rgba(20,20,20,0.92); }
+    .nav-logo { font-size:1.2rem; font-weight:800; letter-spacing:-.02em; color:var(--on-surface); text-decoration:none; }
+    .nav-logo span { color:var(--primary); }
+    .nav-links { display:flex; gap:28px; }
+    .nav-links a { font-size:.875rem; font-weight:500; color:var(--on-surface-variant); text-decoration:none; transition:color .2s; position:relative; }
+    .nav-links a:hover { color:var(--on-surface); }
+    .nav-links a.active { color:var(--on-surface); }
+    .nav-links a.active::after { content:''; position:absolute; bottom:-5px; left:0; right:0; height:2px; background:var(--grad); border-radius:99px; }
+    .nav-actions { display:flex; gap:12px; }
+    .nav-icon { width:40px; height:40px; border-radius:50%; background:var(--surface-highest); border:none; cursor:pointer; font-size:1rem; transition:background .2s; }
+    .nav-icon:hover { background:var(--surface-high); }
+
+    /* HERO */
+    .hero { padding:136px 48px 64px; background:var(--surface-low); }
+    .hero-eyebrow { font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--primary); margin-bottom:14px; }
+    .hero-title { font-size:3.5rem; font-weight:800; letter-spacing:-.04em; line-height:1.05; margin-bottom:16px; }
+    .hero-title span { color:var(--primary); }
+    .hero-sub { font-size:1rem; color:var(--on-surface-variant); margin-bottom:32px; }
+
+    .search-wrap { position:relative; max-width:500px; }
+    .search-icon { position:absolute; left:18px; top:50%; transform:translateY(-50%); font-size:.95rem; pointer-events:none; }
+    .search-input {
+      width:100%; padding:15px 18px 15px 48px;
+      background:var(--surface-high); border:none; border-bottom:2px solid transparent;
+      border-radius:1.5rem; color:var(--on-surface); font-family:'Inter',sans-serif;
+      font-size:.9375rem; outline:none; transition:border-color .2s;
+    }
+    .search-input::placeholder { color:var(--on-surface-variant); }
+    .search-input:focus { border-bottom-color:var(--primary); }
+
+    /* FİLTRELER */
+    .filters { padding:28px 48px; background:var(--surface-low); display:flex; gap:10px; flex-wrap:wrap; }
+    .chip {
+      padding:8px 20px; border-radius:99px; background:var(--surface-highest); border:none;
+      color:var(--on-surface-variant); font-family:'Inter',sans-serif; font-size:.8125rem;
+      font-weight:500; cursor:pointer; transition:all .2s;
+    }
+    .chip:hover { color:var(--on-surface); }
+    .chip.active { background:var(--grad); color:var(--on-primary); font-weight:700; }
+
+    /* İÇERİK */
+    .content { padding:48px; }
+    .content-label { font-size:.75rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--on-surface-variant); margin-bottom:28px; }
+
+    /* GRID */
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:24px; }
+
+    /* KART */
+    .card {
+      background:var(--surface-container); border-radius:1.5rem;
+      overflow:hidden; cursor:pointer; position:relative;
+      transition:transform .3s ease, box-shadow .3s ease;
+    }
+    .card:hover { transform:translateY(-5px) scale(1.01); box-shadow:0 24px 48px rgba(255,145,83,0.1); }
+
+    .card-img { position:relative; height:190px; overflow:hidden; }
+    .card-img img { width:100%; height:100%; object-fit:cover; transition:transform .4s; display:block; }
+    .card:hover .card-img img { transform:scale(1.05); }
+    .card-img-placeholder { width:100%; height:100%; background:var(--surface-high); display:flex; align-items:center; justify-content:center; font-size:3rem; }
+    .card-img::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:55%;
+      background:linear-gradient(to top,rgba(26,25,25,.95) 0%,transparent 100%); pointer-events:none;
+    }
+    .card-badge {
+      position:absolute; top:14px; left:14px; z-index:2;
+      padding:4px 12px; border-radius:99px;
+      background:rgba(38,38,38,0.72); backdrop-filter:blur(12px);
+      font-size:.6875rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    }
+
+    .card-body { padding:20px; }
+    .card-name { font-size:1.125rem; font-weight:700; letter-spacing:-.01em; margin-bottom:5px; }
+    .card-meta { font-size:.8125rem; color:var(--on-surface-variant); margin-bottom:18px; }
+    .card-foot { display:flex; align-items:center; justify-content:space-between; }
+    .card-rating { font-size:.75rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--primary); }
+    .card-btn {
+      padding:9px 20px; border-radius:99px; background:var(--grad); border:none;
+      color:var(--on-primary); font-family:'Inter',sans-serif; font-size:.75rem;
+      font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+      cursor:pointer; transition:box-shadow .2s, transform .2s;
+    }
+    .card-btn:hover { box-shadow:0 0 22px rgba(255,145,83,.35); transform:scale(1.05); }
+
+    /* DURUM */
+    .state { text-align:center; padding:80px 0; color:var(--on-surface-variant); }
+    .state .ico { font-size:3rem; margin-bottom:16px; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    .card { animation:fadeUp .4s ease both; }
+  </style>
+</head>
+<body>
+
+<nav id="nav">
+  <a class="nav-logo" href="index.html">YEMEKİM<span>NEREDE</span></a>
+  <div class="nav-links">
+    <a href="index.html">Ana Sayfa</a>
+    <a href="restaurants.html" class="active">Restoranlar</a>
+    <a href="orders.html">Siparişlerim</a>
+    <a href="cart.html">Fırsatlar</a>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-icon" onclick="location.href='cart.html'">🛒</button>
+    <button class="nav-icon" onclick="location.href='profile.html'">👤</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <p class="hero-eyebrow">Bugün ne yemek istiyorsun?</p>
+  <h1 class="hero-title">En iyi lezzetler<br /><span>sana bir tık uzakta.</span></h1>
+  <p class="hero-sub">Şehrin en seçkin restoranları, tek bir ekranda.</p>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="aramaInput" class="search-input" type="text"
+      placeholder="Restoran veya mutfak türü ara..." oninput="aramaYap()" />
+  </div>
+</section>
+
+<div class="filters">
+  <button class="chip active" onclick="filtrele('',this)">Tümü</button>
+  <button class="chip" onclick="filtrele('Türk',this)">🥙 Türk</button>
+  <button class="chip" onclick="filtrele('İtalyan',this)">🍕 İtalyan</button>
+  <button class="chip" onclick="filtrele('Asya',this)">🍜 Asya</button>
+  <button class="chip" onclick="filtrele('Burger',this)">🍔 Burger</button>
+  <button class="chip" onclick="filtrele('Deniz',this)">🦞 Deniz Ürünleri</button>
+  <button class="chip" onclick="filtrele('Tatlı',this)">🍰 Tatlı</button>
+</div>
+
+<div class="content">
+  <p class="content-label" id="label">Restoranlar Yükleniyor</p>
+  <div id="loading" class="state"><div class="ico">🍽️</div><p>Yükleniyor...</p></div>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="state" style="display:none"><div class="ico">🔍</div><p>Sonuç bulunamadı.</p></div>
+</div>
+
+<script>
+  const API = 'https://api.yemekimnerede.com/v1';
+  let all = []; let activeFilter = '';
+
+  window.addEventListener('scroll', () =>
+    document.getElementById('nav').classList.toggle('scrolled', scrollY > 40));
+
+  async function load() {
+    try {
+      const r = await fetch(`${API}/restaurants`);
+      all = await r.json();
+      render(all);
+    } catch {
+      document.getElementById('loading').innerHTML = '<div class="ico">⚠️</div><p>Yüklenemedi.</p>';
+    }
+  }
+
+  function render(list) {
+    document.getElementById('loading').style.display = 'none';
+    const grid = document.getElementById('grid');
+    const empty = document.getElementById('empty');
+    grid.innerHTML = '';
+    if (!list.length) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    document.getElementById('label').textContent = `${list.length} Restoran`;
+    list.forEach((r, i) => {
+      const img = r.gorselUrl
+        ? `<img src="${r.gorselUrl}" alt="${r.ad}" loading="lazy" />`
+        : `<div class="card-img-placeholder">🍽️</div>`;
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.style.animationDelay = `${i * 55}ms`;
+      c.innerHTML = `
+        <div class="card-img">${img}<span class="card-badge">${r.mutfakTuru}</span></div>
+        <div class="card-body">
+          <h2 class="card-name">${r.ad}</h2>
+          <p class="card-meta">📍 ${r.konum?.sehir || ''}${r.konum?.adres ? ' · ' + r.konum.adres : ''}</p>
+          <div class="card-foot">
+            <span class="card-rating">⭐ ${(r.puan||0).toFixed(1)}</span>
+            <button class="card-btn">Menüyü Gör</button>
+          </div>
+        </div>`;
+      c.addEventListener('click', () => location.href = `restaurant-detail.html?id=${r._id}`);
+      grid.appendChild(c);
+    });
+  }
+
+  function aramaYap() {
+    const q = document.getElementById('aramaInput').value.toLowerCase();
+    let f = all;
+    if (activeFilter) f = f.filter(r => r.mutfakTuru?.toLowerCase().includes(activeFilter.toLowerCase()));
+    if (q) f = f.filter(r => r.ad.toLowerCase().includes(q) || r.mutfakTuru?.toLowerCase().includes(q) || r.konum?.sehir?.toLowerCase().includes(q));
+    render(f);
+  }
+
+  function filtrele(m, btn) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = m;
+    aramaYap();
+  }
+
+  load();
+</script>
+</body>
+</html>
