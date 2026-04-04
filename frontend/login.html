@@ -129,7 +129,7 @@
 <label class="block text-[0.75rem] font-label font-bold uppercase tracking-widest text-on-surface-variant ml-1">E-POSTA</label>
 <div class="relative group">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">mail</span>
-<input class="w-full h-14 bg-surface-container-high/50 rounded-full pl-12 pr-6 border-none outline-none ring-1 ring-white/10 focus:ring-primary/100 transition-all text-on-surface placeholder:text-outline" placeholder="E-posta adresiniz" type="email"/>
+<input id="loginEmail" class="w-full h-14 bg-surface-container-high/50 rounded-full pl-12 pr-6 border-none outline-none ring-1 ring-white/10 focus:ring-primary/100 transition-all text-on-surface placeholder:text-outline" placeholder="E-posta adresiniz" type="email"/>
 </div>
 </div>
 <!-- Password Input -->
@@ -139,7 +139,7 @@
 </div>
 <div class="relative group">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">lock</span>
-<input class="w-full h-14 bg-surface-container-high/50 rounded-full pl-12 pr-12 border-none outline-none ring-1 ring-white/10 focus:ring-primary/100 transition-all text-on-surface placeholder:text-outline" placeholder="••••••••" type="password"/>
+<input id="loginPassword" class="w-full h-14 bg-surface-container-high/50 rounded-full pl-12 pr-12 border-none outline-none ring-1 ring-white/10 focus:ring-primary/100 transition-all text-on-surface placeholder:text-outline" placeholder="••••••••" type="password"/>
 <button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-white transition-colors" type="button">
 <span class="material-symbols-outlined">visibility</span>
 </button>
@@ -184,8 +184,8 @@ document.querySelector('form').addEventListener('submit', async (e) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: e.target.querySelector('input[type="email"]').value,
-        sifre: e.target.querySelector('input[type="password"]').value,
+        email: document.getElementById('loginEmail').value,
+        sifre: document.getElementById('loginPassword').value,
       }),
     });
     const data = await res.json();
@@ -201,7 +201,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
 });
 // Şifre göster/gizle
 document.querySelector('button[type="button"]').addEventListener('click', function() {
-  const input = this.previousElementSibling;
+  const input = document.getElementById('loginPassword');
   const icon = this.querySelector('.material-symbols-outlined');
   if (input.type === 'password') { input.type = 'text'; icon.textContent = 'visibility_off'; }
   else { input.type = 'password'; icon.textContent = 'visibility'; }
