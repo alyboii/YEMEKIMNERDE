@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kampanyalar — YEMEKİMNEREDE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: { extend: {
+      colors: {
+        "primary": "#ff9153", "primary-container": "#ff7a23", "primary-dim": "#fd761a",
+        "surface": "#0e0e0e", "surface-container": "#1a1919", "surface-container-high": "#201f1f",
+        "surface-container-highest": "#262626", "on-surface": "#ffffff", "on-surface-variant": "#adaaaa",
+        "on-primary-fixed": "#000000", "outline-variant": "#494847"
+      },
+      fontFamily: { headline: ["Inter"], body: ["Inter"] }
+    }}
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .glass-card { background: rgba(38,38,38,0.5); backdrop-filter: blur(20px); border: 1px solid rgba(73,72,71,0.2); }
+  .campaign-glow:hover { box-shadow: 0 0 40px rgba(255,145,83,0.2); transform: translateY(-4px); transition: all 0.3s; }
+  .badge-hot { background: linear-gradient(135deg, #ff4500, #ff9153); }
+  .badge-new { background: linear-gradient(135deg, #22c55e, #16a34a); }
+  .badge-limited { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+  .timer { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-neutral-900/60 backdrop-blur-xl rounded-full mt-4 mx-auto w-[95%] max-w-7xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+  <a href="index.html" class="text-2xl font-black tracking-tighter text-white">🍔 YEMEKİMNEREDE</a>
+  <div class="hidden md:flex items-center gap-8">
+    <a class="text-neutral-400 hover:text-white transition-colors" href="index.html">Ana Sayfa</a>
+    <a class="text-neutral-400 hover:text-white transition-colors" href="restaurants.html">Restoranlar</a>
+    <a class="text-orange-500 font-semibold" href="kampanyalar.html">Kampanyalar</a>
+    <a class="text-neutral-400 hover:text-white transition-colors" href="kurye-ol.html">Kurye Ol</a>
+  </div>
+  <div class="flex items-center gap-4" id="navAuth">
+    <button onclick="window.location.href='login.html'" class="text-white font-medium hover:text-orange-500 transition-colors">Giriş Yap</button>
+    <button onclick="window.location.href='register.html'" class="bg-orange-500 text-black px-6 py-2.5 rounded-full font-bold hover:bg-orange-400 transition-all">Kayıt Ol</button>
+  </div>
+</nav>
+<script>
+  (function(){
+    if(localStorage.getItem('token')){
+      document.getElementById('navAuth').innerHTML=`
+        <button onclick="window.location.href='profile.html'" class="text-white font-medium hover:text-orange-500 transition-colors">Profilim</button>
+        <button onclick="localStorage.clear();window.location.reload();" class="bg-orange-500 text-black px-6 py-2.5 rounded-full font-bold">Çıkış</button>`;
+    }
+  })();
+</script>
+
+<main class="pt-36 pb-24 px-6 md:px-8 max-w-7xl mx-auto">
+
+  <!-- HERO -->
+  <div class="text-center mb-20">
+    <span class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest text-orange-400 bg-orange-500/10 rounded-full uppercase">🔥 Sınırlı Süreli Fırsatlar</span>
+    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-6">
+      Kampanyalar
+    </h1>
+    <p class="text-xl text-on-surface-variant max-w-xl mx-auto">En iyi restoranlardan özel indirimler, ücretsiz teslimat ve sürpriz hediyeler seni bekliyor.</p>
+  </div>
+
+  <!-- FEATURED CAMPAIGN -->
+  <div class="relative overflow-hidden rounded-3xl mb-12 campaign-glow cursor-pointer" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">
+    <div class="absolute inset-0" style="background: linear-gradient(135deg, #ff4500 0%, #ff9153 40%, #fbbf24 100%); opacity:0.15;"></div>
+    <div class="absolute inset-0 border border-orange-500/30 rounded-3xl"></div>
+    <div class="relative z-10 p-10 md:p-16 flex flex-col md:flex-row items-center gap-10">
+      <div class="text-8xl md:text-[10rem] leading-none select-none">🍕</div>
+      <div class="flex-1">
+        <span class="badge-hot text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">🔥 En Popüler</span>
+        <h2 class="text-4xl md:text-6xl font-black tracking-tighter mt-4 mb-4">İlk Siparişine<br/><span class="text-orange-400">%20 İndirim</span></h2>
+        <p class="text-on-surface-variant text-lg mb-6 max-w-lg">Yeni üyelerimize özel! Herhangi bir restoranından ilk siparişinde otomatik %20 indirim. Minimum tutar şartı yok.</p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <button class="bg-orange-500 text-black font-black px-10 py-4 rounded-full hover:bg-orange-400 transition-all text-lg">Hemen Sipariş Ver</button>
+          <span class="text-on-surface-variant text-sm">• Kod gerekmez, otomatik uygulanır</span>
+        </div>
+      </div>
+      <div class="text-center glass-card rounded-2xl px-8 py-6 min-w-[140px]">
+        <div class="text-xs text-on-surface-variant uppercase tracking-widest mb-2">Bitiş</div>
+        <div class="text-3xl font-black text-orange-400 timer" id="countdown1">23:47:12</div>
+        <div class="text-xs text-on-surface-variant mt-1">saat : dak : sn</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMPAIGN GRID -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+
+    <!-- Kampanya 1 -->
+    <div class="glass-card rounded-2xl overflow-hidden campaign-glow cursor-pointer" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">
+      <div class="h-3 bg-gradient-to-r from-orange-500 to-yellow-400"></div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-6">
+          <span class="text-5xl">🍔</span>
+          <span class="badge-hot text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Bugün Son!</span>
+        </div>
+        <h3 class="text-2xl font-black tracking-tight mb-2">Burger + İçecek</h3>
+        <p class="text-on-surface-variant text-sm mb-6">Seçili burgerlere içecek ücretsiz! Saat 23:59'a kadar geçerli.</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-3xl font-black text-orange-400">ÜCRETSİZ</span>
+            <div class="text-xs text-on-surface-variant">içecek seçimi</div>
+          </div>
+          <button class="bg-orange-500/10 border border-orange-500/30 text-orange-400 px-5 py-2 rounded-full text-sm font-bold hover:bg-orange-500 hover:text-black transition-all">Al →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kampanya 2 -->
+    <div class="glass-card rounded-2xl overflow-hidden campaign-glow cursor-pointer" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">
+      <div class="h-3 bg-gradient-to-r from-green-500 to-emerald-400"></div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-6">
+          <span class="text-5xl">🥗</span>
+          <span class="badge-new text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">✨ Yeni</span>
+        </div>
+        <h3 class="text-2xl font-black tracking-tight mb-2">Ücretsiz Teslimat</h3>
+        <p class="text-on-surface-variant text-sm mb-6">150₺ ve üzeri siparişlerde teslimat ücreti yok. Hafta sonu boyunca geçerli.</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-3xl font-black text-green-400">0₺</span>
+            <div class="text-xs text-on-surface-variant">teslimat ücreti</div>
+          </div>
+          <button class="bg-green-500/10 border border-green-500/30 text-green-400 px-5 py-2 rounded-full text-sm font-bold hover:bg-green-500 hover:text-black transition-all">Al →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kampanya 3 -->
+    <div class="glass-card rounded-2xl overflow-hidden campaign-glow cursor-pointer" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">
+      <div class="h-3 bg-gradient-to-r from-purple-500 to-violet-400"></div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-6">
+          <span class="text-5xl">🍜</span>
+          <span class="badge-limited text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Sınırlı</span>
+        </div>
+        <h3 class="text-2xl font-black tracking-tight mb-2">2 Al 1 Öde</h3>
+        <p class="text-on-surface-variant text-sm mb-6">Asya mutfağı restoranlarında 2 ana yemek alana 3.üncü bedava. Stok sınırlı!</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-3xl font-black text-purple-400">3'ü AL</span>
+            <div class="text-xs text-on-surface-variant">2'sini öde</div>
+          </div>
+          <button class="bg-purple-500/10 border border-purple-500/30 text-purple-400 px-5 py-2 rounded-full text-sm font-bold hover:bg-purple-500 hover:text-black transition-all">Al →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kampanya 4 -->
+    <div class="glass-card rounded-2xl overflow-hidden campaign-glow cursor-pointer" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">
+      <div class="h-3 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-6">
+          <span class="text-5xl">☕</span>
+          <span class="bg-blue-500 text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Kahve Saati</span>
+        </div>
+        <h3 class="text-2xl font-black tracking-tight mb-2">Sabah Fırsatı</h3>
+        <p class="text-on-surface-variant text-sm mb-6">07:00 – 10:00 arası tüm kahvaltı siparişlerinde %15 indirim. Güne enerjik başla!</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-3xl font-black text-blue-400">%15</span>
+            <div class="text-xs text-on-surface-variant">kahvaltı indirimi</div>
+          </div>
+          <button class="bg-blue-500/10 border border-blue-500/30 text-blue-400 px-5 py-2 rounded-full text-sm font-bold hover:bg-blue-500 hover:text-black transition-all">Al →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kampanya 5 -->
+    <div class="glass-card rounded-2xl overflow-hidden campaign-glow cursor-pointer" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">
+      <div class="h-3 bg-gradient-to-r from-rose-500 to-pink-400"></div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-6">
+          <span class="text-5xl">🍣</span>
+          <span class="bg-rose-500 text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">🔥 Çok Satan</span>
+        </div>
+        <h3 class="text-2xl font-black tracking-tight mb-2">Sushi Günü</h3>
+        <p class="text-on-surface-variant text-sm mb-6">Her Çarşamba tüm sushi restoranlarında 200₺ üzeri siparişlerde %25 indirim.</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-3xl font-black text-rose-400">%25</span>
+            <div class="text-xs text-on-surface-variant">sushi indirimi</div>
+          </div>
+          <button class="bg-rose-500/10 border border-rose-500/30 text-rose-400 px-5 py-2 rounded-full text-sm font-bold hover:bg-rose-500 hover:text-black transition-all">Al →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kampanya 6 -->
+    <div class="glass-card rounded-2xl overflow-hidden campaign-glow cursor-pointer" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">
+      <div class="h-3 bg-gradient-to-r from-amber-500 to-yellow-400"></div>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-6">
+          <span class="text-5xl">🍦</span>
+          <span class="bg-amber-500 text-black text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Tatlı Fırsat</span>
+        </div>
+        <h3 class="text-2xl font-black tracking-tight mb-2">Tatlı Sürprizi</h3>
+        <p class="text-on-surface-variant text-sm mb-6">300₺ ve üzeri siparişlerde rastgele bir tatlı hediye! Dondurma, tiramisu veya cheesecake.</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-3xl font-black text-amber-400">HEDİYE</span>
+            <div class="text-xs text-on-surface-variant">tatlı sürprizi</div>
+          </div>
+          <button class="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-5 py-2 rounded-full text-sm font-bold hover:bg-amber-500 hover:text-black transition-all">Al →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="glass-card rounded-3xl p-12 text-center">
+    <h2 class="text-4xl font-black tracking-tighter mb-4">Kaçırma!</h2>
+    <p class="text-on-surface-variant mb-8">Kampanyalar sınırlı sürelidir. Hemen sipariş ver, fırsatı yakala.</p>
+    <button onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'register.html'" class="bg-gradient-to-r from-orange-500 to-orange-600 text-black font-black px-16 py-5 rounded-full text-xl hover:scale-105 active:scale-95 transition-all shadow-[0_20px_40px_rgba(255,145,83,0.3)]">
+      Hemen Sipariş Ver
+    </button>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="w-full py-10 px-8 bg-neutral-950 border-t border-white/5 mt-12">
+  <div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+    <div class="text-lg font-black text-white">🍔 YEMEKİMNEREDE</div>
+    <div class="flex gap-8 text-xs uppercase tracking-widest text-neutral-500">
+      <a href="index.html" class="hover:text-white transition-colors">Ana Sayfa</a>
+      <a href="restaurants.html" class="hover:text-white transition-colors">Restoranlar</a>
+      <a href="kampanyalar.html" class="hover:text-white transition-colors text-orange-500">Kampanyalar</a>
+      <a href="kurye-ol.html" class="hover:text-white transition-colors">Kurye Ol</a>
+    </div>
+    <p class="text-xs text-neutral-600">© 2026 YEMEKİMNEREDE.</p>
+  </div>
+</footer>
+
+<script>
+  // Geri sayım sayacı
+  function startCountdown(id, seconds) {
+    const el = document.getElementById(id);
+    setInterval(() => {
+      if (seconds <= 0) return;
+      seconds--;
+      const h = String(Math.floor(seconds / 3600)).padStart(2,'0');
+      const m = String(Math.floor((seconds % 3600) / 60)).padStart(2,'0');
+      const s = String(seconds % 60).padStart(2,'0');
+      el.textContent = `${h}:${m}:${s}`;
+    }, 1000);
+  }
+  startCountdown('countdown1', 23*3600 + 47*60 + 12);
+</script>
+</body>
+</html>
