@@ -1,9 +1,14 @@
 # 🖥️ Web Frontend Görevleri — Cemal & Tarlan
 
+> **Yayınlanan Frontend Adresi:** `https://yemekimnerde.vercel.app`
+
+> **YouTube Demo Videosu (Frontend + API Bağlantısı):** [YOUTUBE VİDEO LİNKİ BURAYA GELECEK]
+
 > **Proje:** YEMEKİMNEREDE  
-> **Teknoloji Stack:** HTML5 · Tailwind CSS (CDN) · Vanilla JavaScript · localStorage API  
+> **Teknoloji Stack:** HTML5 · Tailwind CSS (CDN) · Vanilla JavaScript · localStorage API · Fetch API  
 > **Tasarım Dili:** Dark Theme · Glassmorphism · Unsplash Görseller · Material Symbols  
-> **Repo:** `frontend/` klasörü
+> **Repo:** `frontend/` klasörü  
+> **API Bağlantısı:** `https://yemekimnerde.vercel.app/v1` endpoint'lerine `fetch()` ile bağlanılmaktadır
 
 ---
 

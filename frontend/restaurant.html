@@ -582,24 +582,56 @@
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  // ---- REST API ENTEGRASYONU ----
+  // Restoran detayı ve menüsü gerçek ortamda bu endpoint'ten çekilir.
+  // Sunucu erişilemez ise yerel veri (fallback) kullanılır.
+  const API_BASE = 'https://yemekimnerde.vercel.app/v1';
+
   // ---- INIT ----
   const params = new URLSearchParams(window.location.search);
   const id = parseInt(params.get('id'));
-  currentRestaurant = restaurantData[id];
 
-  if (!currentRestaurant) {
-    document.getElementById('restaurant-header').innerHTML = `
-      <div class="text-center py-20">
-        <div class="text-6xl mb-4">😕</div>
-        <h2 class="text-2xl font-bold mb-2">Restoran bulunamadı</h2>
-        <a href="restaurants.html" class="text-primary hover:underline">Restoranlara dön</a>
-      </div>`;
-    document.getElementById('menu-container').innerHTML = '';
-    document.getElementById('category-tabs').innerHTML = '';
-  } else {
-    renderPage(currentRestaurant);
-    renderCartSidebar();
+  async function loadRestaurantFromAPI(restaurantId) {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${API_BASE}/restaurants/${restaurantId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      // API yanıtı varsa kullan; yoksa yerel veriye düş
+      if (data && data.name) {
+        currentRestaurant = data;
+        renderPage(currentRestaurant);
+        renderCartSidebar();
+        return;
+      }
+      throw new Error('Geçersiz yanıt');
+    } catch (err) {
+      // API erişilemez veya hata — yerel statik veri kullanılır
+      console.warn('[YemekimNerede] API bağlantısı kurulamadı, yerel veri kullanılıyor:', err.message);
+      currentRestaurant = restaurantData[restaurantId];
+      if (!currentRestaurant) {
+        document.getElementById('restaurant-header').innerHTML = `
+          <div class="text-center py-20">
+            <div class="text-6xl mb-4">😕</div>
+            <h2 class="text-2xl font-bold mb-2">Restoran bulunamadı</h2>
+            <a href="restaurants.html" class="text-primary hover:underline">Restoranlara dön</a>
+          </div>`;
+        document.getElementById('menu-container').innerHTML = '';
+        document.getElementById('category-tabs').innerHTML = '';
+      } else {
+        renderPage(currentRestaurant);
+        renderCartSidebar();
+      }
+    }
   }
+
+  // API'den restoran verisini çek (fallback: yerel veri)
+  loadRestaurantFromAPI(id);
 </script>
 </body>
 </html>

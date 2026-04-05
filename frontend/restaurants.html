@@ -304,11 +304,43 @@
         btn.classList.add('text-neutral-400', 'border-white/10');
       }
     });
-    const filtered = cat === 'all' ? restaurants : restaurants.filter(r => r.category === cat);
-    renderRestaurants(filtered);
+    // Filtreleme: API'den kategori bazlı çek, başarısız olursa yerel ver
+    loadRestaurantsFromAPI(cat === 'all' ? null : cat);
   }
 
-  renderRestaurants(restaurants);
+  // ---- REST API ENTEGRASYONU ----
+  // Restoranlar, gerçek ortamda aşağıdaki endpoint'ten fetch ile çekilir.
+  // Sunucu erişilemez ise yerel veri (fallback) kullanılır.
+  const API_BASE = 'https://yemekimnerde.vercel.app/v1';
+
+  async function loadRestaurantsFromAPI(category = null) {
+    const token = localStorage.getItem('token');
+    const query = category ? `?category=${encodeURIComponent(category)}&sort=rating` : '?sort=rating';
+    try {
+      const res = await fetch(`${API_BASE}/restaurants${query}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      // API'den gelen veriyi render et; alanlar uyumsuzsa yerel veriye düş
+      if (data.restoranlar && data.restoranlar.length > 0) {
+        renderRestaurants(data.restoranlar);
+        return;
+      }
+      throw new Error('Boş yanıt');
+    } catch (err) {
+      // API erişilemez veya hata — yerel statik veri kullanılır
+      console.warn('[YemekimNerede] API bağlantısı kurulamadı, yerel veri kullanılıyor:', err.message);
+      const fallback = category ? restaurants.filter(r => r.category === category) : restaurants;
+      renderRestaurants(fallback);
+    }
+  }
+
+  // İlk yüklemede API'den çek
+  loadRestaurantsFromAPI();
 </script>
 </body>
 </html>
