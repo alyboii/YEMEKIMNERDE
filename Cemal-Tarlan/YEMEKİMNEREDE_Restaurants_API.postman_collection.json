@@ -8,7 +8,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:3000/v1",
+      "value": "https://yemekimnerde.vercel.app/v1",
       "type": "string"
     },
     {
