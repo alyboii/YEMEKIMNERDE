@@ -21,7 +21,10 @@ router.post('/register', async (req, res) => {
   }
 
   const kullanici = await Kullanici.create({ ad, soyad, email, sifre, telefon });
-  res.status(201).json(kullanici);
+  res.status(201).json({
+    token: tokenUret(kullanici._id),
+    kullanici,
+  });
 });
 
 // POST /v1/auth/login — Giriş Yapma (Ali Ünal)

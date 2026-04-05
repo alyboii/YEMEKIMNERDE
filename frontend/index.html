@@ -1,22 +1,509 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YEMEKİMNEREDE</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YEMEKİMNEREDE | Premium Yemek Deneyimi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#ffffff",
+                    "surface-dim": "#0e0e0e",
+                    "on-primary-fixed": "#000000",
+                    "on-secondary": "#4b2400",
+                    "error-dim": "#d53d18",
+                    "tertiary-dim": "#efad16",
+                    "tertiary-fixed": "#febb28",
+                    "inverse-surface": "#fcf8f8",
+                    "on-secondary-fixed-variant": "#7e4000",
+                    "on-error-container": "#ffd2c8",
+                    "surface-container-low": "#131313",
+                    "tertiary": "#ffcd72",
+                    "surface-container-highest": "#262626",
+                    "on-tertiary-fixed-variant": "#614400",
+                    "surface-bright": "#2c2c2c",
+                    "secondary-container": "#924c00",
+                    "on-tertiary-fixed": "#3c2900",
+                    "surface-container-lowest": "#000000",
+                    "primary": "#ff9153",
+                    "on-secondary-container": "#fff6f2",
+                    "surface-container": "#1a1919",
+                    "surface": "#0e0e0e",
+                    "secondary-dim": "#ec872a",
+                    "on-secondary-fixed": "#542900",
+                    "on-error": "#450900",
+                    "secondary": "#fd9436",
+                    "primary-fixed-dim": "#f06c0b",
+                    "tertiary-fixed-dim": "#efad16",
+                    "on-primary-fixed-variant": "#4e1e00",
+                    "on-primary-container": "#3f1700",
+                    "background": "#0e0e0e",
+                    "surface-container-high": "#201f1f",
+                    "on-background": "#ffffff",
+                    "outline": "#777575",
+                    "on-tertiary": "#614400",
+                    "surface-tint": "#ff9153",
+                    "surface-variant": "#262626",
+                    "error-container": "#b92902",
+                    "tertiary-container": "#febb28",
+                    "on-primary": "#511f00",
+                    "error": "#ff7351",
+                    "primary-container": "#ff7a23",
+                    "outline-variant": "#494847",
+                    "primary-dim": "#fd761a",
+                    "on-tertiary-container": "#563b00",
+                    "inverse-on-surface": "#565554",
+                    "primary-fixed": "#ff7a23",
+                    "secondary-fixed-dim": "#ffb379",
+                    "inverse-primary": "#9e4400",
+                    "secondary-fixed": "#ffc69d",
+                    "on-surface-variant": "#adaaaa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(38, 38, 38, 0.4); backdrop-filter: blur(20px); }
+        .glow-hover:hover { box-shadow: 0 0 30px rgba(255, 145, 83, 0.2); }
+        .hero-text-gradient { background: linear-gradient(135deg, #ff9153 0%, #ff7a23 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
 </head>
-<body class="bg-orange-50 flex items-center justify-center min-h-screen">
-  <div class="text-center">
-    <h1 class="text-4xl font-bold text-orange-600 mb-4">🍔 YEMEKİMNEREDE</h1>
-    <p class="text-gray-600 mb-8">Yemeğinizi saniyeler içinde bulun</p>
-    <div class="space-x-4">
-      <a href="login.html" class="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600">Giriş Yap</a>
-      <a href="register.html" class="border border-orange-500 text-orange-500 px-6 py-3 rounded-lg hover:bg-orange-50">Kayıt Ol</a>
-    </div>
+<body class="selection:bg-primary/30">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-neutral-900/60 backdrop-blur-xl rounded-full mt-4 mx-auto w-[95%] max-w-7xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] font-['Inter'] tracking-tight">
+<div class="text-2xl font-bold tracking-tighter text-white">🍔 YEMEKİMNEREDE</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-orange-500 font-semibold hover:text-orange-400 transition-colors duration-300" href="index.html">Ana Sayfa</a>
+<a class="text-neutral-400 hover:text-white transition-colors duration-300" href="restaurants.html">Restoranlar</a>
+<a class="text-neutral-400 hover:text-white transition-colors duration-300" href="kampanyalar.html">Kampanyalar</a>
+<a class="text-neutral-400 hover:text-white transition-colors duration-300" href="kurye-ol.html">Kurye Ol</a>
+</div>
+<div class="flex items-center gap-4" id="navAuthArea">
+<button class="text-white font-medium hover:text-orange-500 transition-colors duration-300 scale-95 active:scale-90 transition-transform" onclick="window.location.href='login.html'">Giriş Yap</button>
+<button class="bg-primary-container text-on-primary-fixed px-6 py-2.5 rounded-full font-bold hover:shadow-[0_0_20px_rgba(255,122,35,0.4)] transition-all scale-95 active:scale-90 transition-transform" onclick="window.location.href='register.html'">Kayıt Ol</button>
+</div>
+</nav>
+<script>
+// Giriş yapılmışsa nav'ı güncelle
+(function() {
+  const token = localStorage.getItem('token');
+  if (token) {
+    const area = document.getElementById('navAuthArea');
+    area.innerHTML = `
+      <button onclick="window.location.href='profile.html'" class="text-white font-medium hover:text-orange-500 transition-colors duration-300">Profilim</button>
+      <button onclick="localStorage.clear(); window.location.reload();" class="bg-primary-container text-on-primary-fixed px-6 py-2.5 rounded-full font-bold hover:shadow-[0_0_20px_rgba(255,122,35,0.4)] transition-all">Çıkış</button>
+    `;
+  }
+})();
+</script>
+<main>
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-surface">
+<div class="container mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+<div class="max-w-2xl">
+<span class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest text-primary bg-primary/10 rounded-full uppercase">Gurme Deneyimi Başlıyor</span>
+<h1 class="text-6xl md:text-8xl font-black leading-[0.9] tracking-tighter mb-8 italic">
+                        Yemeğini <br/> <span class="hero-text-gradient">Saniyeler</span> <br/> İçinde Bul
+                    </h1>
+<p class="text-lg text-on-surface-variant mb-10 max-w-lg leading-relaxed">
+                        Şehrin en iyi restoranlarından özenle seçilmiş lezzetler, dakikalar içinde kapınızda. Yemek yemeği bir ritüele dönüştürün.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed px-10 py-5 rounded-full text-lg font-bold shadow-[0_20px_40px_rgba(255,145,83,0.3)] hover:scale-105 active:scale-95 transition-all" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">Siparişe Başla</button>
+<button class="bg-transparent border border-white/10 hover:bg-white/5 text-white px-10 py-5 rounded-full text-lg font-bold backdrop-blur-md transition-all" onclick="window.location.href='restaurants.html'">Restoranları Gör</button>
+</div>
+</div>
+</div>
+<!-- Cinematic Image Overlap -->
+<div class="absolute top-0 right-[-10%] bottom-0 w-3/5 hidden lg:block">
+<img alt="Cinematic Burger" class="w-full h-full object-cover object-center transform scale-110" data-alt="Gourmet double-stack cheeseburger with melting cheese and fresh greens on a dark moody background with high-end editorial lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCRz0yM1extmWbPP3bT47IzRh_ZLjeHDpuh9g5tmrMENRzCWfYh0W6ePj4pt25y28ZLinlCRiHmtNlrG9py2apOUDwonsIz85aBvWQ3bxlibRIfmuaejyEPGzQ__7e8kAC8AtaCUqF9CxxIsm8mvNekk4rlHj7mYovY4aI58L-zVxV1S8DhwxMISiwuHSCV57xJY_Ame2JHRT_XyVZGoKW0Xn1wPQP1PG9CQvpTgTZGmnH8oUf1ftvLWEIqUMUv3DIpeYHVpHPpV4"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/40 to-transparent"></div>
+</div>
+</section>
+<!-- Stats Section -->
+<section class="py-24 bg-surface-container-low">
+<div class="container mx-auto px-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+<div class="p-8 group">
+<div class="text-6xl font-black text-white mb-2 group-hover:text-primary transition-colors duration-500">500+</div>
+<div class="text-on-surface-variant font-medium tracking-widest uppercase text-sm">Restoran</div>
+</div>
+<div class="p-8 group border-x border-white/5">
+<div class="text-6xl font-black text-white mb-2 group-hover:text-primary transition-colors duration-500">10K+</div>
+<div class="text-on-surface-variant font-medium tracking-widest uppercase text-sm">Mutlu Kullanıcı</div>
+</div>
+<div class="p-8 group">
+<div class="text-6xl font-black text-white mb-2 group-hover:text-primary transition-colors duration-500">30dk</div>
+<div class="text-on-surface-variant font-medium tracking-widest uppercase text-sm">Teslimat</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-32 px-8 bg-surface">
+<div class="container mx-auto">
+<div class="mb-20 text-center max-w-3xl mx-auto">
+<h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">Kusursuz Bir <span class="text-primary">Teslimat</span> Deneyimi</h2>
+<p class="text-on-surface-variant text-lg">Teknoloji ve lezzeti bir araya getirerek, her siparişte size en iyisini sunuyoruz.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Feature Card 1 -->
+<div class="glass-card glow-hover p-10 rounded-xl transition-all border border-white/5 group">
+<div class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl">restaurant</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Yakınındaki Restoranlar</h3>
+<p class="text-on-surface-variant leading-relaxed">Konumunuza en yakın ve en yüksek puanlı restoranları anında listeleyin.</p>
+</div>
+<!-- Feature Card 2 -->
+<div class="glass-card glow-hover p-10 rounded-xl transition-all border border-white/5 group">
+<div class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl">flash_on</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Hızlı Sipariş</h3>
+<p class="text-on-surface-variant leading-relaxed">Favori yemeklerinizi tek bir dokunuşla sepetinize ekleyin ve sipariş verin.</p>
+</div>
+<!-- Feature Card 3 -->
+<div class="glass-card glow-hover p-10 rounded-xl transition-all border border-white/5 group">
+<div class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl">map</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Anlık Takip</h3>
+<p class="text-on-surface-variant leading-relaxed">Kuryenizin nerede olduğunu ve yemeğinizin ne zaman geleceğini canlı izleyin.</p>
+</div>
+<!-- Feature Card 4 -->
+<div class="glass-card glow-hover p-10 rounded-xl transition-all border border-white/5 group">
+<div class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl">verified_user</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Güvenli Ödeme</h3>
+<p class="text-on-surface-variant leading-relaxed">Kredi kartı veya dijital cüzdan ile güvenli ve hızlı ödeme seçenekleri.</p>
+</div>
+<!-- Feature Card 5 -->
+<div class="glass-card glow-hover p-10 rounded-xl transition-all border border-white/5 group">
+<div class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-primary text-3xl">star</span>
+</div>
+<h3 class="text-2xl font-bold mb-4">Değerlendirmeler</h3>
+<p class="text-on-surface-variant leading-relaxed">Gerçek kullanıcı yorumları ve puanları ile en doğru tercihi yapın.</p>
+</div>
+<!-- Feature Card 6 — Aktif: Kişisel Öneriler -->
+<div onclick="document.getElementById('ai-recommendations').scrollIntoView({behavior:'smooth'})"
+     class="glass-card glow-hover p-10 rounded-xl transition-all border border-primary/20 group cursor-pointer relative overflow-hidden"
+     style="box-shadow: 0 0 0 1px rgba(255,145,83,0.15);">
+  <div class="absolute top-3 right-3 flex items-center gap-1 bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
+    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
+    <span class="text-[10px] font-bold text-primary uppercase tracking-widest">Aktif</span>
   </div>
-  <script>
-    if (localStorage.getItem('token')) window.location.href = 'profile.html';
-  </script>
-</body>
-</html>
+  <div class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary/30 transition-colors">
+    <span class="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
+  </div>
+  <h3 class="text-2xl font-bold mb-4">Kişisel Öneriler</h3>
+  <p class="text-on-surface-variant leading-relaxed mb-6">Yapay zeka desteği ile damak tadınıza uygun restoran önerileri.</p>
+  <span class="inline-flex items-center gap-1 text-primary text-sm font-bold group-hover:gap-2 transition-all">
+    Önerileri Gör <span class="material-symbols-outlined text-base">arrow_forward</span>
+  </span>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Recommendations Section -->
+<section id="ai-recommendations" class="py-32 px-8 bg-surface-container-low">
+<div class="container mx-auto max-w-7xl">
+
+  <!-- Başlık -->
+  <div class="mb-14 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+        <span class="text-xs font-bold text-primary uppercase tracking-[0.2em]">Yapay Zeka Önerisi</span>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-3">
+        Senin İçin <span style="background:linear-gradient(135deg,#ff9153,#fd761a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Seçtiklerimiz</span>
+      </h2>
+      <p id="ai-subtitle" class="text-on-surface-variant text-lg max-w-xl">
+        Yapay zekamız tercihlerinizi analiz ediyor…
+      </p>
+    </div>
+    <a href="restaurants.html"
+       class="flex-shrink-0 flex items-center gap-2 text-sm font-bold text-primary border border-primary/20 px-5 py-2.5 rounded-full hover:bg-primary/10 transition-all">
+      Tüm Restoranlar
+      <span class="material-symbols-outlined text-base">arrow_forward</span>
+    </a>
+  </div>
+
+  <!-- Yapay Zeka Notu -->
+  <div id="ai-note" class="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-2xl p-5 mb-10 max-w-2xl">
+    <span class="material-symbols-outlined text-primary text-2xl flex-shrink-0 mt-0.5">psychology</span>
+    <p class="text-sm text-on-surface-variant leading-relaxed">
+      <span class="text-primary font-bold">Yapay zekamız</span>
+      <span id="ai-note-text"> son seçimlerine dayanarak senin için en uygun restoranları buldu!</span>
+    </p>
+  </div>
+
+  <!-- Kart Izgara -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="recommendation-cards">
+    <!-- JS tarafından doldurulur -->
+  </div>
+
+</div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-32 bg-surface">
+<div class="container mx-auto px-8">
+<div class="relative bg-surface-container-high rounded-[4rem] p-16 md:p-24 overflow-hidden text-center">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<img alt="CTA Background" class="w-full h-full object-cover" data-alt="Overhead spread of diverse international gourmet food on a dark rustic table with warm atmospheric lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCD20XepaOUTDg9SsvHCik4gdlrz2tAHepjh6Aq80VTwBAlg8ClveP6qMtXDmoZvWlZ8zJLgsJiY-sYtx6Ag_uvOEDzJ_nIAtEQPMQgRZpaCJmEk1MrZs0dnqQ0KoXIOFYzV-XqcXxYPJeeybQ-qLLq68tPVIzJnbwUWWVQ1ZI_z_eKj7DUy0BgGJQObIRiQrIUlBpkkQ1sOesAKhzaWobMfFK-8FscbX7apiL-fzX-NRnyMveJGnHasfXEDyysFVeVxYBapoE0XU"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-b from-surface-container-high/80 to-surface-container-high"></div>
+<div class="relative z-10">
+<h2 class="text-5xl md:text-7xl font-black mb-10 tracking-tight italic">Hala Aç mısın?</h2>
+<p class="text-xl text-on-surface-variant mb-12 max-w-2xl mx-auto">Hemen şimdi sipariş ver, ilk siparişinde %20 indirim kazan. Lezzet seni bekliyor.</p>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary-fixed px-16 py-6 rounded-full text-2xl font-black shadow-[0_30px_60px_rgba(255,145,83,0.4)] hover:scale-105 active:scale-95 transition-all uppercase tracking-tighter" onclick="window.location.href=localStorage.getItem('token')?'restaurants.html':'login.html'">
+                            ŞİMDİ SİPARİŞ VER
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+<script>
+(function () {
+  // ---- RESTORAN VERİSİ ----
+  const _U = "https://images.unsplash.com/";
+  const _Q = "?auto=format&fit=crop&w=600&q=80";
+  const restaurants = [
+    { id:1, name:"Burger House",     category:"Burger",  emoji:"🍔", coverImage:_U+"photo-1568901346375-23c9450c58cd"+_Q, rating:4.8, reviews:1240, deliveryTime:"20-30 dk", minOrder:80,  deliveryFee:15, badge:"Çok Popüler", badgeColor:"#ff9153" },
+    { id:2, name:"Sushi Palace",     category:"Sushi",   emoji:"🍱", coverImage:_U+"photo-1579871494447-9811cf80d66c"+_Q, rating:4.9, reviews:875,  deliveryTime:"30-45 dk", minOrder:150, deliveryFee:20, badge:"Premium",     badgeColor:"#a78bfa" },
+    { id:3, name:"Pizza Roma",       category:"Pizza",   emoji:"🍕", coverImage:_U+"photo-1574071318508-1cdbab80d002"+_Q, rating:4.7, reviews:2100, deliveryTime:"25-35 dk", minOrder:100, deliveryFee:12, badge:"Yeni",         badgeColor:"#34d399" },
+    { id:4, name:"Kebap Dünyası",    category:"Kebap",   emoji:"🥙", coverImage:_U+"photo-1599487488170-d11ec9c172f0"+_Q, rating:4.6, reviews:3400, deliveryTime:"15-25 dk", minOrder:60,  deliveryFee:10, badge:"Yerel Lezzet", badgeColor:"#f87171" },
+    { id:5, name:"Wok Express",      category:"Asya",    emoji:"🥢", coverImage:_U+"photo-1562565652-a0d8f0c59eb4"+_Q,   rating:4.5, reviews:680,  deliveryTime:"20-30 dk", minOrder:90,  deliveryFee:15, badge:"Vegan Seçenek",badgeColor:"#10b981" },
+    { id:6, name:"Taco Loco",        category:"Meksika", emoji:"🌮", coverImage:_U+"photo-1565299585323-38d6b0865b47"+_Q, rating:4.4, reviews:520,  deliveryTime:"20-35 dk", minOrder:75,  deliveryFee:18, badge:"Acılı Seçenek",badgeColor:"#fb7185" },
+    { id:7, name:"Akdeniz Sofrası",  category:"Akdeniz", emoji:"🫒", coverImage:_U+"photo-1544025162-d76694265947"+_Q,   rating:4.7, reviews:1050, deliveryTime:"25-40 dk", minOrder:110, deliveryFee:14, badge:"Sağlıklı",     badgeColor:"#2dd4bf" }
+  ];
+
+  // ---- GEÇMİŞ ANALİZİ (orders → cart → null) ----
+  function analyzeHistory() {
+    const nameToCategory = {};
+    const idToCategory   = {};
+    restaurants.forEach(r => {
+      nameToCategory[r.name] = r.category;
+      idToCategory[r.id]     = r.category;
+    });
+
+    // 1) Sipariş geçmişine bak
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const validOrders = orders.filter(o => o.status !== 'İptal Edildi');
+    if (validOrders.length > 0) {
+      const tally = {};
+      validOrders.forEach(order => {
+        const cat = nameToCategory[order.restaurantName];
+        if (!cat) return;
+        if (!tally[cat]) tally[cat] = { orderCount: 0, itemCount: 0 };
+        tally[cat].orderCount += 1;
+        tally[cat].itemCount  += (order.items || []).reduce((s, i) => s + (i.qty || 1), 0);
+      });
+      if (Object.keys(tally).length > 0) {
+        const [topCat, stats] = Object.entries(tally).sort((a, b) => b[1].itemCount - a[1].itemCount)[0];
+        return { category: topCat, orderCount: stats.orderCount, itemCount: stats.itemCount, source: 'orders' };
+      }
+    }
+
+    // 2) Aktif sepete bak
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cart.length > 0) {
+      const tally = {};
+      cart.forEach(item => {
+        const cat = idToCategory[item.restaurantId];
+        if (cat) tally[cat] = (tally[cat] || 0) + (item.qty || 1);
+      });
+      if (Object.keys(tally).length > 0) {
+        const [topCat, qty] = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
+        return { category: topCat, orderCount: 0, itemCount: qty, source: 'cart' };
+      }
+    }
+
+    // 3) Veri yok
+    return null;
+  }
+
+  // ---- ÖNERİLEN RESTORANLAR ----
+  function getRecommendations(favoriteCategory) {
+    if (favoriteCategory) {
+      // Aynı kategorideki restoranları puana göre sırala, ilk 2'yi al
+      const same = restaurants
+        .filter(r => r.category === favoriteCategory)
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 2);
+
+      // 2'den azsa diğer en popüler restoranlardan tamamla
+      if (same.length < 2) {
+        const others = restaurants
+          .filter(r => r.category !== favoriteCategory && r.badge === 'Çok Popüler')
+          .sort((a, b) => b.rating - a.rating);
+        return [...same, ...others].slice(0, 2);
+      }
+      return same;
+    }
+
+    // Veri yoksa: en yüksek puanlı 2 restoran
+    return [...restaurants].sort((a, b) => b.rating - a.rating).slice(0, 2);
+  }
+
+  // ---- KART HTML ----
+  function buildCard(r, rank, analysis) {
+    const stars = '★'.repeat(Math.floor(r.rating)) + (r.rating % 1 >= 0.5 ? '½' : '');
+    return `
+      <div onclick="window.location.href='restaurant.html?id=${r.id}'"
+           class="group cursor-pointer rounded-2xl overflow-hidden border border-white/5 transition-all duration-300"
+           style="background:rgba(26,25,25,0.6);backdrop-filter:blur(20px);
+                  box-shadow:0 0 0 1px rgba(255,145,83,0.08);"
+           onmouseover="this.style.transform='translateY(-6px) scale(1.01)';this.style.boxShadow='0 24px 48px rgba(0,0,0,0.5), 0 0 40px rgba(255,145,83,0.15)'"
+           onmouseout="this.style.transform='';this.style.boxShadow='0 0 0 1px rgba(255,145,83,0.08)'">
+
+        <!-- Üst alan: fotoğraf + rozet -->
+        <div class="relative h-48 overflow-hidden" style="background:#1a1919;">
+          <img src="${r.coverImage}" alt="${r.name}" class="w-full h-full object-cover" loading="lazy"
+               style="transition:transform .4s" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform=''" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 60%)"></div>
+
+          <!-- Sıra rozeti -->
+          <div class="absolute top-4 left-4 w-8 h-8 rounded-full flex items-center justify-center font-black text-sm"
+               style="background:linear-gradient(135deg,#ff9153,#fd761a);color:#000;">
+            ${rank}
+          </div>
+
+          <!-- Kategori rozeti -->
+          <div class="absolute top-4 right-4 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider"
+               style="background:${r.badgeColor}20;color:${r.badgeColor};border:1px solid ${r.badgeColor}40">
+            ${r.badge}
+          </div>
+
+          <!-- Puan -->
+          <div class="absolute bottom-4 right-4 flex items-center gap-1 px-2.5 py-1 rounded-full"
+               style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px)">
+            <span style="color:#fbbf24;font-size:11px;">★</span>
+            <span style="color:#fff;font-size:12px;font-weight:700">${r.rating}</span>
+            <span style="color:#adaaaa;font-size:10px">(${r.reviews.toLocaleString('tr-TR')})</span>
+          </div>
+        </div>
+
+        <!-- Alt bilgi -->
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xl">${r.emoji}</span>
+            <h3 class="text-xl font-bold text-white">${r.name}</h3>
+          </div>
+          <p class="text-xs font-bold uppercase tracking-widest mb-4" style="color:#adaaaa">${r.category} Mutfağı</p>
+
+          <div class="flex items-center justify-between text-xs mb-5" style="color:#777575">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#ff9153">schedule</span>
+              ${r.deliveryTime}
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#ff9153">payments</span>
+              Min. ₺${r.minOrder}
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#ff9153">local_shipping</span>
+              ₺${r.deliveryFee} teslimat
+            </span>
+          </div>
+
+          ${analysis ? `
+          <div style="background:rgba(255,145,83,0.06);border:1px solid rgba(255,145,83,0.15);
+                      border-radius:0.75rem;padding:8px 12px;margin-bottom:14px;">
+            <p style="color:#adaaaa;font-size:11px;line-height:1.6;">
+              <span style="color:#ff9153;font-weight:700;">Neden bu öneri?</span>
+              ${analysis.source === 'orders'
+                ? ` Geçmişteki ${analysis.orderCount} ${analysis.category} siparişine dayanarak sana bu restoranı öneriyoruz!`
+                : ` Sepetindeki ${analysis.category} tercihine dayanarak bu restoranı sana öneriyoruz!`}
+            </p>
+          </div>` : ''}
+
+          <button class="w-full py-3 rounded-full font-bold text-sm uppercase tracking-wider transition-all"
+                  style="background:linear-gradient(135deg,#ff9153,#fd761a);color:#000;"
+                  onmouseover="this.style.boxShadow='0 0 24px rgba(255,145,83,0.4)'"
+                  onmouseout="this.style.boxShadow=''">
+            Menüyü Gör →
+          </button>
+        </div>
+      </div>`;
+  }
+
+  // ---- ARAYÜZÜ GÜNCELLE ----
+  function renderRecommendations() {
+    const analysis    = analyzeHistory();
+    const favCat      = analysis ? analysis.category : null;
+    const picks       = getRecommendations(favCat);
+    const subtitleEl  = document.getElementById('ai-subtitle');
+    const noteTextEl  = document.getElementById('ai-note-text');
+    const cardsEl     = document.getElementById('recommendation-cards');
+
+    if (analysis && analysis.source === 'orders') {
+      subtitleEl.textContent = `Favori mutfağın "${favCat}" — işte sana özel seçimlerimiz.`;
+      noteTextEl.textContent = ` geçmişteki ${analysis.orderCount} ${favCat} siparişine dayanarak sana bu restoranları öneriyor!`;
+    } else if (analysis && analysis.source === 'cart') {
+      subtitleEl.textContent = `Sepetindeki tercihlerine göre "${favCat}" önerileri hazırlandı.`;
+      noteTextEl.textContent = ` aktif sepetindeki "${favCat}" tercihine dayanarak en iyi restoranları buldu!`;
+    } else {
+      subtitleEl.textContent = 'Henüz sipariş geçmişin yok — şimdi en popüler restoranlara bak.';
+      noteTextEl.textContent = ' şu an en yüksek puanlı ve en popüler restoranları öneriyor. İlk siparişini ver, sana özel öneriler başlasın!';
+    }
+
+    cardsEl.innerHTML = picks.map((r, i) => buildCard(r, i + 1, analysis)).join('');
+  }
+
+  renderRecommendations();
+})();
+</script>
+
+<!-- Footer -->
+<footer class="w-full py-12 px-8 flex flex-col items-center gap-8 bg-[#0a0a0a] border-t border-white/5 font-['Inter'] text-sm tracking-wide">
+<div class="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="text-xl font-black text-white uppercase">YEMEKİMNEREDE</div>
+<div class="flex flex-wrap justify-center gap-8 text-neutral-500">
+<a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Hakkımızda</a>
+<a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="restaurants.html">Restoranlar</a>
+<a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Kurye Ol</a>
+<a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Yardım</a>
+<a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Gizlilik Politikası</a>
+</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:border-primary text-neutral-400 hover:text-primary transition-all" href="#">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
+</a>
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:border-primary text-neutral-400 hover:text-primary transition-all" href="#">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+</a>
+</div>
+</div>
+<div class="w-full border-t border-white/5 pt-8 text-neutral-600 text-center">
+            © 2024 YEMEKİMNEREDE. Tüm hakları saklıdır.
+        </div>
+</footer>
+</body></html>

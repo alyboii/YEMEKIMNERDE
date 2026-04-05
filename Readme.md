@@ -19,8 +19,8 @@ E-Ticaret
 
 ## Proje Linkleri
 
-- **REST API Adresi:** [api.yemekimnerede.com](https://api.yemekimnerede.com)
-- **Web Frontend Adresi:** [yemekimnerede.com](https://yemekimnerede.com)
+- **REST API Adresi:** [yemekimnerde-production.up.railway.app](https://yemekimnerde-production.up.railway.app)
+- **Web Frontend Adresi:** [yemekimnerde.vercel.app](https://yemekimnerde.vercel.app)
 
 ---
 
