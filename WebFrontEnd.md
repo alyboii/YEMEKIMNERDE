@@ -1,6 +1,6 @@
 # Web Frontend Görev Dağılımı
 
-**Web Frontend Adresi:** [frontend.yazmuh.com](https://frontend.yazmuh.com)
+**Web Frontend Adresi:** [https://yemekimnerde.vercel.app](https://yemekimnerde.vercel.app)
 
 Bu dokümanda, web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı deneyimi (UX) görevleri listelenmektedir. Her grup üyesi, kendisine atanan sayfaların tasarımı, implementasyonu ve kullanıcı etkileşimlerinden sorumludur.
 
@@ -9,7 +9,7 @@ Bu dokümanda, web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı den
 ## Grup Üyelerinin Web Frontend Görevleri
 
 1. [Ali Ünal'ın Web Frontend Görevleri](Ali-Unal/Ali-Unal-Web-Frontend-Gorevleri.md)
-2. [Cemal Tarlan'ın Web Frontend Görevleri](Cemal-Tarlan/Cemal-Tarlan-Web-Frontend-Gorevleri.md)
+2. [Cemal Tarlan'ın Web Frontend Görevleri](Cemal-Tarlan/Cemal-%20Tarlan-Web-Frontend-Gorevleri.md)
 3. [Abdullah Sözer'in Web Frontend Görevleri](aptullah-sözer/Aptullah-sözer-Web-Frontend-Gorevleri.md)
 
 ---

@@ -1,7 +1,7 @@
 # 🍴 REST API Görevleri — Cemal & Tarlan
 
 > **Proje:** YEMEKİMNEREDE  
-> **Base URL:** `http://localhost:3000/v1`  
+> **Base URL:** `https://yemekimnerde-production.up.railway.app/v1`  
 > **Yetkilendirme:** Tüm korumalı uç noktalarda `Authorization: Bearer <JWT_TOKEN>` header'ı gereklidir.  
 > **Postman Koleksiyonu:** `Cemal-Tarlan/YEMEKİMNEREDE_Restaurants_API.postman_collection.json`
 
