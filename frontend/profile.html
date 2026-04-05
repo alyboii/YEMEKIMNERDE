@@ -213,6 +213,33 @@
 </div>
 </form>
 </div>
+<!-- Adreslerim Card -->
+<div class="glass-card rounded-xl p-8 shadow-2xl">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+</div>
+<h2 class="text-xl font-bold">Adreslerim</h2>
+</div>
+<div id="adresListesi" class="space-y-3 mb-8"></div>
+<form id="adresForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="space-y-2">
+<label class="text-[0.65rem] font-black uppercase tracking-widest text-on-surface-variant ml-1">Başlık</label>
+<input id="adresBaslik" class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary" placeholder="Ev, İş..." type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-[0.65rem] font-black uppercase tracking-widest text-on-surface-variant ml-1">Adres</label>
+<input id="adresAdres" class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary" placeholder="Sokak, No..." type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-[0.65rem] font-black uppercase tracking-widest text-on-surface-variant ml-1">Şehir</label>
+<input id="adresSehir" class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary" placeholder="İstanbul" type="text"/>
+</div>
+<div class="md:col-span-3 flex justify-end">
+<button class="border border-primary text-primary hover:bg-primary/5 font-bold px-10 py-4 rounded-full transition-all active:scale-95" type="submit">Adres Ekle</button>
+</div>
+</form>
+</div>
 <!-- Danger Zone -->
 <div class="bg-error-container/10 border border-error-container/20 rounded-xl p-8">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -261,6 +288,7 @@ async function kullaniciyiYukle() {
     document.getElementById('inputSoyad').value = u.soyad || '';
     document.getElementById('inputEmail').value = u.email || '';
     document.getElementById('inputTelefon').value = u.telefon || '';
+    adresleriGoster(u.adresler);
   } catch (err) {
     console.error('Kullanıcı yüklenemedi:', err);
   }
@@ -319,6 +347,66 @@ document.getElementById('sifreForm').addEventListener('submit', async (e) => {
     btn.disabled = false; btn.textContent = 'Şifre Güncelle';
   }
 });
+
+// Adresleri Göster
+function adresleriGoster(adresler) {
+  const liste = document.getElementById('adresListesi');
+  if (!adresler || adresler.length === 0) {
+    liste.innerHTML = '<p class="text-on-surface-variant text-sm">Henüz adres eklenmemiş.</p>';
+    return;
+  }
+  liste.innerHTML = adresler.map(a => `
+    <div class="flex items-center justify-between bg-surface-container-high rounded-2xl p-4">
+      <div>
+        <p class="font-bold text-sm">${a.baslik}</p>
+        <p class="text-on-surface-variant text-xs">${a.adres}, ${a.sehir}</p>
+      </div>
+      <button onclick="adresSil('${a._id}')" class="text-error hover:text-error-dim transition-colors">
+        <span class="material-symbols-outlined">delete</span>
+      </button>
+    </div>
+  `).join('');
+}
+
+// Adres Ekle — POST /v1/users/:id/addresses
+document.getElementById('adresForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  try {
+    const res = await fetch(`${API}/users/${kullaniciId}/addresses`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        baslik: document.getElementById('adresBaslik').value,
+        adres: document.getElementById('adresAdres').value,
+        sehir: document.getElementById('adresSehir').value,
+      }),
+    });
+    const data = await res.json();
+    adresleriGoster(data.adresler);
+    e.target.reset();
+  } catch (err) {
+    alert('Adres eklenemedi');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// Adres Sil — DELETE /v1/users/:id/addresses/:addressId
+async function adresSil(addressId) {
+  if (!confirm('Bu adresi silmek istiyor musunuz?')) return;
+  try {
+    const res = await fetch(`${API}/users/${kullaniciId}/addresses/${addressId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const data = await res.json();
+    adresleriGoster(data.adresler);
+  } catch (err) {
+    alert('Adres silinemedi');
+  }
+}
 
 // Hesap Sil — DELETE /v1/users/:id
 document.getElementById('hesapSilBtn').addEventListener('click', async () => {
