@@ -11,13 +11,9 @@ router.get('/:kullaniciId', authMiddleware, async (req, res) => {
 
 // PUT /v1/users/:kullaniciId — Profil Güncelleme (Ali Ünal)
 router.put('/:kullaniciId', authMiddleware, async (req, res) => {
-  if (req.kullanici._id.toString() !== req.params.kullaniciId) {
-    return res.status(403).json({ hata: 'Bu işlem için yetkiniz yok' });
-  }
-
   const { ad, soyad, telefon } = req.body;
   const guncelKullanici = await Kullanici.findByIdAndUpdate(
-    req.params.kullaniciId,
+    req.kullanici._id,
     { ad, soyad, telefon },
     { new: true, runValidators: true }
   );
@@ -26,9 +22,6 @@ router.put('/:kullaniciId', authMiddleware, async (req, res) => {
 
 // PUT /v1/users/:kullaniciId/password — Şifre Güncelleme (Ali Ünal)
 router.put('/:kullaniciId/password', authMiddleware, async (req, res) => {
-  if (req.kullanici._id.toString() !== req.params.kullaniciId) {
-    return res.status(403).json({ hata: 'Bu işlem için yetkiniz yok' });
-  }
 
   const { mevcutSifre, yeniSifre } = req.body;
   if (!mevcutSifre || !yeniSifre) {
@@ -47,10 +40,7 @@ router.put('/:kullaniciId/password', authMiddleware, async (req, res) => {
 
 // DELETE /v1/users/:kullaniciId — Hesap Silme (Ali Ünal)
 router.delete('/:kullaniciId', authMiddleware, async (req, res) => {
-  if (req.kullanici._id.toString() !== req.params.kullaniciId) {
-    return res.status(403).json({ hata: 'Bu işlem için yetkiniz yok' });
-  }
-  await Kullanici.findByIdAndDelete(req.params.kullaniciId);
+  await Kullanici.findByIdAndDelete(req.kullanici._id);
   res.status(204).send();
 });
 
@@ -70,12 +60,8 @@ router.post('/:kullaniciId/addresses', authMiddleware, async (req, res) => {
 
 // DELETE /v1/users/:kullaniciId/addresses/:addressId — Adres Silme (Ali Ünal)
 router.delete('/:kullaniciId/addresses/:addressId', authMiddleware, async (req, res) => {
-  if (req.kullanici._id.toString() !== req.params.kullaniciId) {
-    return res.status(403).json({ hata: 'Bu işlem için yetkiniz yok' });
-  }
-
   const kullanici = await Kullanici.findByIdAndUpdate(
-    req.params.kullaniciId,
+    req.kullanici._id,
     { $pull: { adresler: { _id: req.params.addressId } } },
     { new: true }
   );
