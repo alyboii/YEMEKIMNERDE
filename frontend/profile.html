@@ -159,7 +159,7 @@
 </div>
 <h2 class="text-xl font-bold">Profil Bilgileri</h2>
 </div>
-<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<form id="profilForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div class="space-y-2">
 <label class="text-[0.65rem] font-black uppercase tracking-widest text-on-surface-variant ml-1">Ad</label>
 <input id="inputAd" class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary placeholder-on-surface-variant/40" type="text" value=""/>
@@ -191,19 +191,19 @@
 </div>
 <h2 class="text-xl font-bold">Şifre Değiştir</h2>
 </div>
-<form class="space-y-6 max-w-lg">
+<form id="sifreForm" class="space-y-6 max-w-lg">
 <div class="space-y-2">
 <label class="text-[0.65rem] font-black uppercase tracking-widest text-on-surface-variant ml-1">Mevcut Şifre</label>
-<input class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary placeholder-on-surface-variant/40" placeholder="••••••••" type="password"/>
+<input id="mevcutSifre" class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary placeholder-on-surface-variant/40" placeholder="••••••••" type="password"/>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div class="space-y-2">
 <label class="text-[0.65rem] font-black uppercase tracking-widest text-on-surface-variant ml-1">Yeni Şifre</label>
-<input class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary placeholder-on-surface-variant/40" placeholder="••••••••" type="password"/>
+<input id="yeniSifre" class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary placeholder-on-surface-variant/40" placeholder="••••••••" type="password"/>
 </div>
 <div class="space-y-2">
 <label class="text-[0.65rem] font-black uppercase tracking-widest text-on-surface-variant ml-1">Yeni Şifre Tekrar</label>
-<input class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary placeholder-on-surface-variant/40" placeholder="••••••••" type="password"/>
+<input id="yeniSifreTekrar" class="w-full bg-surface-container-high border-none rounded-2xl p-4 text-on-surface focus:ring-1 focus:ring-primary placeholder-on-surface-variant/40" placeholder="••••••••" type="password"/>
 </div>
 </div>
 <div class="flex justify-start mt-4">
@@ -220,7 +220,7 @@
 <h2 class="text-xl font-bold text-error">Tehlikeli Bölge</h2>
 <p class="text-sm text-on-surface-variant">Bu işlem geri alınamaz. Hesabınızdaki tüm veriler ve sipariş geçmişiniz kalıcı olarak silinecektir.</p>
 </div>
-<button class="bg-gradient-to-r from-error-dim to-error text-on-error font-bold px-8 py-4 rounded-full transition-all hover:scale-105 active:scale-95 shadow-xl shadow-error/20 whitespace-nowrap">
+<button id="hesapSilBtn" class="bg-gradient-to-r from-error-dim to-error text-on-error font-bold px-8 py-4 rounded-full transition-all hover:scale-105 active:scale-95 shadow-xl shadow-error/20 whitespace-nowrap">
                         Hesabı Sil
                     </button>
 </div>
@@ -267,5 +267,77 @@ async function kullaniciyiYukle() {
 }
 
 kullaniciyiYukle();
+
+// Profil Güncelle — PUT /v1/users/:id
+document.getElementById('profilForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true; btn.textContent = 'Kaydediliyor...';
+  try {
+    const res = await fetch(`${API}/users/${kullaniciId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        ad: document.getElementById('inputAd').value,
+        soyad: document.getElementById('inputSoyad').value,
+        telefon: document.getElementById('inputTelefon').value,
+      }),
+    });
+    if (!res.ok) throw new Error((await res.json()).hata);
+    btn.textContent = '✓ Kaydedildi!';
+    setTimeout(() => { btn.disabled = false; btn.textContent = 'Güncelle'; }, 2000);
+    kullaniciyiYukle();
+  } catch (err) {
+    alert(err.message);
+    btn.disabled = false; btn.textContent = 'Güncelle';
+  }
+});
+
+// Şifre Güncelle — PUT /v1/users/:id/password
+document.getElementById('sifreForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const yeni = document.getElementById('yeniSifre').value;
+  const tekrar = document.getElementById('yeniSifreTekrar').value;
+  if (yeni !== tekrar) { alert('Yeni şifreler eşleşmiyor!'); return; }
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true; btn.textContent = 'Güncelleniyor...';
+  try {
+    const res = await fetch(`${API}/users/${kullaniciId}/password`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({
+        mevcutSifre: document.getElementById('mevcutSifre').value,
+        yeniSifre: yeni,
+      }),
+    });
+    if (!res.ok) throw new Error((await res.json()).hata);
+    alert('Şifre başarıyla güncellendi!');
+    e.target.reset();
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Şifre Güncelle';
+  }
+});
+
+// Hesap Sil — DELETE /v1/users/:id
+document.getElementById('hesapSilBtn').addEventListener('click', async () => {
+  if (!confirm('Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) return;
+  try {
+    const res = await fetch(`${API}/users/${kullaniciId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (res.status === 204 || res.ok) {
+      localStorage.clear();
+      alert('Hesabınız silindi.');
+      window.location.href = 'index.html';
+    } else {
+      throw new Error('Silme işlemi başarısız');
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+});
 </script>
 </body></html>
