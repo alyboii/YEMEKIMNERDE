@@ -54,6 +54,20 @@ router.delete('/:kullaniciId', authMiddleware, async (req, res) => {
   res.status(204).send();
 });
 
+// POST /v1/users/:kullaniciId/addresses — Adres Ekleme (Ali Ünal)
+router.post('/:kullaniciId/addresses', authMiddleware, async (req, res) => {
+  const { baslik, adres, sehir } = req.body;
+  if (!baslik || !adres || !sehir) {
+    return res.status(400).json({ hata: 'Başlık, adres ve şehir zorunludur' });
+  }
+  const kullanici = await Kullanici.findByIdAndUpdate(
+    req.params.kullaniciId,
+    { $push: { adresler: { baslik, adres, sehir } } },
+    { new: true }
+  );
+  res.status(201).json(kullanici);
+});
+
 // DELETE /v1/users/:kullaniciId/addresses/:addressId — Adres Silme (Ali Ünal)
 router.delete('/:kullaniciId/addresses/:addressId', authMiddleware, async (req, res) => {
   if (req.kullanici._id.toString() !== req.params.kullaniciId) {
