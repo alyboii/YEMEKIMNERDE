@@ -1,26 +1,26 @@
 const express = require('express');
 const router = express.Router();
+const Cart = require('../models/Cart'); // Az önce oluşturduğun modeli çağırıyoruz
 
-// POST /v1/cart/items — Sepete ekle
-router.post('/items', (req, res) => {
-    res.status(201).json({ message: "Ürün sepete eklendi" });
+// Sepete ürün ekle (Veritabanına yazar)
+router.post('/', async (req, res) => {
+    try {
+        const newCartItem = new Cart(req.body);
+        const savedItem = await newCartItem.save();
+        res.status(201).json({ message: "Ürün sepete eklendi", item: savedItem });
+    } catch (err) {
+        res.status(500).json({ error: "Sepete eklenirken hata", details: err.message });
+    }
 });
 
-// GET /v1/cart — Sepeti görüntüle
-router.get('/', (req, res) => {
-    res.status(200).json({ message: "Sepet detayları getirildi" });
-});
-
-// PUT /v1/cart/items/:itemId — Miktar güncelle
-router.put('/items/:itemId', (req, res) => {
-    const { itemId } = req.params;
-    res.status(200).json({ message: `Ürün (${itemId}) miktarı güncellendi` });
-});
-
-// DELETE /v1/cart/items/:itemId — Sepetten çıkar
-router.delete('/items/:itemId', (req, res) => {
-    const { itemId } = req.params;
-    res.status(200).json({ message: `Ürün (${itemId}) sepetten çıkarıldı` });
+// Sepetteki ürünleri getir (Veritabanından okur)
+router.get('/', async (req, res) => {
+    try {
+        const cartItems = await Cart.find();
+        res.status(200).json(cartItems);
+    } catch (err) {
+        res.status(500).json({ error: "Sepet getirilemedi", details: err.message });
+    }
 });
 
 module.exports = router;
