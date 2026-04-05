@@ -6,9 +6,6 @@ const router = express.Router();
 
 // GET /v1/users/:kullaniciId — Profil Görüntüleme (Ali Ünal)
 router.get('/:kullaniciId', authMiddleware, async (req, res) => {
-  if (req.kullanici._id.toString() !== req.params.kullaniciId) {
-    return res.status(403).json({ hata: 'Bu işlem için yetkiniz yok' });
-  }
   res.json(req.kullanici);
 });
 
