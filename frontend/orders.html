@@ -1,276 +1,433 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="tr"><head>
+<html class="dark" lang="tr">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Siparişlerim - YEMEKİMNEREDE</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-container": "#1a1919",
-                        "primary-dim": "#fd761a",
-                        "surface-container-low": "#131313",
-                        "secondary-fixed-dim": "#ffb379",
-                        "on-error-container": "#ffd2c8",
-                        "surface-dim": "#0e0e0e",
-                        "outline-variant": "#494847",
-                        "surface-container-highest": "#262626",
-                        "on-secondary": "#4b2400",
-                        "tertiary-dim": "#efad16",
-                        "tertiary": "#ffcd72",
-                        "primary-fixed": "#ff7a23",
-                        "surface-variant": "#262626",
-                        "on-tertiary": "#614400",
-                        "inverse-primary": "#9e4400",
-                        "on-secondary-fixed": "#542900",
-                        "secondary-dim": "#ec872a",
-                        "error-dim": "#d53d18",
-                        "error-container": "#b92902",
-                        "on-primary-container": "#3f1700",
-                        "tertiary-fixed-dim": "#efad16",
-                        "surface-tint": "#ff9153",
-                        "inverse-on-surface": "#565554",
-                        "error": "#ff7351",
-                        "inverse-surface": "#fcf8f8",
-                        "secondary": "#fd9436",
-                        "on-background": "#ffffff",
-                        "surface-container-high": "#201f1f",
-                        "on-surface-variant": "#adaaaa",
-                        "on-primary": "#511f00",
-                        "tertiary-container": "#febb28",
-                        "secondary-fixed": "#ffc69d",
-                        "primary-fixed-dim": "#f06c0b",
-                        "tertiary-fixed": "#febb28",
-                        "primary-container": "#ff7a23",
-                        "outline": "#777575",
-                        "on-surface": "#ffffff",
-                        "on-primary-fixed-variant": "#4e1e00",
-                        "secondary-container": "#924c00",
-                        "on-tertiary-fixed-variant": "#614400",
-                        "on-tertiary-fixed": "#3c2900",
-                        "on-primary-fixed": "#000000",
-                        "on-tertiary-container": "#563b00",
-                        "surface-bright": "#2c2c2c",
-                        "primary": "#ff9153",
-                        "surface-container-lowest": "#000000",
-                        "background": "#0e0e0e",
-                        "on-secondary-fixed-variant": "#7e4000",
-                        "on-secondary-container": "#fff6f2",
-                        "surface": "#0e0e0e",
-                        "on-error": "#450900"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "1rem",
-                        "lg": "2rem",
-                        "xl": "3rem",
-                        "full": "9999px"
-                    },
-                    "fontFamily": {
-                        "headline": ["Inter"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
-                    }
-                },
-            },
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container": "#1a1919",
+          "primary-dim": "#fd761a",
+          "surface-container-low": "#131313",
+          "secondary-fixed-dim": "#ffb379",
+          "on-error-container": "#ffd2c8",
+          "surface-dim": "#0e0e0e",
+          "outline-variant": "#494847",
+          "surface-container-highest": "#262626",
+          "on-secondary": "#4b2400",
+          "tertiary-dim": "#efad16",
+          "tertiary": "#ffcd72",
+          "primary-fixed": "#ff7a23",
+          "surface-variant": "#262626",
+          "on-tertiary": "#614400",
+          "inverse-primary": "#9e4400",
+          "on-secondary-fixed": "#542900",
+          "secondary-dim": "#ec872a",
+          "error-dim": "#d53d18",
+          "error-container": "#b92902",
+          "on-primary-container": "#3f1700",
+          "tertiary-fixed-dim": "#efad16",
+          "surface-tint": "#ff9153",
+          "inverse-on-surface": "#565554",
+          "error": "#ff7351",
+          "inverse-surface": "#fcf8f8",
+          "secondary": "#fd9436",
+          "on-background": "#ffffff",
+          "surface-container-high": "#201f1f",
+          "on-surface-variant": "#adaaaa",
+          "on-primary": "#511f00",
+          "tertiary-container": "#febb28",
+          "secondary-fixed": "#ffc69d",
+          "primary-fixed-dim": "#f06c0b",
+          "tertiary-fixed": "#febb28",
+          "primary-container": "#ff7a23",
+          "outline": "#777575",
+          "on-surface": "#ffffff",
+          "on-primary-fixed-variant": "#4e1e00",
+          "secondary-container": "#924c00",
+          "on-tertiary-fixed-variant": "#614400",
+          "on-tertiary-fixed": "#3c2900",
+          "on-primary-fixed": "#000000",
+          "on-tertiary-container": "#563b00",
+          "surface-bright": "#2c2c2c",
+          "primary": "#ff9153",
+          "surface-container-lowest": "#000000",
+          "background": "#0e0e0e",
+          "on-secondary-fixed-variant": "#7e4000",
+          "on-secondary-container": "#fff6f2",
+          "surface": "#0e0e0e",
+          "on-error": "#450900"
+        },
+        borderRadius: {
+          DEFAULT: "1rem", lg: "2rem", xl: "3rem", full: "9999px"
+        },
+        fontFamily: {
+          headline: ["Inter"], body: ["Inter"], label: ["Inter"]
         }
-    </script>
+      }
+    }
+  }
+</script>
 <style>
-        body {
-            background-color: #0a0a0a;
-            font-family: 'Inter', sans-serif;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .glass-card {
-            background: rgba(38, 38, 38, 0.4);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(73, 72, 71, 0.15);
-        }
-        .signature-glow {
-            background: linear-gradient(135deg, #ff9153 0%, #fd761a 100%);
-        }
-    </style>
+  body { background-color: #0a0a0a; font-family: 'Inter', sans-serif; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .glass-card {
+    background: rgba(38, 38, 38, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(73, 72, 71, 0.15);
+  }
+  .signature-glow { background: linear-gradient(135deg, #ff9153 0%, #fd761a 100%); }
+  .tab-active { background: linear-gradient(135deg, #ff9153 0%, #fd761a 100%); color: #511f00; font-weight: 700; }
+  .tab-inactive { border: 1px solid rgba(73, 72, 71, 0.15); color: #adaaaa; }
+  .tab-inactive:hover { background: #262626; color: #ffffff; }
+</style>
 </head>
 <body class="text-on-surface antialiased">
+
 <!-- TopNavBar -->
 <header class="fixed top-0 left-0 w-full z-50 bg-[#262626]/60 backdrop-blur-[20px] shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-<nav class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto font-['Inter'] antialiased tracking-tight">
-<div class="text-2xl font-black tracking-tighter text-white">YEMEKİMNEREDE</div>
-<div class="hidden md:flex items-center gap-8">
-<a class="text-[#adaaaa] hover:text-white transition-colors" href="index.html">Ana Sayfa</a>
-<a class="text-[#adaaaa] hover:text-white transition-colors" href="restaurants.html">Restoranlar</a>
-<a class="text-[#f97316] font-bold border-b-2 border-[#f97316] pb-1" href="orders.html">Siparişlerim</a>
-<a class="text-[#adaaaa] hover:text-white transition-colors" href="#">Fırsatlar</a>
-</div>
-<div class="flex items-center gap-4">
-<button class="p-2 hover:bg-white/10 rounded-full transition-all duration-300 active:scale-95">
-<span class="material-symbols-outlined text-white" data-icon="shopping_bag">shopping_bag</span>
-</button>
-<button class="p-2 hover:bg-white/10 rounded-full transition-all duration-300 active:scale-95">
-<span class="material-symbols-outlined text-white" data-icon="notifications">notifications</span>
-</button>
-<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
-<img alt="Kullanıcı Avatarı" data-alt="close-up portrait of a professional man with a kind smile in soft studio lighting against a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMjv2QKrJOTAoJql9HjNJm3jFxeZ9AKX15DIOW6myHce3c9o0FVQcgaF1myFUFbo-KIzMgvWxDOPP_7ne3Pzng1UOWhelJ3P-J9enK2ANPVRSlXCVIuDb5m7nbHGynjwzJHoYfkaTg-CYe-y4qA1E4cp9oT2NHLYr-MEV7KdwaFKCTrBHVv3zb-rjEBvep00EEWwa39Y4XGjnaogx5hNOieDZp-MYPFQAmoQ2p2oQTJXl3fOP3S9LuYQXMnq_J_3BBRObnlqO1fV8"/>
-</div>
-</div>
-</nav>
+  <nav class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto font-['Inter'] antialiased tracking-tight">
+    <div class="text-2xl font-black tracking-tighter text-white">YEMEKİMNEREDE</div>
+    <div class="hidden md:flex items-center gap-8">
+      <a class="text-[#adaaaa] hover:text-white transition-colors" href="index.html">Ana Sayfa</a>
+      <a class="text-[#adaaaa] hover:text-white transition-colors" href="restaurants.html">Restoranlar</a>
+      <a class="text-[#f97316] font-bold border-b-2 border-[#f97316] pb-1" href="orders.html">Siparişlerim</a>
+      <a class="text-[#adaaaa] hover:text-white transition-colors" href="cart.html">Sepetim</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <button class="p-2 hover:bg-white/10 rounded-full transition-all duration-300 active:scale-95">
+        <span class="material-symbols-outlined text-white">shopping_bag</span>
+      </button>
+      <button class="p-2 hover:bg-white/10 rounded-full transition-all duration-300 active:scale-95">
+        <span class="material-symbols-outlined text-white">notifications</span>
+      </button>
+    </div>
+  </nav>
 </header>
+
 <main class="pt-32 pb-24 px-6 md:px-8 max-w-7xl mx-auto">
-<!-- Header Section -->
-<div class="mb-12">
-<h1 class="text-5xl md:text-6xl font-black tracking-tighter mb-4">Siparişlerim</h1>
-<p class="text-on-surface-variant text-lg">Geçmiş ve aktif siparişleriniz</p>
-</div>
-<!-- Filter Pills -->
-<div class="flex flex-wrap gap-3 mb-12">
-<button class="px-8 py-3 rounded-full signature-glow text-on-primary font-bold transition-all duration-300 active:scale-95">Tümü</button>
-<button class="px-8 py-3 rounded-full border border-outline-variant/15 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-300">Aktif</button>
-<button class="px-8 py-3 rounded-full border border-outline-variant/15 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-300">Tamamlanan</button>
-<button class="px-8 py-3 rounded-full border border-outline-variant/15 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-300">İptal Edilen</button>
-</div>
-<!-- Order Cards Grid -->
-<div class="grid grid-cols-1 gap-6">
-<!-- Order 1: Hazırlanıyor -->
-<div class="glass-card rounded-xl overflow-hidden p-6 flex flex-col md:flex-row items-center gap-8 group">
-<div class="relative w-full md:w-48 h-48 rounded-lg overflow-hidden shrink-0">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="close-up of traditional turkish iskender kebab with melted butter and yogurt on a dark rustic plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWP25PewKKGLFpNAFukjLLP5usY2gVg-lrXDlf3Pyt1ElD8GmFvQhIca-IwVPT9CI_uHzINjkwIUDemCCpornpnWFyEVh5Mhh4PlcSxgAk7V6XwVgAFGg_QCj5lIDJ3hcKlpDAR7UUBwm1YBGNTzOfl4vNXYUPLRGfoIynDSc2rwz45RoZG6olTkxxdzAmXlUoV6p16Xph9FD5YbicUsAP1yrvqFpewpeSSMY5DFEN8-uDCF5PHAoSPBPQ_9KtPnICCu8TR7VljDU"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-</div>
-<div class="flex-grow w-full">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-<div>
-<span class="text-[0.75rem] font-bold tracking-[0.05em] text-on-surface-variant uppercase">#ORD-2026-004</span>
-<h2 class="text-2xl font-bold mt-1">Bursa Lezzet</h2>
-</div>
-<div class="flex items-center gap-2 px-4 py-2 rounded-full bg-tertiary-container/20 text-tertiary-container animate-pulse">
-<span class="material-symbols-outlined text-sm" data-icon="restaurant">restaurant</span>
-<span class="text-sm font-bold">Hazırlanıyor</span>
-</div>
-</div>
-<p class="text-on-surface-variant mb-6 text-lg">2x İskender, 1x Ayran</p>
-<div class="w-full bg-surface-container-high h-1.5 rounded-full mb-6 overflow-hidden">
-<div class="bg-primary h-full w-2/3 rounded-full"></div>
-</div>
-<div class="flex justify-between items-center">
-<span class="text-3xl font-black text-primary">₺560.00</span>
-<div class="flex gap-4">
-<button class="px-6 py-2 rounded-full border border-outline-variant/30 text-on-surface font-bold hover:bg-white/5 transition-all">Detay</button>
-<button class="px-6 py-2 rounded-full signature-glow text-on-primary font-bold active:scale-95 transition-all">Tekrar Sipariş Ver</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Order 2: Yolda -->
-<div class="glass-card rounded-xl overflow-hidden p-6 flex flex-col md:flex-row items-center gap-8 group">
-<div class="relative w-full md:w-48 h-48 rounded-lg overflow-hidden shrink-0">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="close-up of spicy adana kebab skewers with roasted peppers and flatbread on a dark slate background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD34OHjcMQyz8QD7zBPUPC9EGplguDdH6dvjimrPLmZNPrvOkXWUKd3YA8kzEj6wWL000aHQimZwcNjpNHtVo_yGAmsmzh_PhQPUMrnokaTCynlku1r4XSeT4vdglCPH0vI-cKHp5EBa4CX08fS5tB34-rFZBsDrHN__KJswdY7y5WK3iJMWSAZvz1l2eRuOoaQG7t1goyH2NS33H4mlpYMFhToTml92TPbrA7JX3jbhSdpBwJkjKv6qy35U-7yVXg_mDFbAhi2Kvw"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-</div>
-<div class="flex-grow w-full">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-<div>
-<span class="text-[0.75rem] font-bold tracking-[0.05em] text-on-surface-variant uppercase">#ORD-2026-003</span>
-<h2 class="text-2xl font-bold mt-1">Kebapçı Ahmet</h2>
-</div>
-<div class="flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/20 text-blue-400">
-<span class="material-symbols-outlined text-sm" data-icon="delivery_dining">delivery_dining</span>
-<span class="text-sm font-bold">Yolda</span>
-</div>
-</div>
-<p class="text-on-surface-variant mb-8 text-lg">1x Adana Kebap, 1x Şalgam</p>
-<div class="flex justify-between items-center">
-<span class="text-3xl font-black text-on-surface">₺210.00</span>
-<div class="flex gap-4">
-<button class="px-6 py-2 rounded-full border border-outline-variant/30 text-on-surface font-bold hover:bg-white/5 transition-all">Detay</button>
-<button class="px-6 py-2 rounded-full signature-glow text-on-primary font-bold active:scale-95 transition-all">Tekrar Sipariş Ver</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Order 3: Teslim Edildi -->
-<div class="glass-card rounded-xl overflow-hidden p-6 flex flex-col md:flex-row items-center gap-8 group">
-<div class="relative w-full md:w-48 h-48 rounded-lg overflow-hidden shrink-0">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="steaming bowl of red lentil soup garnished with lemon and chili oil on a dark wooden table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfs-V4DzxIcrrMw8lUzWqndSD5PZeSY0L4SZ8QHpGifgGjyagw_aerrMgEsrgVTBDblZPQUonU2jJUH_JbF6ZrDkar30o1nP-uapOt19WN9r8QTxjtUNxTbJYaPdhVJIqOIdet3dlvOpDIdNojtI4RNcmJI_uZirn425AHhVxcmlmkEyhKDavMrvBHHBjmSVShoOID-WG0lthwKW2JAN0uNBwIVfrr831fZ7TOkfWg1NLbTqYs3-cGmTgv-67d2ltxmo58nk1Dlx8"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-</div>
-<div class="flex-grow w-full">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-<div>
-<span class="text-[0.75rem] font-bold tracking-[0.05em] text-on-surface-variant uppercase">#ORD-2026-002</span>
-<h2 class="text-2xl font-bold mt-1">Çorba Dünyası</h2>
-</div>
-<div class="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-400">
-<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
-<span class="text-sm font-bold">Teslim Edildi</span>
-</div>
-</div>
-<p class="text-on-surface-variant mb-8 text-lg">2x Mercimek Çorbası</p>
-<div class="flex justify-between items-center">
-<span class="text-3xl font-black text-on-surface">₺140.00</span>
-<div class="flex gap-4">
-<button class="px-6 py-2 rounded-full border border-outline-variant/30 text-on-surface font-bold hover:bg-white/5 transition-all">Detay</button>
-<button class="px-6 py-2 rounded-full signature-glow text-on-primary font-bold active:scale-95 transition-all">Tekrar Sipariş Ver</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Order 4: İptal -->
-<div class="glass-card rounded-xl overflow-hidden p-6 flex flex-col md:flex-row items-center gap-8 group opacity-70">
-<div class="relative w-full md:w-48 h-48 rounded-lg overflow-hidden shrink-0 grayscale">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="flame grilled beef burger with fresh lettuce and tomato on a toasted bun with dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvRx2HFIleKVwyfa6N2tL6tG-1uLlQdTgRU24WgHmu3-uswBIrEboNfTsqSkwbqSs0FtAmRCaLhGwCOf12_rB0IbfaHkfpvuWxd06KBDsPfqaZ4x7Iw8zUWWaLRJAgFBvoPyc2QJFrEOW72g3B07WRsA5hZebFjgYd-QORtNAF3cX7SmbNOMOC9x89XiT74ipMJKNdw8FnAHPdQpHqG64ZolYLPnIpTlkK2_9AFTxxLpnBNMpF8ifMpcT3wCiwDsdnwF8vZZffjIU"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-</div>
-<div class="flex-grow w-full">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-<div>
-<span class="text-[0.75rem] font-bold tracking-[0.05em] text-on-surface-variant uppercase">#ORD-2026-001</span>
-<h2 class="text-2xl font-bold mt-1">Burger King</h2>
-</div>
-<div class="flex items-center gap-2 px-4 py-2 rounded-full bg-error-container/20 text-error">
-<span class="material-symbols-outlined text-sm" data-icon="cancel">cancel</span>
-<span class="text-sm font-bold">İptal</span>
-</div>
-</div>
-<p class="text-on-surface-variant mb-8 text-lg">1x Whopper Menü</p>
-<div class="flex justify-between items-center">
-<span class="text-3xl font-black text-on-surface">₺280.00</span>
-<div class="flex gap-4">
-<button class="px-6 py-2 rounded-full border border-outline-variant/30 text-on-surface font-bold hover:bg-white/5 transition-all">Detay</button>
-<button class="px-6 py-2 rounded-full signature-glow text-on-primary font-bold active:scale-95 transition-all">Tekrar Sipariş Ver</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Pagination -->
-<div class="mt-16 flex justify-center items-center gap-4">
-<button class="w-12 h-12 flex items-center justify-center rounded-full bg-primary text-on-primary font-bold shadow-lg">1</button>
-<button class="w-12 h-12 flex items-center justify-center rounded-full border border-outline-variant/15 text-on-surface-variant hover:text-white hover:bg-surface-container-highest transition-all">2</button>
-<button class="w-12 h-12 flex items-center justify-center rounded-full border border-outline-variant/15 text-on-surface-variant hover:text-white hover:bg-surface-container-highest transition-all">3</button>
-<button class="w-12 h-12 flex items-center justify-center rounded-full border border-outline-variant/15 text-on-surface-variant hover:text-white hover:bg-surface-container-highest transition-all">
-<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
-</button>
-</div>
+  <!-- Header -->
+  <div class="mb-12">
+    <h1 class="text-5xl md:text-6xl font-black tracking-tighter mb-4">Siparişlerim</h1>
+    <p class="text-on-surface-variant text-lg">Geçmiş ve aktif siparişleriniz</p>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="flex flex-wrap gap-3 mb-12" id="filter-tabs">
+    <button onclick="setTab('all')"       id="tab-all"       class="px-8 py-3 rounded-full transition-all duration-300 active:scale-95 tab-active">Tümü</button>
+    <button onclick="setTab('active')"    id="tab-active"    class="px-8 py-3 rounded-full transition-all duration-300 active:scale-95 tab-inactive">Aktif</button>
+    <button onclick="setTab('completed')" id="tab-completed" class="px-8 py-3 rounded-full transition-all duration-300 active:scale-95 tab-inactive">Tamamlanan</button>
+    <button onclick="setTab('cancelled')" id="tab-cancelled" class="px-8 py-3 rounded-full transition-all duration-300 active:scale-95 tab-inactive">İptal Edilen</button>
+  </div>
+
+  <!-- Order Cards -->
+  <div class="grid grid-cols-1 gap-6" id="orders-container">
+    <!-- JS tarafından doldurulur -->
+  </div>
 </main>
+
 <!-- Footer -->
 <footer class="w-full py-12 px-8 bg-[#0e0e0e] border-t border-[#494847]/15">
-<div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
-<div class="text-lg font-black text-white">YEMEKİMNEREDE</div>
-<div class="flex flex-wrap justify-center gap-8 font-['Inter'] text-[0.75rem] uppercase tracking-[0.05em]">
-<a class="text-[#adaaaa] hover:text-[#f97316] transition-colors" href="#">Hakkımızda</a>
-<a class="text-[#adaaaa] hover:text-[#f97316] transition-colors" href="#">Kullanım Koşulları</a>
-<a class="text-[#adaaaa] hover:text-[#f97316] transition-colors" href="#">Gizlilik</a>
-<a class="text-[#adaaaa] hover:text-[#f97316] transition-colors" href="#">Yardım</a>
-</div>
-<p class="font-['Inter'] text-[0.75rem] uppercase tracking-[0.05em] text-[#adaaaa]">© 2024 YEMEKİMNEREDE. Hyper-Focus Editorial Dining.</p>
-</div>
+  <div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+    <div class="text-lg font-black text-white">YEMEKİMNEREDE</div>
+    <div class="flex flex-wrap justify-center gap-8 font-['Inter'] text-[0.75rem] uppercase tracking-[0.05em]">
+      <a class="text-[#adaaaa] hover:text-[#f97316] transition-colors" href="#">Hakkımızda</a>
+      <a class="text-[#adaaaa] hover:text-[#f97316] transition-colors" href="#">Kullanım Koşulları</a>
+      <a class="text-[#adaaaa] hover:text-[#f97316] transition-colors" href="#">Gizlilik</a>
+      <a class="text-[#adaaaa] hover:text-[#f97316] transition-colors" href="#">Yardım</a>
+    </div>
+    <p class="font-['Inter'] text-[0.75rem] uppercase tracking-[0.05em] text-[#adaaaa]">© 2024 YEMEKİMNEREDE. Hyper-Focus Editorial Dining.</p>
+  </div>
 </footer>
-</body></html>
+
+<script>
+  // ─── SABITLER ──────────────────────────────────────────────
+  const TOTAL_MS = 120000;  // 2 dakika → Teslim Edildi
+  const YOLDA_MS = 30000;   // 30 saniye → Yolda
+
+  // ─── DURUM ─────────────────────────────────────────────────
+  let activeTab = 'all';
+
+  // ─── LOCALSTORAGE ──────────────────────────────────────────
+  function loadOrders() {
+    return JSON.parse(localStorage.getItem('orders') || '[]');
+  }
+
+  function saveOrders(orders) {
+    localStorage.setItem('orders', JSON.stringify(orders));
+  }
+
+  // ─── DURUM HESAPLA ─────────────────────────────────────────
+  // İptal edilmemişse zamana göre durumu döner
+  function computeStatus(order) {
+    if (order.status === 'İptal Edildi') return 'İptal Edildi';
+    const elapsed = Date.now() - order.placedAt;
+    if (elapsed >= TOTAL_MS) return 'Teslim Edildi';
+    if (elapsed >= YOLDA_MS) return 'Yolda';
+    return 'Hazırlanıyor';
+  }
+
+  // ─── DURUM CONFİG ──────────────────────────────────────────
+  const STATUS_CONFIG = {
+    'Hazırlanıyor': {
+      badge: 'bg-yellow-500/20 text-yellow-400 animate-pulse',
+      icon: 'restaurant',
+      barColor: 'bg-yellow-400'
+    },
+    'Yolda': {
+      badge: 'bg-blue-500/20 text-blue-400',
+      icon: 'delivery_dining',
+      barColor: 'bg-blue-400'
+    },
+    'Teslim Edildi': {
+      badge: 'bg-emerald-500/20 text-emerald-400',
+      icon: 'check_circle',
+      barColor: 'bg-emerald-400'
+    },
+    'İptal Edildi': {
+      badge: 'bg-red-900/20 text-red-400',
+      icon: 'cancel',
+      barColor: ''
+    }
+  };
+
+  // ─── FİLTRELEME ────────────────────────────────────────────
+  function getFiltered(orders, tab) {
+    switch (tab) {
+      case 'active':    return orders.filter(o => o.status === 'Hazırlanıyor' || o.status === 'Yolda');
+      case 'completed': return orders.filter(o => o.status === 'Teslim Edildi');
+      case 'cancelled': return orders.filter(o => o.status === 'İptal Edildi');
+      default:          return orders;
+    }
+  }
+
+  // ─── SİPARİŞ KARTI HTML ────────────────────────────────────
+  function buildCard(order) {
+    const cfg       = STATUS_CONFIG[order.status] || STATUS_CONFIG['Hazırlanıyor'];
+    const elapsed   = Date.now() - order.placedAt;
+    const remaining = Math.max(0, TOTAL_MS - elapsed);
+    const progress  = Math.min(100, (elapsed / TOTAL_MS) * 100);
+    const mins      = Math.floor(remaining / 60000);
+    const secs      = Math.floor((remaining % 60000) / 1000);
+    const isActive  = order.status === 'Hazırlanıyor' || order.status === 'Yolda';
+    const isCancelled = order.status === 'İptal Edildi';
+
+    const countdownText = isActive
+      ? (remaining > 0 ? `Tahmini Teslimat: ${mins}dk ${secs}sn` : 'Az kaldı…')
+      : (order.status === 'Teslim Edildi' ? 'Teslim edildi!' : '');
+
+    const heroImage = order.items && order.items[0] && order.items[0].image
+      ? `<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              src="${order.items[0].image}" alt="${escHtml(order.items[0].name)}" />`
+      : `<div class="w-full h-full flex items-center justify-center bg-surface-container-high">
+           <span class="material-symbols-outlined text-6xl text-on-surface-variant">restaurant_menu</span>
+         </div>`;
+
+    const itemsText = order.items
+      ? order.items.map(i => `${i.qty}x ${escHtml(i.name)}`).join(', ')
+      : '';
+
+    const cancelBtn = order.status === 'Hazırlanıyor'
+      ? `<button onclick="cancelOrder('${order.id}')"
+                 class="px-5 py-2 rounded-full border border-red-500/30 text-red-400 text-sm font-bold
+                        hover:bg-red-500/10 transition-all active:scale-95">
+           Siparişi İptal Et
+         </button>`
+      : '';
+
+    return `
+      <div class="glass-card rounded-xl overflow-hidden p-6 flex flex-col md:flex-row items-center gap-8 group
+                  ${isCancelled ? 'opacity-60' : ''}">
+
+        <!-- Görsel -->
+        <div class="relative w-full md:w-48 h-48 rounded-lg overflow-hidden shrink-0
+                    ${isCancelled ? 'grayscale' : ''}">
+          ${heroImage}
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        </div>
+
+        <!-- İçerik -->
+        <div class="flex-grow w-full">
+
+          <!-- Üst satır: ID, restoran, rozet -->
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-start gap-4 mb-3">
+            <div>
+              <span class="text-[0.7rem] font-bold tracking-widest text-on-surface-variant uppercase">#${escHtml(order.id)}</span>
+              <h2 class="text-2xl font-bold mt-0.5">${escHtml(order.restaurantName)}</h2>
+              <span class="text-xs text-on-surface-variant">${escHtml(order.date)}</span>
+            </div>
+            <div class="flex flex-col items-start md:items-end gap-1.5 shrink-0">
+              <!-- Durum rozeti -->
+              <div id="badge-${order.id}"
+                   class="flex items-center gap-2 px-4 py-2 rounded-full ${cfg.badge}">
+                <span class="material-symbols-outlined text-sm">${cfg.icon}</span>
+                <span class="text-sm font-bold">${order.status}</span>
+              </div>
+              <!-- Geri sayım -->
+              ${isActive || order.status === 'Teslim Edildi'
+                ? `<span id="countdown-${order.id}" class="text-xs font-bold text-primary">${countdownText}</span>`
+                : ''}
+            </div>
+          </div>
+
+          <!-- Ürünler -->
+          <p class="text-on-surface-variant mb-4 text-base leading-relaxed">${itemsText}</p>
+
+          <!-- İlerleme çubuğu (sadece aktif siparişler) -->
+          ${isActive ? `
+          <div class="w-full bg-surface-container-high h-1.5 rounded-full mb-4 overflow-hidden">
+            <div id="progress-${order.id}"
+                 class="${cfg.barColor} h-full rounded-full transition-all duration-1000"
+                 style="width:${progress.toFixed(1)}%"></div>
+          </div>` : ''}
+
+          <!-- Alt satır: Fiyat + Butonlar -->
+          <div class="flex flex-wrap justify-between items-center gap-4">
+            <span class="text-3xl font-black ${isCancelled ? 'text-on-surface-variant' : 'text-primary'}">
+              ₺${order.total.toFixed(2)}
+            </span>
+            <div class="flex flex-wrap gap-3">
+              ${cancelBtn}
+              <button class="px-6 py-2 rounded-full border border-outline-variant/30 text-on-surface
+                             font-bold hover:bg-white/5 transition-all text-sm">
+                Detay
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>`;
+  }
+
+  // ─── HTML ESCAPE ───────────────────────────────────────────
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ─── TAM RENDER ────────────────────────────────────────────
+  function renderOrders() {
+    // Tüm durumları zamana göre güncelle ve kaydet
+    let orders = loadOrders();
+    orders.forEach(o => { o.status = computeStatus(o); });
+    saveOrders(orders);
+
+    const filtered  = getFiltered(orders, activeTab);
+    const container = document.getElementById('orders-container');
+
+    if (orders.length === 0) {
+      container.innerHTML = `
+        <div class="glass-card rounded-xl p-16 flex flex-col items-center gap-6 text-center">
+          <span class="material-symbols-outlined text-7xl text-on-surface-variant">receipt_long</span>
+          <h3 class="text-2xl font-bold">Henüz siparişiniz yok</h3>
+          <p class="text-on-surface-variant">Sipariş vermek için restoranlarımıza göz atın.</p>
+          <a href="restaurants.html"
+             class="signature-glow px-8 py-3 rounded-full text-on-primary font-bold uppercase tracking-wider
+                    text-sm hover:scale-105 transition-all">
+            Restoranları Keşfet
+          </a>
+        </div>`;
+      return;
+    }
+
+    if (filtered.length === 0) {
+      const labels = { active: 'aktif', completed: 'tamamlanmış', cancelled: 'iptal edilmiş' };
+      container.innerHTML = `
+        <div class="glass-card rounded-xl p-16 flex flex-col items-center gap-4 text-center">
+          <span class="material-symbols-outlined text-5xl text-on-surface-variant">inbox</span>
+          <p class="text-on-surface-variant text-lg">
+            ${labels[activeTab] || ''} sipariş bulunamadı.
+          </p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = filtered.map(buildCard).join('');
+  }
+
+  // ─── SADECE KAUNTDAUN & PROGRESS GÜNCELLEMESİ ─────────────
+  function updateLiveElements() {
+    const orders = loadOrders();
+    orders.forEach(order => {
+      if (order.status === 'İptal Edildi' || order.status === 'Teslim Edildi') return;
+
+      const countdownEl = document.getElementById(`countdown-${order.id}`);
+      const progressEl  = document.getElementById(`progress-${order.id}`);
+
+      const elapsed   = Date.now() - order.placedAt;
+      const remaining = Math.max(0, TOTAL_MS - elapsed);
+      const mins      = Math.floor(remaining / 60000);
+      const secs      = Math.floor((remaining % 60000) / 1000);
+
+      if (countdownEl) {
+        countdownEl.textContent = remaining > 0
+          ? `Tahmini Teslimat: ${mins}dk ${secs}sn`
+          : 'Az kaldı…';
+      }
+
+      if (progressEl) {
+        const pct = Math.min(100, (elapsed / TOTAL_MS) * 100);
+        progressEl.style.width = pct.toFixed(1) + '%';
+      }
+    });
+  }
+
+  // ─── TAB DEĞİŞTİR ──────────────────────────────────────────
+  function setTab(tab) {
+    activeTab = tab;
+    ['all', 'active', 'completed', 'cancelled'].forEach(t => {
+      const btn = document.getElementById('tab-' + t);
+      btn.className = `px-8 py-3 rounded-full transition-all duration-300 active:scale-95 ${t === tab ? 'tab-active' : 'tab-inactive'}`;
+    });
+    renderOrders();
+  }
+
+  // ─── SİPARİŞ İPTAL ─────────────────────────────────────────
+  function cancelOrder(orderId) {
+    let orders = loadOrders();
+    const order = orders.find(o => o.id === orderId);
+    if (!order || order.status !== 'Hazırlanıyor') return;
+    order.status = 'İptal Edildi';
+    saveOrders(orders);
+    renderOrders();
+  }
+
+  // ─── INTERVAL TİK ──────────────────────────────────────────
+  function tick() {
+    const orders = loadOrders();
+    let changed = false;
+
+    orders.forEach(o => {
+      if (o.status === 'İptal Edildi') return;
+      const newStatus = computeStatus(o);
+      if (newStatus !== o.status) {
+        o.status = newStatus;
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      saveOrders(orders);
+      renderOrders(); // durum değişti → tam yeniden render
+    } else {
+      updateLiveElements(); // sadece sayaçları güncelle
+    }
+  }
+
+  // ─── BAŞLAT ────────────────────────────────────────────────
+  renderOrders();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
