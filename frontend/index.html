@@ -305,26 +305,49 @@
     { id:7, name:"Akdeniz Sofrası",  category:"Akdeniz", emoji:"🫒", coverImage:_U+"photo-1544025162-d76694265947"+_Q,   rating:4.7, reviews:1050, deliveryTime:"25-40 dk", minOrder:110, deliveryFee:14, badge:"Sağlıklı",     badgeColor:"#2dd4bf" }
   ];
 
-  // ---- FAVORİ KATEGORİ ANALİZİ ----
-  function getFavoriteCategory() {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    if (cart.length === 0) return null;
-
-    // restaurantId → category eşlemesi
-    const idToCategory = {};
-    restaurants.forEach(r => { idToCategory[r.id] = r.category; });
-
-    // Her kategori için toplam adet say
-    const tally = {};
-    cart.forEach(item => {
-      const cat = idToCategory[item.restaurantId];
-      if (cat) tally[cat] = (tally[cat] || 0) + item.qty;
+  // ---- GEÇMİŞ ANALİZİ (orders → cart → null) ----
+  function analyzeHistory() {
+    const nameToCategory = {};
+    const idToCategory   = {};
+    restaurants.forEach(r => {
+      nameToCategory[r.name] = r.category;
+      idToCategory[r.id]     = r.category;
     });
 
-    if (Object.keys(tally).length === 0) return null;
+    // 1) Sipariş geçmişine bak
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const validOrders = orders.filter(o => o.status !== 'İptal Edildi');
+    if (validOrders.length > 0) {
+      const tally = {};
+      validOrders.forEach(order => {
+        const cat = nameToCategory[order.restaurantName];
+        if (!cat) return;
+        if (!tally[cat]) tally[cat] = { orderCount: 0, itemCount: 0 };
+        tally[cat].orderCount += 1;
+        tally[cat].itemCount  += (order.items || []).reduce((s, i) => s + (i.qty || 1), 0);
+      });
+      if (Object.keys(tally).length > 0) {
+        const [topCat, stats] = Object.entries(tally).sort((a, b) => b[1].itemCount - a[1].itemCount)[0];
+        return { category: topCat, orderCount: stats.orderCount, itemCount: stats.itemCount, source: 'orders' };
+      }
+    }
 
-    // En çok sipariş edilen kategori
-    return Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
+    // 2) Aktif sepete bak
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cart.length > 0) {
+      const tally = {};
+      cart.forEach(item => {
+        const cat = idToCategory[item.restaurantId];
+        if (cat) tally[cat] = (tally[cat] || 0) + (item.qty || 1);
+      });
+      if (Object.keys(tally).length > 0) {
+        const [topCat, qty] = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
+        return { category: topCat, orderCount: 0, itemCount: qty, source: 'cart' };
+      }
+    }
+
+    // 3) Veri yok
+    return null;
   }
 
   // ---- ÖNERİLEN RESTORANLAR ----
@@ -351,7 +374,7 @@
   }
 
   // ---- KART HTML ----
-  function buildCard(r, rank) {
+  function buildCard(r, rank, analysis) {
     const stars = '★'.repeat(Math.floor(r.rating)) + (r.rating % 1 >= 0.5 ? '½' : '');
     return `
       <div onclick="window.location.href='restaurant.html?id=${r.id}'"
@@ -411,6 +434,17 @@
             </span>
           </div>
 
+          ${analysis ? `
+          <div style="background:rgba(255,145,83,0.06);border:1px solid rgba(255,145,83,0.15);
+                      border-radius:0.75rem;padding:8px 12px;margin-bottom:14px;">
+            <p style="color:#adaaaa;font-size:11px;line-height:1.6;">
+              <span style="color:#ff9153;font-weight:700;">Neden bu öneri?</span>
+              ${analysis.source === 'orders'
+                ? ` Geçmişteki ${analysis.orderCount} ${analysis.category} siparişine dayanarak sana bu restoranı öneriyoruz!`
+                : ` Sepetindeki ${analysis.category} tercihine dayanarak bu restoranı sana öneriyoruz!`}
+            </p>
+          </div>` : ''}
+
           <button class="w-full py-3 rounded-full font-bold text-sm uppercase tracking-wider transition-all"
                   style="background:linear-gradient(135deg,#ff9153,#fd761a);color:#000;"
                   onmouseover="this.style.boxShadow='0 0 24px rgba(255,145,83,0.4)'"
@@ -423,21 +457,25 @@
 
   // ---- ARAYÜZÜ GÜNCELLE ----
   function renderRecommendations() {
-    const favCat  = getFavoriteCategory();
-    const picks   = getRecommendations(favCat);
+    const analysis    = analyzeHistory();
+    const favCat      = analysis ? analysis.category : null;
+    const picks       = getRecommendations(favCat);
     const subtitleEl  = document.getElementById('ai-subtitle');
     const noteTextEl  = document.getElementById('ai-note-text');
     const cardsEl     = document.getElementById('recommendation-cards');
 
-    if (favCat) {
-      subtitleEl.textContent  = `Favori mutfağın "${favCat}" — işte sana özel seçimlerimiz.`;
-      noteTextEl.textContent  = ` son sepet tercihlerine dayanarak "${favCat}" kategorisindeki en iyi restoranları senin için buldu!`;
+    if (analysis && analysis.source === 'orders') {
+      subtitleEl.textContent = `Favori mutfağın "${favCat}" — işte sana özel seçimlerimiz.`;
+      noteTextEl.textContent = ` geçmişteki ${analysis.orderCount} ${favCat} siparişine dayanarak sana bu restoranları öneriyor!`;
+    } else if (analysis && analysis.source === 'cart') {
+      subtitleEl.textContent = `Sepetindeki tercihlerine göre "${favCat}" önerileri hazırlandı.`;
+      noteTextEl.textContent = ` aktif sepetindeki "${favCat}" tercihine dayanarak en iyi restoranları buldu!`;
     } else {
-      subtitleEl.textContent  = 'Henüz sipariş geçmişin yok — şimdi en popüler restoranlara bak.';
-      noteTextEl.textContent  = ' şu an en yüksek puanlı ve en popüler restoranları öneriyor. İlk siparişini ver, sana özel öneriler başlasın!';
+      subtitleEl.textContent = 'Henüz sipariş geçmişin yok — şimdi en popüler restoranlara bak.';
+      noteTextEl.textContent = ' şu an en yüksek puanlı ve en popüler restoranları öneriyor. İlk siparişini ver, sana özel öneriler başlasın!';
     }
 
-    cardsEl.innerHTML = picks.map((r, i) => buildCard(r, i + 1)).join('');
+    cardsEl.innerHTML = picks.map((r, i) => buildCard(r, i + 1, analysis)).join('');
   }
 
   renderRecommendations();
