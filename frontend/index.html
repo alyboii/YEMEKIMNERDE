@@ -99,11 +99,24 @@
 <a class="text-neutral-400 hover:text-white transition-colors duration-300" href="#">Kampanyalar</a>
 <a class="text-neutral-400 hover:text-white transition-colors duration-300" href="#">Kurye Ol</a>
 </div>
-<div class="flex items-center gap-4">
+<div class="flex items-center gap-4" id="navAuthArea">
 <button class="text-white font-medium hover:text-orange-500 transition-colors duration-300 scale-95 active:scale-90 transition-transform" onclick="window.location.href='login.html'">Giriş Yap</button>
 <button class="bg-primary-container text-on-primary-fixed px-6 py-2.5 rounded-full font-bold hover:shadow-[0_0_20px_rgba(255,122,35,0.4)] transition-all scale-95 active:scale-90 transition-transform" onclick="window.location.href='register.html'">Kayıt Ol</button>
 </div>
 </nav>
+<script>
+// Giriş yapılmışsa nav'ı güncelle
+(function() {
+  const token = localStorage.getItem('token');
+  if (token) {
+    const area = document.getElementById('navAuthArea');
+    area.innerHTML = `
+      <button onclick="window.location.href='profile.html'" class="text-white font-medium hover:text-orange-500 transition-colors duration-300">Profilim</button>
+      <button onclick="localStorage.clear(); window.location.reload();" class="bg-primary-container text-on-primary-fixed px-6 py-2.5 rounded-full font-bold hover:shadow-[0_0_20px_rgba(255,122,35,0.4)] transition-all">Çıkış</button>
+    `;
+  }
+})();
+</script>
 <main>
 <!-- Hero Section -->
 <section class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-surface">
@@ -437,7 +450,7 @@
 <div class="text-xl font-black text-white uppercase">YEMEKİMNEREDE</div>
 <div class="flex flex-wrap justify-center gap-8 text-neutral-500">
 <a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Hakkımızda</a>
-<a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Restoranlar</a>
+<a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="restaurants.html">Restoranlar</a>
 <a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Kurye Ol</a>
 <a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Yardım</a>
 <a class="hover:text-white transition-all opacity-80 hover:opacity-100" href="#">Gizlilik Politikası</a>
