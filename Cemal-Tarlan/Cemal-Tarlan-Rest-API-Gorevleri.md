@@ -316,7 +316,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 | Koleksiyon Değişkeni | Açıklama |
 |----------------------|----------|
-| `{{baseUrl}}` | `http://localhost:3000/v1` |
+| `{{baseUrl}}` | `https://yemekimnerde.vercel.app/v1` |
 | `{{token}}` | Giriş sonrası alınan JWT token |
 | `{{restaurantId}}` | Test edilecek restoran ObjectId |
 | `{{itemId}}` | Test edilecek menü öğesi ObjectId |
