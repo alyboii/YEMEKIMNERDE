@@ -150,40 +150,42 @@
 
 <script>
   // ---- DATA ----
+  const UNS = "https://images.unsplash.com/";
+  const Q   = "?auto=format&fit=crop&w=400&q=80";
+  const QC  = "?auto=format&fit=crop&w=800&q=85"; // cover (büyük)
+
   const restaurantData = {
     1: {
       id: 1, name: "Burger House", emoji: "🍔", category: "Burger",
       description: "Özenle seçilmiş malzemelerle hazırlanan gurme burgerler. Her lokma bir deneyim.",
       rating: 4.8, reviews: 1240, deliveryTime: "20-30 dk", minOrder: 80, deliveryFee: 15,
       badge: "Çok Popüler", badgeColor: "bg-orange-500/20 text-orange-400",
+      coverImage: UNS+"photo-1568901346375-23c9450c58cd"+QC,
       menu: [
         {
-          category: "Burgerler",
-          emoji: "🍔",
+          category: "Burgerler", emoji: "🍔",
           items: [
-            { id: "b1", name: "Classic Smash Burger", desc: "200gr dana eti, çedar peyniri, özel sos, turşu, domates, marul", price: 185, emoji: "🍔", popular: true },
-            { id: "b2", name: "BBQ Bacon Burger", desc: "200gr dana eti, çıtır bacon, BBQ sos, soğan halkası, jalapeno", price: 210, emoji: "🥓", popular: false },
-            { id: "b3", name: "Double Smash", desc: "2x150gr dana eti, double çedar, özel sos, karamelize soğan", price: 260, emoji: "🍔", popular: true },
-            { id: "b4", name: "Mushroom Swiss Burger", desc: "200gr dana eti, sautéed mantar, İsviçre peyniri, trüf mayonez", price: 230, emoji: "🍄", popular: false },
-            { id: "b5", name: "Vegan Black Bean", desc: "Siyah fasulye pattie, avokado, domates salsa, vegan mayonez", price: 175, emoji: "🥑", popular: false },
+            { id:"b1", name:"Classic Smash Burger",       desc:"200gr dana eti, çedar peyniri, özel sos, turşu, domates, marul",       price:185, popular:true,  image:UNS+"photo-1568901346375-23c9450c58cd"+Q },
+            { id:"b2", name:"BBQ Bacon Burger",           desc:"200gr dana eti, çıtır bacon, BBQ sos, soğan halkası, jalapeno",        price:210, popular:false, image:UNS+"photo-1553979459-d2229ba7433b"+Q },
+            { id:"b3", name:"Double Smash",               desc:"2x150gr dana eti, double çedar, özel sos, karamelize soğan",          price:260, popular:true,  image:UNS+"photo-1586190848861-99aa4a171e90"+Q },
+            { id:"b4", name:"Mushroom Swiss Burger",      desc:"200gr dana eti, sautéed mantar, İsviçre peyniri, trüf mayonez",       price:230, popular:false, image:UNS+"photo-1572802419224-296b0aeee0d9"+Q },
+            { id:"b5", name:"Vegan Black Bean",           desc:"Siyah fasulye pattie, avokado, domates salsa, vegan mayonez",         price:175, popular:false, image:UNS+"photo-1520072959219-c595dc870360"+Q },
           ]
         },
         {
-          category: "Yanlar",
-          emoji: "🍟",
+          category: "Yanlar", emoji: "🍟",
           items: [
-            { id: "b6", name: "Klasik Patates Kızartması", desc: "Crispy çubuk patates, özel bahar", price: 60, emoji: "🍟", popular: true },
-            { id: "b7", name: "Soğan Halkası", desc: "Çıtır unlu soğan halkası, ranch sos", price: 75, emoji: "🧅", popular: false },
-            { id: "b8", name: "Mozarella Sticks", desc: "6 adet çıtır mozarella, marina sos", price: 90, emoji: "🧀", popular: false },
+            { id:"b6", name:"Klasik Patates Kızartması",  desc:"Crispy çubuk patates, özel bahar",                                    price:60,  popular:true,  image:UNS+"photo-1573080496219-bb080dd4f877"+Q },
+            { id:"b7", name:"Soğan Halkası",              desc:"Çıtır unlu soğan halkası, ranch sos",                                price:75,  popular:false, image:UNS+"photo-1639024471283-03518883512d"+Q },
+            { id:"b8", name:"Mozarella Sticks",           desc:"6 adet çıtır mozarella, marina sos",                                 price:90,  popular:false, image:UNS+"photo-1541592106381-b31e9677c0e5"+Q },
           ]
         },
         {
-          category: "İçecekler",
-          emoji: "🥤",
+          category: "İçecekler", emoji: "🥤",
           items: [
-            { id: "b9", name: "Milkshake", desc: "Çikolata / Çilek / Vanilya seçenekli", price: 85, emoji: "🥛", popular: false },
-            { id: "b10", name: "Taze Sıkılmış Portakal", desc: "300ml taze sıkılmış", price: 55, emoji: "🍊", popular: false },
-            { id: "b11", name: "Cola / Sprite / Fanta", desc: "330ml kutu", price: 35, emoji: "🥤", popular: false },
+            { id:"b9",  name:"Milkshake",                 desc:"Çikolata / Çilek / Vanilya seçenekli",                               price:85,  popular:false, image:UNS+"photo-1572490122747-3e9d0c7b5e52"+Q },
+            { id:"b10", name:"Taze Sıkılmış Portakal",    desc:"300ml taze sıkılmış",                                                price:55,  popular:false, image:UNS+"photo-1621506289937-a8e4df240d0b"+Q },
+            { id:"b11", name:"Cola / Sprite / Fanta",     desc:"330ml kutu",                                                         price:35,  popular:false, image:UNS+"photo-1525385133512-2f3bdd039054"+Q },
           ]
         }
       ]
@@ -193,33 +195,31 @@
       description: "Japonya'nın geleneksel tatlarını İstanbul'a taşıyan otantik sushi deneyimi.",
       rating: 4.9, reviews: 875, deliveryTime: "30-45 dk", minOrder: 150, deliveryFee: 20,
       badge: "Premium", badgeColor: "bg-purple-500/20 text-purple-400",
+      coverImage: UNS+"photo-1579871494447-9811cf80d66c"+QC,
       menu: [
         {
-          category: "Maki & Nigiri",
-          emoji: "🍣",
+          category: "Maki & Nigiri", emoji: "🍣",
           items: [
-            { id: "s1", name: "Salmon Nigiri (4 adet)", desc: "Taze somon, sushi pirinci, wasabi", price: 145, emoji: "🍣", popular: true },
-            { id: "s2", name: "Tuna Maki (8 adet)", desc: "Ton balığı, avokado, nori", price: 130, emoji: "🐟", popular: false },
-            { id: "s3", name: "Spicy Salmon Roll (8 adet)", desc: "Somon, sriracha mayo, salatalık, tobiko", price: 155, emoji: "🌶️", popular: true },
-            { id: "s4", name: "Rainbow Roll (8 adet)", desc: "Ton, somon, hamachi, avokado, salatalık", price: 195, emoji: "🌈", popular: true },
-            { id: "s5", name: "Shrimp Tempura Roll (6 adet)", desc: "Tempura karides, avokado, sos", price: 175, emoji: "🍤", popular: false },
+            { id:"s1", name:"Salmon Nigiri (4 adet)",     desc:"Taze somon, sushi pirinci, wasabi",                                   price:145, popular:true,  image:UNS+"photo-1617196034183-421b4040ed20"+Q },
+            { id:"s2", name:"Tuna Maki (8 adet)",         desc:"Ton balığı, avokado, nori",                                          price:130, popular:false, image:UNS+"photo-1611143669185-af224c5e3252"+Q },
+            { id:"s3", name:"Spicy Salmon Roll (8 adet)", desc:"Somon, sriracha mayo, salatalık, tobiko",                            price:155, popular:true,  image:UNS+"photo-1562802378-063ec186a863"+Q },
+            { id:"s4", name:"Rainbow Roll (8 adet)",      desc:"Ton, somon, hamachi, avokado, salatalık",                            price:195, popular:true,  image:UNS+"photo-1617196034096-2186592926c9"+Q },
+            { id:"s5", name:"Shrimp Tempura Roll (6 adet)",desc:"Tempura karides, avokado, sos",                                    price:175, popular:false, image:UNS+"photo-1559410545-0bdcd187e0a6"+Q },
           ]
         },
         {
-          category: "Ramen & Soup",
-          emoji: "🍜",
+          category: "Ramen & Soup", emoji: "🍜",
           items: [
-            { id: "s6", name: "Tonkotsu Ramen", desc: "Domuz suyu bazlı, chashu, yumurta, nori, menma", price: 220, emoji: "🍜", popular: true },
-            { id: "s7", name: "Miso Soup", desc: "Beyaz miso, tofu, wakame, yeşil soğan", price: 65, emoji: "🥣", popular: false },
-            { id: "s8", name: "Edamame", desc: "Tuzlu haşlanmış soya fasulyesi", price: 55, emoji: "🫛", popular: false },
+            { id:"s6", name:"Tonkotsu Ramen",             desc:"Domuz suyu bazlı, chashu, yumurta, nori, menma",                     price:220, popular:true,  image:UNS+"photo-1569718212165-3a8278d5f624"+Q },
+            { id:"s7", name:"Miso Soup",                  desc:"Beyaz miso, tofu, wakame, yeşil soğan",                              price:65,  popular:false, image:UNS+"photo-1547592180-85f173990554"+Q },
+            { id:"s8", name:"Edamame",                    desc:"Tuzlu haşlanmış soya fasulyesi",                                     price:55,  popular:false, image:UNS+"photo-1615361200141-f45040f367be"+Q },
           ]
         },
         {
-          category: "İçecekler",
-          emoji: "🍵",
+          category: "İçecekler", emoji: "🍵",
           items: [
-            { id: "s9", name: "Yeşil Çay (Sıcak)", desc: "Japon matcha çayı", price: 45, emoji: "🍵", popular: false },
-            { id: "s10", name: "Yuzu Lemonade", desc: "Japon yuzu limonata, buz", price: 75, emoji: "🍋", popular: false },
+            { id:"s9",  name:"Yeşil Çay (Sıcak)",         desc:"Japon matcha çayı",                                                  price:45,  popular:false, image:UNS+"photo-1556679343-c7306c1976bc"+Q },
+            { id:"s10", name:"Yuzu Lemonade",              desc:"Japon yuzu limonata, buz",                                          price:75,  popular:false, image:UNS+"photo-1621506289937-a8e4df240d0b"+Q },
           ]
         }
       ]
@@ -229,34 +229,32 @@
       description: "Taş fırında pişirilmiş, İtalyan usulü ince hamurlu pizzalar.",
       rating: 4.7, reviews: 2100, deliveryTime: "25-35 dk", minOrder: 100, deliveryFee: 12,
       badge: "Yeni", badgeColor: "bg-green-500/20 text-green-400",
+      coverImage: UNS+"photo-1574071318508-1cdbab80d002"+QC,
       menu: [
         {
-          category: "Pizzalar",
-          emoji: "🍕",
+          category: "Pizzalar", emoji: "🍕",
           items: [
-            { id: "p1", name: "Margherita", desc: "San Marzano domates, mozzarella di bufala, fesleğen, zeytinyağı", price: 160, emoji: "🍕", popular: true },
-            { id: "p2", name: "Diavola", desc: "Domates, mozzarella, acı sucuk, jalapeno, kırmızı biber", price: 195, emoji: "🌶️", popular: true },
-            { id: "p3", name: "Quattro Stagioni", desc: "4 mevsim pizzası: mantar, ham, enginar, zeytin", price: 210, emoji: "🍄", popular: false },
-            { id: "p4", name: "Truffle Funghi", desc: "Krem trüf sos, mantar karışımı, parmigiano, roka", price: 245, emoji: "🫕", popular: true },
-            { id: "p5", name: "Prosciutto e Rucola", desc: "Prosciutto crudo, taze roka, parmigiano reggiano", price: 230, emoji: "🥩", popular: false },
-            { id: "p6", name: "Vegan Primavera", desc: "Domates sos, mevsim sebzeleri, vegan peynir", price: 175, emoji: "🌿", popular: false },
+            { id:"p1", name:"Margherita",                 desc:"San Marzano domates, mozzarella di bufala, fesleğen, zeytinyağı",   price:160, popular:true,  image:UNS+"photo-1574071318508-1cdbab80d002"+Q },
+            { id:"p2", name:"Diavola",                    desc:"Domates, mozzarella, acı sucuk, jalapeno, kırmızı biber",           price:195, popular:true,  image:UNS+"photo-1565299624946-b28f40a0ae38"+Q },
+            { id:"p3", name:"Quattro Stagioni",           desc:"4 mevsim pizzası: mantar, ham, enginar, zeytin",                   price:210, popular:false, image:UNS+"photo-1548369937-47519962c11a"+Q },
+            { id:"p4", name:"Truffle Funghi",             desc:"Krem trüf sos, mantar karışımı, parmigiano, roka",                  price:245, popular:true,  image:UNS+"photo-1571997478779-2adcbbe9ab2f"+Q },
+            { id:"p5", name:"Prosciutto e Rucola",        desc:"Prosciutto crudo, taze roka, parmigiano reggiano",                  price:230, popular:false, image:UNS+"photo-1513104890138-7c749659a591"+Q },
+            { id:"p6", name:"Vegan Primavera",            desc:"Domates sos, mevsim sebzeleri, vegan peynir",                       price:175, popular:false, image:UNS+"photo-1574071318508-1cdbab80d002"+Q },
           ]
         },
         {
-          category: "Makarnalar",
-          emoji: "🍝",
+          category: "Makarnalar", emoji: "🍝",
           items: [
-            { id: "p7", name: "Cacio e Pepe", desc: "Spaghetti, pecorino romano, taze karabiber", price: 150, emoji: "🍝", popular: true },
-            { id: "p8", name: "Carbonara", desc: "Spaghetti, guanciale, yumurta sarısı, pecorino", price: 175, emoji: "🥚", popular: false },
-            { id: "p9", name: "Penne Arrabbiata", desc: "Penne, acı domates sos, sarımsak, fesleğen", price: 140, emoji: "🍅", popular: false },
+            { id:"p7", name:"Cacio e Pepe",               desc:"Spaghetti, pecorino romano, taze karabiber",                        price:150, popular:true,  image:UNS+"photo-1555949258-eb67b1ef0ceb"+Q },
+            { id:"p8", name:"Carbonara",                  desc:"Spaghetti, guanciale, yumurta sarısı, pecorino",                    price:175, popular:false, image:UNS+"photo-1612874742237-6526221588e3"+Q },
+            { id:"p9", name:"Penne Arrabbiata",           desc:"Penne, acı domates sos, sarımsak, fesleğen",                        price:140, popular:false, image:UNS+"photo-1621996346565-e3dbc353d2e5"+Q },
           ]
         },
         {
-          category: "Tatlılar",
-          emoji: "🍮",
+          category: "Tatlılar", emoji: "🍮",
           items: [
-            { id: "p10", name: "Tiramisu", desc: "Klasik İtalyan tiramisu, mascarpone, kahve", price: 95, emoji: "☕", popular: true },
-            { id: "p11", name: "Panna Cotta", desc: "Vanilya panna cotta, çilek coulis", price: 85, emoji: "🍮", popular: false },
+            { id:"p10", name:"Tiramisu",                  desc:"Klasik İtalyan tiramisu, mascarpone, kahve",                        price:95,  popular:true,  image:UNS+"photo-1571877227200-a0d98ea607e9"+Q },
+            { id:"p11", name:"Panna Cotta",               desc:"Vanilya panna cotta, çilek coulis",                                 price:85,  popular:false, image:UNS+"photo-1488477304112-4944851de03d"+Q },
           ]
         }
       ]
@@ -266,35 +264,33 @@
       description: "Antep'ten gelen ustalar eliyle hazırlanan geleneksel Türk kebapları.",
       rating: 4.6, reviews: 3400, deliveryTime: "15-25 dk", minOrder: 60, deliveryFee: 10,
       badge: "Yerel Lezzet", badgeColor: "bg-red-500/20 text-red-400",
+      coverImage: UNS+"photo-1599487488170-d11ec9c172f0"+QC,
       menu: [
         {
-          category: "Kebaplar",
-          emoji: "🥩",
+          category: "Kebaplar", emoji: "🥩",
           items: [
-            { id: "k1", name: "Adana Kebap", desc: "Kıymalı acılı kebap, lavaş, közlenmiş domates ve biber", price: 145, emoji: "🥩", popular: true },
-            { id: "k2", name: "Urfa Kebap", desc: "Kıymalı sade kebap, lavaş, sumak soğan", price: 140, emoji: "🫕", popular: true },
-            { id: "k3", name: "Tavuk Şiş", desc: "Marine tavuk şiş, pilav, közlenmiş sebze", price: 125, emoji: "🍗", popular: false },
-            { id: "k4", name: "Kuzu Şiş", desc: "Taze kuzu but şiş, basmati pilav, yoğurt sos", price: 175, emoji: "🐑", popular: true },
-            { id: "k5", name: "Karışık Izgara", desc: "Adana + Tavuk şiş + Kuzu pirzola, pilav, salata", price: 280, emoji: "🍢", popular: false },
-            { id: "k6", name: "Lahmacun (3 adet)", desc: "İnce hamurun üzerinde kıymalı harç, limon, maydanoz", price: 90, emoji: "🫓", popular: true },
+            { id:"k1", name:"Adana Kebap",                desc:"Kıymalı acılı kebap, lavaş, közlenmiş domates ve biber",            price:145, popular:true,  image:UNS+"photo-1599487488170-d11ec9c172f0"+Q },
+            { id:"k2", name:"Urfa Kebap",                 desc:"Kıymalı sade kebap, lavaş, sumak soğan",                            price:140, popular:true,  image:UNS+"photo-1625937329935-1be9a5f7eb01"+Q },
+            { id:"k3", name:"Tavuk Şiş",                  desc:"Marine tavuk şiş, pilav, közlenmiş sebze",                          price:125, popular:false, image:UNS+"photo-1603360946369-dc9bb6258143"+Q },
+            { id:"k4", name:"Kuzu Şiş",                   desc:"Taze kuzu but şiş, basmati pilav, yoğurt sos",                     price:175, popular:true,  image:UNS+"photo-1544025162-d76694265947"+Q },
+            { id:"k5", name:"Karışık Izgara",             desc:"Adana + Tavuk şiş + Kuzu pirzola, pilav, salata",                   price:280, popular:false, image:UNS+"photo-1529006557810-274b9b2fc783"+Q },
+            { id:"k6", name:"Lahmacun (3 adet)",          desc:"İnce hamurun üzerinde kıymalı harç, limon, maydanoz",              price:90,  popular:true,  image:UNS+"photo-1602030638412-bb8dcc0bc8b0"+Q },
           ]
         },
         {
-          category: "Mezeler",
-          emoji: "🥗",
+          category: "Mezeler", emoji: "🥗",
           items: [
-            { id: "k7", name: "Humus", desc: "Ev yapımı humus, zeytinyağı, pul biber, pita", price: 65, emoji: "🧆", popular: false },
-            { id: "k8", name: "Cacık", desc: "Yoğurt, salatalık, sarımsak, nane", price: 45, emoji: "🥒", popular: false },
-            { id: "k9", name: "Patlıcan Salatası", desc: "Közlenmiş patlıcan, sarımsak, limon", price: 70, emoji: "🍆", popular: false },
+            { id:"k7", name:"Humus",                      desc:"Ev yapımı humus, zeytinyağı, pul biber, pita",                     price:65,  popular:false, image:UNS+"photo-1604909052743-94e838986d24"+Q },
+            { id:"k8", name:"Cacık",                      desc:"Yoğurt, salatalık, sarımsak, nane",                                 price:45,  popular:false, image:UNS+"photo-1563245372-f21724e3856d"+Q },
+            { id:"k9", name:"Patlıcan Salatası",          desc:"Közlenmiş patlıcan, sarımsak, limon",                               price:70,  popular:false, image:UNS+"photo-1540420773420-3366772f4999"+Q },
           ]
         },
         {
-          category: "İçecekler & Tatlılar",
-          emoji: "🥛",
+          category: "İçecekler & Tatlılar", emoji: "🥛",
           items: [
-            { id: "k10", name: "Ayran", desc: "Köy yapımı ayran, 400ml", price: 30, emoji: "🥛", popular: true },
-            { id: "k11", name: "Şalgam", desc: "Acı / sade şalgam suyu", price: 30, emoji: "🫙", popular: false },
-            { id: "k12", name: "Baklava (4 dilim)", desc: "Antep fıstıklı geleneksel baklava", price: 110, emoji: "🍯", popular: true },
+            { id:"k10", name:"Ayran",                     desc:"Köy yapımı ayran, 400ml",                                           price:30,  popular:true,  image:UNS+"photo-1567620832903-9fc6debc209f"+Q },
+            { id:"k11", name:"Şalgam",                    desc:"Acı / sade şalgam suyu",                                            price:30,  popular:false, image:UNS+"photo-1513558161293-cdaf765ed2fd"+Q },
+            { id:"k12", name:"Baklava (4 dilim)",         desc:"Antep fıstıklı geleneksel baklava",                                 price:110, popular:true,  image:UNS+"photo-1613919113640-25732ec5e61f"+Q },
           ]
         }
       ]
@@ -304,34 +300,32 @@
       description: "Çin, Tayland ve Vietnam mutfaklarından seçmeler. Asya sokak lezzetleri.",
       rating: 4.5, reviews: 680, deliveryTime: "20-30 dk", minOrder: 90, deliveryFee: 15,
       badge: "Vegane Seçenek", badgeColor: "bg-emerald-500/20 text-emerald-400",
+      coverImage: UNS+"photo-1562565652-a0d8f0c59eb4"+QC,
       menu: [
         {
-          category: "Wok Yemekleri",
-          emoji: "🥘",
+          category: "Wok Yemekleri", emoji: "🥘",
           items: [
-            { id: "w1", name: "Pad Thai (Tavuk)", desc: "Rice noodle, tavuk, yumurta, fıstık, yeşil soğan, tamarind sos", price: 155, emoji: "🍜", popular: true },
-            { id: "w2", name: "Pad Thai (Karides)", desc: "Rice noodle, jumbo karides, fıstık, tamarind sos", price: 185, emoji: "🦐", popular: true },
-            { id: "w3", name: "Kung Pao Chicken", desc: "Tavuk, yer fıstığı, kuru biber, Sichuan sos", price: 160, emoji: "🌶️", popular: false },
-            { id: "w4", name: "Green Curry", desc: "Yeşil köri, hindistancevizi sütü, sebze, jasmine pirinç", price: 150, emoji: "🍛", popular: false },
-            { id: "w5", name: "Vegan Tofu Stir Fry", desc: "Crispy tofu, karışık sebze, soya sos, susam yağı", price: 140, emoji: "🫘", popular: false },
+            { id:"w1", name:"Pad Thai (Tavuk)",           desc:"Rice noodle, tavuk, yumurta, fıstık, yeşil soğan, tamarind sos",   price:155, popular:true,  image:UNS+"photo-1562565652-a0d8f0c59eb4"+Q },
+            { id:"w2", name:"Pad Thai (Karides)",         desc:"Rice noodle, jumbo karides, fıstık, tamarind sos",                  price:185, popular:true,  image:UNS+"photo-1559314809-0d155014e29e"+Q },
+            { id:"w3", name:"Kung Pao Chicken",           desc:"Tavuk, yer fıstığı, kuru biber, Sichuan sos",                       price:160, popular:false, image:UNS+"photo-1603360946369-dc9bb6258143"+Q },
+            { id:"w4", name:"Green Curry",                desc:"Yeşil köri, hindistancevizi sütü, sebze, jasmine pirinç",           price:150, popular:false, image:UNS+"photo-1455619452474-d2be8b1e70cd"+Q },
+            { id:"w5", name:"Vegan Tofu Stir Fry",        desc:"Crispy tofu, karışık sebze, soya sos, susam yağı",                  price:140, popular:false, image:UNS+"photo-1546069901-ba9599a7e63c"+Q },
           ]
         },
         {
-          category: "Dim Sum & Başlangıçlar",
-          emoji: "🥟",
+          category: "Dim Sum & Başlangıçlar", emoji: "🥟",
           items: [
-            { id: "w6", name: "Gyoza (6 adet)", desc: "Buharda veya kızarmış, tavuk + lahana, ponzu sos", price: 95, emoji: "🥟", popular: true },
-            { id: "w7", name: "Spring Roll (4 adet)", desc: "Çıtır bahar rulo, sebze dolgusu, tatlı acı sos", price: 80, emoji: "🌿", popular: false },
-            { id: "w8", name: "Edamame", desc: "Deniz tuzlu haşlanmış edamame", price: 55, emoji: "🫛", popular: false },
+            { id:"w6", name:"Gyoza (6 adet)",             desc:"Buharda veya kızarmış, tavuk + lahana, ponzu sos",                  price:95,  popular:true,  image:UNS+"photo-1563245372-f21724e3856d"+Q },
+            { id:"w7", name:"Spring Roll (4 adet)",       desc:"Çıtır bahar rulo, sebze dolgusu, tatlı acı sos",                   price:80,  popular:false, image:UNS+"photo-1548369937-47519962c11a"+Q },
+            { id:"w8", name:"Edamame",                    desc:"Deniz tuzlu haşlanmış edamame",                                     price:55,  popular:false, image:UNS+"photo-1615361200141-f45040f367be"+Q },
           ]
         },
         {
-          category: "İçecekler",
-          emoji: "🧋",
+          category: "İçecekler", emoji: "🧋",
           items: [
-            { id: "w9", name: "Bubble Tea (Taro)", desc: "Taro sütlü çay, tapioka inci", price: 85, emoji: "🧋", popular: true },
-            { id: "w10", name: "Thai Iced Tea", desc: "Siyah çay, yoğunlaştırılmış süt, buz", price: 70, emoji: "🍵", popular: false },
-            { id: "w11", name: "Lychee Soda", desc: "Liçi aromalı gazlı içecek", price: 45, emoji: "🥤", popular: false },
+            { id:"w9",  name:"Bubble Tea (Taro)",         desc:"Taro sütlü çay, tapioka inci",                                      price:85,  popular:true,  image:UNS+"photo-1558618666-fcd25c85cd64"+Q },
+            { id:"w10", name:"Thai Iced Tea",             desc:"Siyah çay, yoğunlaştırılmış süt, buz",                             price:70,  popular:false, image:UNS+"photo-1547592180-85f173990554"+Q },
+            { id:"w11", name:"Lychee Soda",               desc:"Liçi aromalı gazlı içecek",                                         price:45,  popular:false, image:UNS+"photo-1625772452859-1c03d884dcd7"+Q },
           ]
         }
       ]
@@ -341,33 +335,31 @@
       description: "Meksika sokaklarından ilham alan otantik tacos, burrito ve nacho tarifleri.",
       rating: 4.4, reviews: 520, deliveryTime: "20-35 dk", minOrder: 75, deliveryFee: 18,
       badge: "Acılı Seçenek", badgeColor: "bg-rose-500/20 text-rose-400",
+      coverImage: UNS+"photo-1565299585323-38d6b0865b47"+QC,
       menu: [
         {
-          category: "Tacos",
-          emoji: "🌮",
+          category: "Tacos", emoji: "🌮",
           items: [
-            { id: "t1", name: "Carne Asada Tacos (3 adet)", desc: "Izgara dana eti, salsa verde, soğan, kişniş, lime", price: 145, emoji: "🌮", popular: true },
-            { id: "t2", name: "Al Pastor Tacos (3 adet)", desc: "Ananaslı pork, chipotle sos, kişniş, soğan", price: 140, emoji: "🍍", popular: true },
-            { id: "t3", name: "Fish Tacos (3 adet)", desc: "Panko kaplamalı balık, lahana slaw, avokado kreması", price: 155, emoji: "🐟", popular: false },
-            { id: "t4", name: "Vegan Black Bean Tacos (3 adet)", desc: "Siyah fasulye, mango salsa, guacamole, lime", price: 125, emoji: "🥑", popular: false },
+            { id:"t1", name:"Carne Asada Tacos (3 adet)", desc:"Izgara dana eti, salsa verde, soğan, kişniş, lime",                price:145, popular:true,  image:UNS+"photo-1565299585323-38d6b0865b47"+Q },
+            { id:"t2", name:"Al Pastor Tacos (3 adet)",   desc:"Ananaslı pork, chipotle sos, kişniş, soğan",                       price:140, popular:true,  image:UNS+"photo-1552332386-f8dd00dc2f85"+Q },
+            { id:"t3", name:"Fish Tacos (3 adet)",        desc:"Panko kaplamalı balık, lahana slaw, avokado kreması",               price:155, popular:false, image:UNS+"photo-1551504734-5ee1c4a1479b"+Q },
+            { id:"t4", name:"Vegan Black Bean Tacos (3 adet)",desc:"Siyah fasulye, mango salsa, guacamole, lime",                  price:125, popular:false, image:UNS+"photo-1605591419634-bbcd64f89e40"+Q },
           ]
         },
         {
-          category: "Burrito & Nachos",
-          emoji: "🌯",
+          category: "Burrito & Nachos", emoji: "🌯",
           items: [
-            { id: "t5", name: "Chicken Burrito", desc: "Tavuk, pirinç, fasulye, çedar, ekşi krema, guacamole", price: 175, emoji: "🌯", popular: true },
-            { id: "t6", name: "Beef Burrito Supreme", desc: "Dana kıyma, pirinç, pinto fasulye, 3 peynir, pico de gallo", price: 195, emoji: "🫔", popular: false },
-            { id: "t7", name: "Loaded Nachos", desc: "Tortilla cips, 3 peynir, jalapeño, guacamole, sour cream", price: 130, emoji: "🧀", popular: true },
+            { id:"t5", name:"Chicken Burrito",            desc:"Tavuk, pirinç, fasulye, çedar, ekşi krema, guacamole",             price:175, popular:true,  image:UNS+"photo-1626700051175-6818013e1d4f"+Q },
+            { id:"t6", name:"Beef Burrito Supreme",       desc:"Dana kıyma, pirinç, pinto fasulye, 3 peynir, pico de gallo",       price:195, popular:false, image:UNS+"photo-1553979459-d2229ba7433b"+Q },
+            { id:"t7", name:"Loaded Nachos",              desc:"Tortilla cips, 3 peynir, jalapeño, guacamole, sour cream",         price:130, popular:true,  image:UNS+"photo-1513456852971-30c0b8199d4d"+Q },
           ]
         },
         {
-          category: "Yanlar & İçecekler",
-          emoji: "🍹",
+          category: "Yanlar & İçecekler", emoji: "🍹",
           items: [
-            { id: "t8", name: "Guacamole & Chips", desc: "Taze avokado guacamole, tortilla cips", price: 85, emoji: "🥑", popular: false },
-            { id: "t9", name: "Horchata", desc: "Geleneksel Meksika pirinç içeceği, tarçın, vanilya", price: 55, emoji: "🥛", popular: false },
-            { id: "t10", name: "Mango Limonata", desc: "Taze mango, limon, sparkling su", price: 60, emoji: "🥭", popular: false },
+            { id:"t8",  name:"Guacamole & Chips",         desc:"Taze avokado guacamole, tortilla cips",                             price:85,  popular:false, image:UNS+"photo-1615397349754-cfa2066a298e"+Q },
+            { id:"t9",  name:"Horchata",                  desc:"Geleneksel Meksika pirinç içeceği, tarçın, vanilya",               price:55,  popular:false, image:UNS+"photo-1567620832903-9fc6debc209f"+Q },
+            { id:"t10", name:"Mango Limonata",            desc:"Taze mango, limon, sparkling su",                                   price:60,  popular:false, image:UNS+"photo-1621506289937-a8e4df240d0b"+Q },
           ]
         }
       ]
@@ -377,35 +369,33 @@
       description: "Ege ve Akdeniz'in en taze malzemeleriyle hazırlanan sağlıklı ve lezzetli tabaklar.",
       rating: 4.7, reviews: 1050, deliveryTime: "25-40 dk", minOrder: 110, deliveryFee: 14,
       badge: "Sağlıklı", badgeColor: "bg-teal-500/20 text-teal-400",
+      coverImage: UNS+"photo-1544025162-d76694265947"+QC,
       menu: [
         {
-          category: "Ana Yemekler",
-          emoji: "🍽️",
+          category: "Ana Yemekler", emoji: "🍽️",
           items: [
-            { id: "a1", name: "Levrek Izgara", desc: "Taze levrek, ızgara sebze, limon, dereotu yoğurt sos", price: 285, emoji: "🐟", popular: true },
-            { id: "a2", name: "Ahtapot Izgara", desc: "Tenderize ahtapot, kaparili zeytinyağı, taze kekik", price: 320, emoji: "🐙", popular: true },
-            { id: "a3", name: "Lamb Chops", desc: "Kuzupirzola, nane yoğurt, közlenmiş patlıcan, bulgur", price: 340, emoji: "🥩", popular: false },
-            { id: "a4", name: "Falafel Tabağı", desc: "Ev yapımı falafel, humus, tabule, pita, harissa", price: 165, emoji: "🧆", popular: false },
+            { id:"a1", name:"Levrek Izgara",              desc:"Taze levrek, ızgara sebze, limon, dereotu yoğurt sos",              price:285, popular:true,  image:UNS+"photo-1519708227418-c8fd9a32b7a2"+Q },
+            { id:"a2", name:"Ahtapot Izgara",             desc:"Tenderize ahtapot, kaparili zeytinyağı, taze kekik",                price:320, popular:true,  image:UNS+"photo-1565299624946-b28f40a0ae38"+Q },
+            { id:"a3", name:"Lamb Chops",                 desc:"Kuzupirzola, nane yoğurt, közlenmiş patlıcan, bulgur",             price:340, popular:false, image:UNS+"photo-1529006557810-274b9b2fc783"+Q },
+            { id:"a4", name:"Falafel Tabağı",             desc:"Ev yapımı falafel, humus, tabule, pita, harissa",                   price:165, popular:false, image:UNS+"photo-1604906312163-1a2c8fb1e1d4"+Q },
           ]
         },
         {
-          category: "Salatalar & Mezeler",
-          emoji: "🥗",
+          category: "Salatalar & Mezeler", emoji: "🥗",
           items: [
-            { id: "a5", name: "Fattoush Salatası", desc: "Roka, domates, salatalık, nar ekşisi, pita cipsi, sumak", price: 95, emoji: "🥗", popular: true },
-            { id: "a6", name: "Yunan Salatası", desc: "Domates, salatalık, kırmızı soğan, zeytin, beyaz peynir", price: 110, emoji: "🫒", popular: false },
-            { id: "a7", name: "Hummus Tabağı", desc: "Krema humus, ezme domates, çam fıstığı, pita", price: 85, emoji: "🫓", popular: true },
-            { id: "a8", name: "Kalamar Tava", desc: "Çıtır kalamar, limon, tartar sos", price: 150, emoji: "🦑", popular: false },
+            { id:"a5", name:"Fattoush Salatası",          desc:"Roka, domates, salatalık, nar ekşisi, pita cipsi, sumak",          price:95,  popular:true,  image:UNS+"photo-1512621776951-a57141f2eefd"+Q },
+            { id:"a6", name:"Yunan Salatası",             desc:"Domates, salatalık, kırmızı soğan, zeytin, beyaz peynir",          price:110, popular:false, image:UNS+"photo-1540420773420-3366772f4999"+Q },
+            { id:"a7", name:"Hummus Tabağı",              desc:"Krema humus, ezme domates, çam fıstığı, pita",                     price:85,  popular:true,  image:UNS+"photo-1604909052743-94e838986d24"+Q },
+            { id:"a8", name:"Kalamar Tava",               desc:"Çıtır kalamar, limon, tartar sos",                                  price:150, popular:false, image:UNS+"photo-1559410545-0bdcd187e0a6"+Q },
           ]
         },
         {
-          category: "Tatlılar & İçecekler",
-          emoji: "☕",
+          category: "Tatlılar & İçecekler", emoji: "☕",
           items: [
-            { id: "a9", name: "Kadayıf", desc: "Antepfıstıklı tel kadayıf, kaymak", price: 90, emoji: "🍯", popular: true },
-            { id: "a10", name: "Türk Kahvesi", desc: "Geleneksel fincan Türk kahvesi", price: 40, emoji: "☕", popular: false },
-            { id: "a11", name: "Ayran", desc: "Ev yapımı soğuk ayran", price: 30, emoji: "🥛", popular: false },
-            { id: "a12", name: "Taze Nane Limonata", desc: "Taze nane, limon, soda, buz", price: 55, emoji: "🍋", popular: false },
+            { id:"a9",  name:"Kadayıf",                   desc:"Antepfıstıklı tel kadayıf, kaymak",                                 price:90,  popular:true,  image:UNS+"photo-1613919113640-25732ec5e61f"+Q },
+            { id:"a10", name:"Türk Kahvesi",              desc:"Geleneksel fincan Türk kahvesi",                                    price:40,  popular:false, image:UNS+"photo-1514432324607-a09d9b4aefdd"+Q },
+            { id:"a11", name:"Ayran",                     desc:"Ev yapımı soğuk ayran",                                             price:30,  popular:false, image:UNS+"photo-1567620832903-9fc6debc209f"+Q },
+            { id:"a12", name:"Taze Nane Limonata",        desc:"Taze nane, limon, soda, buz",                                       price:55,  popular:false, image:UNS+"photo-1621506289937-a8e4df240d0b"+Q },
           ]
         }
       ]
@@ -521,7 +511,9 @@
     // Header
     document.getElementById('restaurant-header').innerHTML = `
       <div class="glass-card rounded-xl border border-white/5 p-8 flex flex-col md:flex-row gap-6 items-start md:items-center">
-        <div class="w-24 h-24 rounded-2xl bg-surface-container-highest flex items-center justify-center text-5xl flex-shrink-0">${restaurant.emoji}</div>
+        <div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 bg-surface-container-highest">
+            <img src="${restaurant.coverImage}" alt="${restaurant.name}" class="w-full h-full object-cover" loading="lazy" />
+          </div>
         <div class="flex-1">
           <div class="flex flex-wrap items-center gap-3 mb-2">
             <h1 class="text-3xl font-black">${restaurant.name}</h1>
@@ -556,8 +548,10 @@
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           ${cat.items.map(item => `
-            <div class="menu-item glass-card rounded-xl border border-white/5 p-5 flex gap-4">
-              <div class="w-16 h-16 rounded-xl bg-surface-container-highest flex items-center justify-center text-3xl flex-shrink-0">${item.emoji}</div>
+            <div class="menu-item glass-card rounded-xl border border-white/5 p-4 flex gap-4">
+              <div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container-highest">
+                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy" />
+              </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between gap-2 mb-1">
                   <div>
@@ -569,7 +563,7 @@
                 <div class="flex items-center justify-between">
                   <span class="text-primary font-black text-lg">₺${item.price}</span>
                   <button
-                    onclick="addToCart(${restaurant.id}, {id:'${item.id}',name:'${item.name}',price:${item.price},emoji:'${item.emoji}'})"
+                    onclick="addToCart(${restaurant.id}, {id:'${item.id}',name:'${item.name}',price:${item.price},image:'${item.image}'})"
                     class="flex items-center gap-1 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 px-4 py-1.5 rounded-full text-sm font-bold transition-all">
                     <span class="material-symbols-outlined text-sm">add</span>
                     Ekle

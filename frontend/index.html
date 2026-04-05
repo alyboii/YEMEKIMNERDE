@@ -280,14 +280,16 @@
 <script>
 (function () {
   // ---- RESTORAN VERİSİ ----
+  const _U = "https://images.unsplash.com/";
+  const _Q = "?auto=format&fit=crop&w=600&q=80";
   const restaurants = [
-    { id:1, name:"Burger House",     category:"Burger",  emoji:"🍔", coverEmoji:"🍔", rating:4.8, reviews:1240, deliveryTime:"20-30 dk", minOrder:80,  deliveryFee:15, badge:"Çok Popüler", badgeColor:"#ff9153" },
-    { id:2, name:"Sushi Palace",     category:"Sushi",   emoji:"🍱", coverEmoji:"🍣", rating:4.9, reviews:875,  deliveryTime:"30-45 dk", minOrder:150, deliveryFee:20, badge:"Premium",     badgeColor:"#a78bfa" },
-    { id:3, name:"Pizza Roma",       category:"Pizza",   emoji:"🍕", coverEmoji:"🍕", rating:4.7, reviews:2100, deliveryTime:"25-35 dk", minOrder:100, deliveryFee:12, badge:"Yeni",         badgeColor:"#34d399" },
-    { id:4, name:"Kebap Dünyası",    category:"Kebap",   emoji:"🥙", coverEmoji:"🥩", rating:4.6, reviews:3400, deliveryTime:"15-25 dk", minOrder:60,  deliveryFee:10, badge:"Yerel Lezzet", badgeColor:"#f87171" },
-    { id:5, name:"Wok Express",      category:"Asya",    emoji:"🥢", coverEmoji:"🥡", rating:4.5, reviews:680,  deliveryTime:"20-30 dk", minOrder:90,  deliveryFee:15, badge:"Vegan Seçenek",badgeColor:"#10b981" },
-    { id:6, name:"Taco Loco",        category:"Meksika", emoji:"🌮", coverEmoji:"🌯", rating:4.4, reviews:520,  deliveryTime:"20-35 dk", minOrder:75,  deliveryFee:18, badge:"Acılı Seçenek",badgeColor:"#fb7185" },
-    { id:7, name:"Akdeniz Sofrası",  category:"Akdeniz", emoji:"🫒", coverEmoji:"🥗", rating:4.7, reviews:1050, deliveryTime:"25-40 dk", minOrder:110, deliveryFee:14, badge:"Sağlıklı",     badgeColor:"#2dd4bf" }
+    { id:1, name:"Burger House",     category:"Burger",  emoji:"🍔", coverImage:_U+"photo-1568901346375-23c9450c58cd"+_Q, rating:4.8, reviews:1240, deliveryTime:"20-30 dk", minOrder:80,  deliveryFee:15, badge:"Çok Popüler", badgeColor:"#ff9153" },
+    { id:2, name:"Sushi Palace",     category:"Sushi",   emoji:"🍱", coverImage:_U+"photo-1579871494447-9811cf80d66c"+_Q, rating:4.9, reviews:875,  deliveryTime:"30-45 dk", minOrder:150, deliveryFee:20, badge:"Premium",     badgeColor:"#a78bfa" },
+    { id:3, name:"Pizza Roma",       category:"Pizza",   emoji:"🍕", coverImage:_U+"photo-1574071318508-1cdbab80d002"+_Q, rating:4.7, reviews:2100, deliveryTime:"25-35 dk", minOrder:100, deliveryFee:12, badge:"Yeni",         badgeColor:"#34d399" },
+    { id:4, name:"Kebap Dünyası",    category:"Kebap",   emoji:"🥙", coverImage:_U+"photo-1599487488170-d11ec9c172f0"+_Q, rating:4.6, reviews:3400, deliveryTime:"15-25 dk", minOrder:60,  deliveryFee:10, badge:"Yerel Lezzet", badgeColor:"#f87171" },
+    { id:5, name:"Wok Express",      category:"Asya",    emoji:"🥢", coverImage:_U+"photo-1562565652-a0d8f0c59eb4"+_Q,   rating:4.5, reviews:680,  deliveryTime:"20-30 dk", minOrder:90,  deliveryFee:15, badge:"Vegan Seçenek",badgeColor:"#10b981" },
+    { id:6, name:"Taco Loco",        category:"Meksika", emoji:"🌮", coverImage:_U+"photo-1565299585323-38d6b0865b47"+_Q, rating:4.4, reviews:520,  deliveryTime:"20-35 dk", minOrder:75,  deliveryFee:18, badge:"Acılı Seçenek",badgeColor:"#fb7185" },
+    { id:7, name:"Akdeniz Sofrası",  category:"Akdeniz", emoji:"🫒", coverImage:_U+"photo-1544025162-d76694265947"+_Q,   rating:4.7, reviews:1050, deliveryTime:"25-40 dk", minOrder:110, deliveryFee:14, badge:"Sağlıklı",     badgeColor:"#2dd4bf" }
   ];
 
   // ---- FAVORİ KATEGORİ ANALİZİ ----
@@ -346,10 +348,11 @@
            onmouseover="this.style.transform='translateY(-6px) scale(1.01)';this.style.boxShadow='0 24px 48px rgba(0,0,0,0.5), 0 0 40px rgba(255,145,83,0.15)'"
            onmouseout="this.style.transform='';this.style.boxShadow='0 0 0 1px rgba(255,145,83,0.08)'">
 
-        <!-- Üst alan: emoji + rozet -->
-        <div class="relative h-48 flex items-center justify-center overflow-hidden"
-             style="background:linear-gradient(135deg, #1a1919 0%, #201f1f 100%);">
-          <span class="text-8xl select-none" style="filter:drop-shadow(0 8px 24px rgba(0,0,0,0.4))">${r.coverEmoji}</span>
+        <!-- Üst alan: fotoğraf + rozet -->
+        <div class="relative h-48 overflow-hidden" style="background:#1a1919;">
+          <img src="${r.coverImage}" alt="${r.name}" class="w-full h-full object-cover" loading="lazy"
+               style="transition:transform .4s" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform=''" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(0,0,0,0.55) 0%,transparent 60%)"></div>
 
           <!-- Sıra rozeti -->
           <div class="absolute top-4 left-4 w-8 h-8 rounded-full flex items-center justify-center font-black text-sm"
