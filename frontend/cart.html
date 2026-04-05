@@ -6,7 +6,6 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -85,9 +84,11 @@
         .glass-card { background: rgba(38, 38, 38, 0.4); backdrop-filter: blur(20px); }
         .primary-gradient { background: linear-gradient(135deg, #ff9153 0%, #fd761a 100%); }
         .ghost-border { border: 1px solid rgba(73, 72, 71, 0.15); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     </style>
 </head>
 <body class="bg-background text-on-surface min-h-screen flex flex-col">
+
 <!-- TopNavBar -->
 <header class="fixed top-0 w-full z-50 bg-neutral-950/60 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
 <div class="flex justify-between items-center px-8 py-4 w-full max-w-7xl mx-auto font-['Inter'] tracking-tight">
@@ -100,151 +101,63 @@
 </nav>
 <div class="flex items-center gap-4">
 <button class="p-2 hover:bg-white/5 rounded-full transition-all active:scale-95">
-<span class="material-symbols-outlined text-white" data-icon="person">person</span>
+<span class="material-symbols-outlined text-white">person</span>
 </button>
 <button class="p-2 hover:bg-white/5 rounded-full transition-all active:scale-95 relative">
-<span class="material-symbols-outlined text-orange-500" data-icon="shopping_cart">shopping_cart</span>
-<span class="absolute -top-1 -right-1 bg-orange-500 text-on-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full">4</span>
+<span class="material-symbols-outlined text-orange-500">shopping_cart</span>
+<span id="nav-cart-badge" class="absolute -top-1 -right-1 bg-orange-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
 </button>
 </div>
 </div>
 </header>
+
 <main class="flex-grow pt-32 pb-20 px-8 w-full max-w-7xl mx-auto">
 <!-- Page Header -->
 <div class="flex items-baseline gap-4 mb-12">
 <h1 class="text-[3.5rem] font-extrabold tracking-tighter leading-none">Sepetim</h1>
-<div class="bg-primary-container/20 text-primary border border-primary/20 px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase">4 Ürün</div>
+<div id="item-count-badge" class="bg-primary-container/20 text-primary border border-primary/20 px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase">0 Ürün</div>
 </div>
+
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-<!-- Left Column: Cart Items -->
-<div class="lg:col-span-8 flex flex-col gap-6">
-<!-- Item 1: Adana Kebap -->
-<div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
-<div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0">
-<img alt="Adana Kebap" class="w-full h-full object-cover" data-alt="Close-up of a perfectly charred Adana Kebap skewer on a bed of flatbread with grilled peppers and sumac onions" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCETfIk4oc1Qy4w6fIbGGYZUqQLUjYhAAoJepYjKOTqrWjHP1F-PzilJD9y-uI5eVy2SuQdE6KzNA_8YCP-BNW-eMERmQzgWuU4TSV8c3vVn2hE8vGjj7E32kjVYufQ3nRXv2ygF5vpIS-A19yViqT3aEV2qR_-PE3HACpKnjWNlw2GQs43C2-imyDgO4dirMh4QHGuzkcZDQPA7pg0nNX_pgJA5MGx-J7PqkLheBkCXAG4FWyeNI1tLVhx8jmj5Ip94C5hY0qPXHw"/>
-</div>
-<div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
-<div class="text-center sm:text-left">
-<h3 class="text-xl font-bold text-on-surface tracking-tight">Adana Kebap</h3>
-<p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">Kebapçı Hasan Usta</p>
-</div>
-<div class="flex items-center gap-6">
-<div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
-<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
-<span class="mx-4 font-bold w-4 text-center">1</span>
-<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
-</div>
-<div class="text-xl font-bold text-primary">₺180.00</div>
-<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Item 2: Mercimek Çorbası -->
-<div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
-<div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0">
-<img alt="Mercimek Çorbası" class="w-full h-full object-cover" data-alt="Rich golden lentil soup in a rustic bowl garnished with a swirl of chili oil and fresh lemon wedge" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxhmNNu6zyG_vL-s9-mgPVitXIcG2-0b8Jsw4vup-QBZuegzQd5i7wBax0vXg3mM3nMu_1GPGpsyx8okgK86tq74VDyw8UjUlLB7DBlXKSJChprMM8hNwS7ImkOYci7gQu2DF022hmu0DFBDOJpBVfFAXUr5YKPXZaG_lO8-JHZznzaCebMxeIuKtdXy5dXNxR5xn0bOMpvPKvsRI29sAZvHmyYlVkzLtahBPc55VKqIBJt57jNwt72gWuQMAsBJiQ_5xkxddt6qI"/>
-</div>
-<div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
-<div class="text-center sm:text-left">
-<h3 class="text-xl font-bold text-on-surface tracking-tight">Mercimek Çorbası</h3>
-<p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">Çorba Dünyası</p>
-</div>
-<div class="flex items-center gap-6">
-<div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
-<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
-<span class="mx-4 font-bold w-4 text-center">1</span>
-<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
-</div>
-<div class="text-xl font-bold text-primary">₺65.00</div>
-<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Item 3: İskender -->
-<div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
-<div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0">
-<img alt="İskender" class="w-full h-full object-cover" data-alt="Traditional Iskender kebab with thin slices of doner meat, rich tomato sauce, melted butter, and creamy yogurt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6xpeDawSiCzaVWQwuHjHojdkSBnASHWTnQ2hf-amMWrwstjJc21b_Emc_WOCo103C53gZpiqG90hTsSAjtgFcocmgeUY7y0iDMccj_zJ8iHYn5VmR_spHwYEFHRdcy7woc73q2DYP0gQU_v2efVs8q-9Mjf1pCrbeARHvdK14uSQquO1l_z6wJgI889vYFlpGOvxxLmHMgQlbsA-CpWhfd1a6fcPph3bW2jb_Lr5b1RKHXVnKeQ84S875UQaDkXAlWnihfX4K9oY"/>
-</div>
-<div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
-<div class="text-center sm:text-left">
-<h3 class="text-xl font-bold text-on-surface tracking-tight">İskender</h3>
-<p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">Bursa Saray</p>
-</div>
-<div class="flex items-center gap-6">
-<div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
-<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
-<span class="mx-4 font-bold w-4 text-center">1</span>
-<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
-</div>
-<div class="text-xl font-bold text-primary">₺265.00</div>
-<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Item 4: Ayran -->
-<div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
-<div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0">
-<img alt="Ayran" class="w-full h-full object-cover" data-alt="Frothy chilled traditional Turkish Ayran yogurt drink in a copper cup with bubbles on top" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjUNh6RPCzfwRi5LDRuL_T5BYGNqbltd-MeZfEWiY3-4dO_eP7BFVPm1Qmrr0uqvvFNd3cHYnJwK6F9ruF-5jemoMO1W7Zk3CJRsaaCXcN8BTZYHIinlSvmazxFMZGB88RlsHt244inf5JjNzo-_ArWL6IgDzmrgnNnkdrAGbZ-g83yi1Kt2jMfuBTMDehnnK4kRnsql9Yw93c7vpKy_MKEf5wLcgF1IApYh0Blk7PlfgN63o_Fr6i4kbSXTD5QUmpoc7lEV8Z_OU"/>
-</div>
-<div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
-<div class="text-center sm:text-left">
-<h3 class="text-xl font-bold text-on-surface tracking-tight">Ayran</h3>
-<p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">Sütaş Doğal</p>
-</div>
-<div class="flex items-center gap-6">
-<div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
-<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="remove">remove</span></button>
-<span class="mx-4 font-bold w-4 text-center">1</span>
-<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm" data-icon="add">add</span></button>
-</div>
-<div class="text-xl font-bold text-primary">₺30.00</div>
-<button class="p-2 text-on-surface-variant hover:text-error transition-colors">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Right Column: Order Summary -->
+<!-- Sol Kolon: Sepet Ürünleri (JS tarafından doldurulur) -->
+<div class="lg:col-span-8 flex flex-col gap-6" id="cart-items-container"></div>
+
+<!-- Sağ Kolon: Sipariş Özeti -->
 <div class="lg:col-span-4 sticky top-32">
 <div class="glass-card ghost-border rounded-xl p-8 flex flex-col gap-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
 <h2 class="text-2xl font-bold tracking-tight border-b border-outline-variant/10 pb-4">Sipariş Özeti</h2>
 <div class="space-y-4">
 <div class="flex justify-between items-center">
 <span class="text-on-surface-variant font-medium uppercase text-xs tracking-widest">Ara Toplam</span>
-<span class="text-lg font-semibold">₺540.00</span>
+<span class="text-lg font-semibold" id="summary-subtotal">₺0.00</span>
 </div>
 <div class="flex justify-between items-center">
 <span class="text-on-surface-variant font-medium uppercase text-xs tracking-widest">Teslimat Ücreti</span>
-<span class="text-lg font-semibold text-secondary">₺15.00</span>
+<span class="text-lg font-semibold text-secondary" id="summary-delivery">₺0.00</span>
 </div>
 <div class="flex items-center gap-2 bg-primary/5 p-3 rounded-lg border border-primary/10">
-<span class="material-symbols-outlined text-primary text-xl" data-icon="schedule">schedule</span>
+<span class="material-symbols-outlined text-primary text-xl">schedule</span>
 <span class="text-sm font-bold text-primary uppercase tracking-wider">Tahmini Teslimat: 25-35 dk</span>
 </div>
 </div>
 <div class="pt-6 border-t border-outline-variant/20 flex justify-between items-end">
 <span class="text-sm font-bold text-on-surface uppercase tracking-[0.2em]">Toplam</span>
-<span class="text-3xl font-black text-white tracking-tighter">₺555.00</span>
+<span class="text-3xl font-black text-white tracking-tighter" id="summary-total">₺0.00</span>
 </div>
-<button class="primary-gradient w-full py-5 rounded-full text-on-primary font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(253,118,26,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300">
-                        Siparişi Onayla
-                        <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+<button id="confirm-btn" onclick="confirmOrder()"
+  class="primary-gradient w-full py-5 rounded-full text-on-primary font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(253,118,26,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-40 disabled:pointer-events-none disabled:transform-none">
+  SİPARİŞİ ONAYLA
+  <span class="material-symbols-outlined">arrow_forward</span>
 </button>
 <div class="flex items-center justify-center gap-2 text-on-surface-variant/60">
-<span class="material-symbols-outlined text-sm" data-icon="shield_check">shield</span>
+<span class="material-symbols-outlined text-sm">shield</span>
 <span class="text-[10px] font-bold uppercase tracking-widest">Güvenli Ödeme 256-bit SSL</span>
 </div>
 </div>
 </div>
 </div>
 </main>
+
 <!-- Footer -->
 <footer class="bg-neutral-950 w-full py-12 mt-auto border-t border-white/5">
 <div class="flex flex-col md:flex-row justify-between items-center px-12 w-full font-['Inter'] text-sm uppercase tracking-widest">
@@ -258,4 +171,156 @@
 <div class="text-neutral-500">© 2024 YEMEKİMNEREDE. Hyper-Focus Editorial Dining.</div>
 </div>
 </footer>
+
+<script>
+  // ---- VERİ ----
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const deliveryFee      = parseFloat(localStorage.getItem('cartDeliveryFee') || '0');
+  const restaurantName   = localStorage.getItem('cartRestaurantName') || '';
+
+  // ---- KAYDET ----
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  // ---- MİKTAR DEĞİŞTİR ----
+  function changeQty(itemId, delta) {
+    const item = cart.find(c => c.id === itemId);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(c => c.id !== itemId);
+    saveCart();
+    render();
+  }
+
+  // ---- ÜRÜN SİL ----
+  function removeItem(itemId) {
+    cart = cart.filter(c => c.id !== itemId);
+    saveCart();
+    render();
+  }
+
+  // ---- RENDER ----
+  function render() {
+    const container   = document.getElementById('cart-items-container');
+    const badge       = document.getElementById('item-count-badge');
+    const navBadge    = document.getElementById('nav-cart-badge');
+    const subtotalEl  = document.getElementById('summary-subtotal');
+    const deliveryEl  = document.getElementById('summary-delivery');
+    const totalEl     = document.getElementById('summary-total');
+    const confirmBtn  = document.getElementById('confirm-btn');
+
+    const totalQty = cart.reduce((s, c) => s + c.qty, 0);
+    const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+    const fee      = cart.length > 0 ? deliveryFee : 0;
+    const total    = subtotal + fee;
+
+    // Nav sepet rozeti
+    navBadge.textContent = totalQty;
+    navBadge.classList.toggle('hidden', totalQty === 0);
+
+    // Başlık rozeti
+    badge.textContent = `${totalQty} Ürün`;
+
+    // Özet paneli
+    subtotalEl.textContent = `₺${subtotal.toFixed(2)}`;
+    deliveryEl.textContent = fee > 0 ? `₺${fee.toFixed(2)}` : 'Ücretsiz';
+    totalEl.textContent    = `₺${total.toFixed(2)}`;
+    confirmBtn.disabled    = cart.length === 0;
+
+    // Sepet boşsa
+    if (cart.length === 0) {
+      container.innerHTML = `
+        <div class="glass-card ghost-border rounded-xl p-16 flex flex-col items-center gap-6 text-center">
+          <span class="text-7xl">🛒</span>
+          <h3 class="text-2xl font-bold text-on-surface">Sepetiniz Boş</h3>
+          <p class="text-on-surface-variant">Henüz sepetinize ürün eklemediniz.</p>
+          <a href="restaurants.html"
+             class="primary-gradient px-8 py-3 rounded-full text-on-primary font-bold uppercase tracking-wider text-sm hover:scale-105 transition-all">
+            Restoranlara Git
+          </a>
+        </div>`;
+      return;
+    }
+
+    // Ürün kartları
+    container.innerHTML = cart.map(item => `
+      <div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
+        <div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0 bg-surface-container-highest">
+          ${item.image
+            ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy" />`
+            : `<div class="w-full h-full flex items-center justify-center text-5xl select-none">🍽️</div>`
+          }
+        </div>
+        <div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+          <div class="text-center sm:text-left">
+            <h3 class="text-xl font-bold text-on-surface tracking-tight">${item.name}</h3>
+            <p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">
+              ${restaurantName || 'Restoran'}
+            </p>
+            <p class="text-xs text-on-surface-variant mt-0.5">Birim: ₺${item.price.toFixed(2)}</p>
+          </div>
+          <div class="flex items-center gap-6">
+            <!-- Miktar kontrol -->
+            <div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
+              <button onclick="changeQty('${item.id}', -1)"
+                      class="hover:text-primary transition-colors active:scale-90">
+                <span class="material-symbols-outlined text-sm">remove</span>
+              </button>
+              <span class="mx-4 font-bold w-4 text-center">${item.qty}</span>
+              <button onclick="changeQty('${item.id}', 1)"
+                      class="hover:text-primary transition-colors active:scale-90">
+                <span class="material-symbols-outlined text-sm">add</span>
+              </button>
+            </div>
+            <!-- Satır toplamı -->
+            <div class="text-xl font-bold text-primary min-w-[80px] text-right">
+              ₺${(item.price * item.qty).toFixed(2)}
+            </div>
+            <!-- Sil butonu -->
+            <button onclick="removeItem('${item.id}')"
+                    class="p-2 text-on-surface-variant hover:text-error transition-colors active:scale-90"
+                    title="Ürünü kaldır">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ---- SİPARİŞİ ONAYLA ----
+  function confirmOrder() {
+    if (cart.length === 0) return;
+
+    // localStorage temizle
+    localStorage.removeItem('cart');
+    localStorage.removeItem('cartDeliveryFee');
+    localStorage.removeItem('cartRestaurantName');
+    cart = [];
+
+    // Başarı modalı
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm';
+    overlay.innerHTML = `
+      <div class="glass-card ghost-border rounded-2xl p-12 flex flex-col items-center gap-6
+                  text-center max-w-sm mx-4 shadow-[0_0_60px_rgba(255,145,83,0.3)]">
+        <div class="text-6xl">✅</div>
+        <h2 class="text-2xl font-black text-white tracking-tight">Siparişiniz Alındı!</h2>
+        <p class="text-on-surface-variant leading-relaxed">
+          Siparişiniz başarıyla oluşturuldu.<br/>Hazırlanmaya başlandı.
+        </p>
+        <div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+          <div class="bg-primary h-full rounded-full" style="width:100%;transition:width 2.5s linear"></div>
+        </div>
+        <p class="text-xs text-on-surface-variant">Ana sayfaya yönlendiriliyorsunuz…</p>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    setTimeout(() => { window.location.href = 'index.html'; }, 2800);
+  }
+
+  // ---- BAŞLAT ----
+  render();
+</script>
 </body></html>
