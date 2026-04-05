@@ -195,17 +195,68 @@
 <h3 class="text-2xl font-bold mb-4">Değerlendirmeler</h3>
 <p class="text-on-surface-variant leading-relaxed">Gerçek kullanıcı yorumları ve puanları ile en doğru tercihi yapın.</p>
 </div>
-<!-- Feature Card 6 -->
-<div class="glass-card glow-hover p-10 rounded-xl transition-all border border-white/5 group">
-<div class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary/30 transition-colors">
-<span class="material-symbols-outlined text-primary text-3xl">person</span>
-</div>
-<h3 class="text-2xl font-bold mb-4">Kişisel Öneriler</h3>
-<p class="text-on-surface-variant leading-relaxed">Yapay zeka desteği ile damak tadınıza uygun restoran önerileri.</p>
+<!-- Feature Card 6 — Aktif: Kişisel Öneriler -->
+<div onclick="document.getElementById('ai-recommendations').scrollIntoView({behavior:'smooth'})"
+     class="glass-card glow-hover p-10 rounded-xl transition-all border border-primary/20 group cursor-pointer relative overflow-hidden"
+     style="box-shadow: 0 0 0 1px rgba(255,145,83,0.15);">
+  <div class="absolute top-3 right-3 flex items-center gap-1 bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-full">
+    <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span>
+    <span class="text-[10px] font-bold text-primary uppercase tracking-widest">Aktif</span>
+  </div>
+  <div class="w-14 h-14 bg-primary/20 rounded-full flex items-center justify-center mb-8 group-hover:bg-primary/30 transition-colors">
+    <span class="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
+  </div>
+  <h3 class="text-2xl font-bold mb-4">Kişisel Öneriler</h3>
+  <p class="text-on-surface-variant leading-relaxed mb-6">Yapay zeka desteği ile damak tadınıza uygun restoran önerileri.</p>
+  <span class="inline-flex items-center gap-1 text-primary text-sm font-bold group-hover:gap-2 transition-all">
+    Önerileri Gör <span class="material-symbols-outlined text-base">arrow_forward</span>
+  </span>
 </div>
 </div>
 </div>
 </section>
+<!-- AI Recommendations Section -->
+<section id="ai-recommendations" class="py-32 px-8 bg-surface-container-low">
+<div class="container mx-auto max-w-7xl">
+
+  <!-- Başlık -->
+  <div class="mb-14 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+        <span class="text-xs font-bold text-primary uppercase tracking-[0.2em]">Yapay Zeka Önerisi</span>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-3">
+        Senin İçin <span style="background:linear-gradient(135deg,#ff9153,#fd761a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Seçtiklerimiz</span>
+      </h2>
+      <p id="ai-subtitle" class="text-on-surface-variant text-lg max-w-xl">
+        Yapay zekamız tercihlerinizi analiz ediyor…
+      </p>
+    </div>
+    <a href="restaurants.html"
+       class="flex-shrink-0 flex items-center gap-2 text-sm font-bold text-primary border border-primary/20 px-5 py-2.5 rounded-full hover:bg-primary/10 transition-all">
+      Tüm Restoranlar
+      <span class="material-symbols-outlined text-base">arrow_forward</span>
+    </a>
+  </div>
+
+  <!-- Yapay Zeka Notu -->
+  <div id="ai-note" class="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-2xl p-5 mb-10 max-w-2xl">
+    <span class="material-symbols-outlined text-primary text-2xl flex-shrink-0 mt-0.5">psychology</span>
+    <p class="text-sm text-on-surface-variant leading-relaxed">
+      <span class="text-primary font-bold">Yapay zekamız</span>
+      <span id="ai-note-text"> son seçimlerine dayanarak senin için en uygun restoranları buldu!</span>
+    </p>
+  </div>
+
+  <!-- Kart Izgara -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="recommendation-cards">
+    <!-- JS tarafından doldurulur -->
+  </div>
+
+</div>
+</section>
+
 <!-- CTA Section -->
 <section class="py-32 bg-surface">
 <div class="container mx-auto px-8">
@@ -225,6 +276,158 @@
 </div>
 </section>
 </main>
+
+<script>
+(function () {
+  // ---- RESTORAN VERİSİ ----
+  const restaurants = [
+    { id:1, name:"Burger House",     category:"Burger",  emoji:"🍔", coverEmoji:"🍔", rating:4.8, reviews:1240, deliveryTime:"20-30 dk", minOrder:80,  deliveryFee:15, badge:"Çok Popüler", badgeColor:"#ff9153" },
+    { id:2, name:"Sushi Palace",     category:"Sushi",   emoji:"🍱", coverEmoji:"🍣", rating:4.9, reviews:875,  deliveryTime:"30-45 dk", minOrder:150, deliveryFee:20, badge:"Premium",     badgeColor:"#a78bfa" },
+    { id:3, name:"Pizza Roma",       category:"Pizza",   emoji:"🍕", coverEmoji:"🍕", rating:4.7, reviews:2100, deliveryTime:"25-35 dk", minOrder:100, deliveryFee:12, badge:"Yeni",         badgeColor:"#34d399" },
+    { id:4, name:"Kebap Dünyası",    category:"Kebap",   emoji:"🥙", coverEmoji:"🥩", rating:4.6, reviews:3400, deliveryTime:"15-25 dk", minOrder:60,  deliveryFee:10, badge:"Yerel Lezzet", badgeColor:"#f87171" },
+    { id:5, name:"Wok Express",      category:"Asya",    emoji:"🥢", coverEmoji:"🥡", rating:4.5, reviews:680,  deliveryTime:"20-30 dk", minOrder:90,  deliveryFee:15, badge:"Vegan Seçenek",badgeColor:"#10b981" },
+    { id:6, name:"Taco Loco",        category:"Meksika", emoji:"🌮", coverEmoji:"🌯", rating:4.4, reviews:520,  deliveryTime:"20-35 dk", minOrder:75,  deliveryFee:18, badge:"Acılı Seçenek",badgeColor:"#fb7185" },
+    { id:7, name:"Akdeniz Sofrası",  category:"Akdeniz", emoji:"🫒", coverEmoji:"🥗", rating:4.7, reviews:1050, deliveryTime:"25-40 dk", minOrder:110, deliveryFee:14, badge:"Sağlıklı",     badgeColor:"#2dd4bf" }
+  ];
+
+  // ---- FAVORİ KATEGORİ ANALİZİ ----
+  function getFavoriteCategory() {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cart.length === 0) return null;
+
+    // restaurantId → category eşlemesi
+    const idToCategory = {};
+    restaurants.forEach(r => { idToCategory[r.id] = r.category; });
+
+    // Her kategori için toplam adet say
+    const tally = {};
+    cart.forEach(item => {
+      const cat = idToCategory[item.restaurantId];
+      if (cat) tally[cat] = (tally[cat] || 0) + item.qty;
+    });
+
+    if (Object.keys(tally).length === 0) return null;
+
+    // En çok sipariş edilen kategori
+    return Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
+  }
+
+  // ---- ÖNERİLEN RESTORANLAR ----
+  function getRecommendations(favoriteCategory) {
+    if (favoriteCategory) {
+      // Aynı kategorideki restoranları puana göre sırala, ilk 2'yi al
+      const same = restaurants
+        .filter(r => r.category === favoriteCategory)
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 2);
+
+      // 2'den azsa diğer en popüler restoranlardan tamamla
+      if (same.length < 2) {
+        const others = restaurants
+          .filter(r => r.category !== favoriteCategory && r.badge === 'Çok Popüler')
+          .sort((a, b) => b.rating - a.rating);
+        return [...same, ...others].slice(0, 2);
+      }
+      return same;
+    }
+
+    // Veri yoksa: en yüksek puanlı 2 restoran
+    return [...restaurants].sort((a, b) => b.rating - a.rating).slice(0, 2);
+  }
+
+  // ---- KART HTML ----
+  function buildCard(r, rank) {
+    const stars = '★'.repeat(Math.floor(r.rating)) + (r.rating % 1 >= 0.5 ? '½' : '');
+    return `
+      <div onclick="window.location.href='restaurant.html?id=${r.id}'"
+           class="group cursor-pointer rounded-2xl overflow-hidden border border-white/5 transition-all duration-300"
+           style="background:rgba(26,25,25,0.6);backdrop-filter:blur(20px);
+                  box-shadow:0 0 0 1px rgba(255,145,83,0.08);"
+           onmouseover="this.style.transform='translateY(-6px) scale(1.01)';this.style.boxShadow='0 24px 48px rgba(0,0,0,0.5), 0 0 40px rgba(255,145,83,0.15)'"
+           onmouseout="this.style.transform='';this.style.boxShadow='0 0 0 1px rgba(255,145,83,0.08)'">
+
+        <!-- Üst alan: emoji + rozet -->
+        <div class="relative h-48 flex items-center justify-center overflow-hidden"
+             style="background:linear-gradient(135deg, #1a1919 0%, #201f1f 100%);">
+          <span class="text-8xl select-none" style="filter:drop-shadow(0 8px 24px rgba(0,0,0,0.4))">${r.coverEmoji}</span>
+
+          <!-- Sıra rozeti -->
+          <div class="absolute top-4 left-4 w-8 h-8 rounded-full flex items-center justify-center font-black text-sm"
+               style="background:linear-gradient(135deg,#ff9153,#fd761a);color:#000;">
+            ${rank}
+          </div>
+
+          <!-- Kategori rozeti -->
+          <div class="absolute top-4 right-4 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider"
+               style="background:${r.badgeColor}20;color:${r.badgeColor};border:1px solid ${r.badgeColor}40">
+            ${r.badge}
+          </div>
+
+          <!-- Puan -->
+          <div class="absolute bottom-4 right-4 flex items-center gap-1 px-2.5 py-1 rounded-full"
+               style="background:rgba(0,0,0,0.6);backdrop-filter:blur(8px)">
+            <span style="color:#fbbf24;font-size:11px;">★</span>
+            <span style="color:#fff;font-size:12px;font-weight:700">${r.rating}</span>
+            <span style="color:#adaaaa;font-size:10px">(${r.reviews.toLocaleString('tr-TR')})</span>
+          </div>
+        </div>
+
+        <!-- Alt bilgi -->
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xl">${r.emoji}</span>
+            <h3 class="text-xl font-bold text-white">${r.name}</h3>
+          </div>
+          <p class="text-xs font-bold uppercase tracking-widest mb-4" style="color:#adaaaa">${r.category} Mutfağı</p>
+
+          <div class="flex items-center justify-between text-xs mb-5" style="color:#777575">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#ff9153">schedule</span>
+              ${r.deliveryTime}
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#ff9153">payments</span>
+              Min. ₺${r.minOrder}
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#ff9153">local_shipping</span>
+              ₺${r.deliveryFee} teslimat
+            </span>
+          </div>
+
+          <button class="w-full py-3 rounded-full font-bold text-sm uppercase tracking-wider transition-all"
+                  style="background:linear-gradient(135deg,#ff9153,#fd761a);color:#000;"
+                  onmouseover="this.style.boxShadow='0 0 24px rgba(255,145,83,0.4)'"
+                  onmouseout="this.style.boxShadow=''">
+            Menüyü Gör →
+          </button>
+        </div>
+      </div>`;
+  }
+
+  // ---- ARAYÜZÜ GÜNCELLE ----
+  function renderRecommendations() {
+    const favCat  = getFavoriteCategory();
+    const picks   = getRecommendations(favCat);
+    const subtitleEl  = document.getElementById('ai-subtitle');
+    const noteTextEl  = document.getElementById('ai-note-text');
+    const cardsEl     = document.getElementById('recommendation-cards');
+
+    if (favCat) {
+      subtitleEl.textContent  = `Favori mutfağın "${favCat}" — işte sana özel seçimlerimiz.`;
+      noteTextEl.textContent  = ` son sepet tercihlerine dayanarak "${favCat}" kategorisindeki en iyi restoranları senin için buldu!`;
+    } else {
+      subtitleEl.textContent  = 'Henüz sipariş geçmişin yok — şimdi en popüler restoranlara bak.';
+      noteTextEl.textContent  = ' şu an en yüksek puanlı ve en popüler restoranları öneriyor. İlk siparişini ver, sana özel öneriler başlasın!';
+    }
+
+    cardsEl.innerHTML = picks.map((r, i) => buildCard(r, i + 1)).join('');
+  }
+
+  renderRecommendations();
+})();
+</script>
+
 <!-- Footer -->
 <footer class="w-full py-12 px-8 flex flex-col items-center gap-8 bg-[#0a0a0a] border-t border-white/5 font-['Inter'] text-sm tracking-wide">
 <div class="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between gap-8">
