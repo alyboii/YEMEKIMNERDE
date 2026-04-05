@@ -1,17 +1,348 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sepetim - YEMEKIMNERDE</title>
-</head>
-<body>
-    <h1>Sepetim</h1>
-    
-    <div id="cart-container">
-        <p>Sepetinizde ürün bulunmamaktadır.</p>
-    </div>
 
-    <button onclick="alert('Siparişi tamamlama ekranına yönlendiriliyorsunuz...')">Siparişi Tamamla</button>
-</body>
-</html>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#511f00",
+                    "on-primary-fixed-variant": "#4e1e00",
+                    "secondary": "#fd9436",
+                    "surface-bright": "#2c2c2c",
+                    "secondary-dim": "#ec872a",
+                    "on-tertiary-fixed": "#3c2900",
+                    "tertiary-container": "#febb28",
+                    "surface": "#0e0e0e",
+                    "outline-variant": "#494847",
+                    "surface-variant": "#262626",
+                    "background": "#0e0e0e",
+                    "surface-dim": "#0e0e0e",
+                    "on-tertiary": "#614400",
+                    "error-dim": "#d53d18",
+                    "on-primary-container": "#3f1700",
+                    "secondary-fixed-dim": "#ffb379",
+                    "secondary-container": "#924c00",
+                    "on-primary-fixed": "#000000",
+                    "tertiary": "#ffcd72",
+                    "on-surface": "#ffffff",
+                    "surface-container-low": "#131313",
+                    "on-secondary-fixed": "#542900",
+                    "surface-tint": "#ff9153",
+                    "primary-dim": "#fd761a",
+                    "inverse-primary": "#9e4400",
+                    "tertiary-fixed-dim": "#efad16",
+                    "error": "#ff7351",
+                    "outline": "#777575",
+                    "surface-container": "#1a1919",
+                    "primary": "#ff9153",
+                    "on-secondary-fixed-variant": "#7e4000",
+                    "on-tertiary-container": "#563b00",
+                    "secondary-fixed": "#ffc69d",
+                    "on-error-container": "#ffd2c8",
+                    "error-container": "#b92902",
+                    "tertiary-dim": "#efad16",
+                    "primary-fixed": "#ff7a23",
+                    "inverse-surface": "#fcf8f8",
+                    "on-secondary-container": "#fff6f2",
+                    "on-surface-variant": "#adaaaa",
+                    "on-error": "#450900",
+                    "tertiary-fixed": "#febb28",
+                    "on-tertiary-fixed-variant": "#614400",
+                    "on-secondary": "#4b2400",
+                    "surface-container-highest": "#262626",
+                    "surface-container-high": "#201f1f",
+                    "primary-fixed-dim": "#f06c0b",
+                    "on-background": "#ffffff",
+                    "surface-container-lowest": "#000000",
+                    "primary-container": "#ff7a23",
+                    "inverse-on-surface": "#565554"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0e0e0e; color: #ffffff; }
+        .glass-card { background: rgba(38, 38, 38, 0.4); backdrop-filter: blur(20px); }
+        .primary-gradient { background: linear-gradient(135deg, #ff9153 0%, #fd761a 100%); }
+        .ghost-border { border: 1px solid rgba(73, 72, 71, 0.15); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-neutral-950/60 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<div class="flex justify-between items-center px-8 py-4 w-full max-w-7xl mx-auto font-['Inter'] tracking-tight">
+<div class="text-2xl font-black tracking-tighter text-white uppercase">YEMEKİMNEREDE</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-neutral-400 font-medium hover:text-white transition-colors hover:bg-white/5 px-3 py-1 rounded-full" href="index.html">Ana Sayfa</a>
+<a class="text-neutral-400 font-medium hover:text-white transition-colors hover:bg-white/5 px-3 py-1 rounded-full" href="restaurants.html">Restoranlar</a>
+<a class="text-neutral-400 font-medium hover:text-white transition-colors hover:bg-white/5 px-3 py-1 rounded-full" href="orders.html">Siparişlerim</a>
+<a class="text-orange-500 font-bold border-b-2 border-orange-500 pb-1" href="cart.html">Sepetim</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-white/5 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined text-white">person</span>
+</button>
+<button class="p-2 hover:bg-white/5 rounded-full transition-all active:scale-95 relative">
+<span class="material-symbols-outlined text-orange-500">shopping_cart</span>
+<span id="nav-cart-badge" class="absolute -top-1 -right-1 bg-orange-500 text-black text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+</button>
+</div>
+</div>
+</header>
+
+<main class="flex-grow pt-32 pb-20 px-8 w-full max-w-7xl mx-auto">
+<!-- Page Header -->
+<div class="flex items-baseline gap-4 mb-12">
+<h1 class="text-[3.5rem] font-extrabold tracking-tighter leading-none">Sepetim</h1>
+<div id="item-count-badge" class="bg-primary-container/20 text-primary border border-primary/20 px-4 py-1.5 rounded-full text-sm font-bold tracking-widest uppercase">0 Ürün</div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Sol Kolon: Sepet Ürünleri (JS tarafından doldurulur) -->
+<div class="lg:col-span-8 flex flex-col gap-6" id="cart-items-container"></div>
+
+<!-- Sağ Kolon: Sipariş Özeti -->
+<div class="lg:col-span-4 sticky top-32">
+<div class="glass-card ghost-border rounded-xl p-8 flex flex-col gap-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+<h2 class="text-2xl font-bold tracking-tight border-b border-outline-variant/10 pb-4">Sipariş Özeti</h2>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-medium uppercase text-xs tracking-widest">Ara Toplam</span>
+<span class="text-lg font-semibold" id="summary-subtotal">₺0.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-medium uppercase text-xs tracking-widest">Teslimat Ücreti</span>
+<span class="text-lg font-semibold text-secondary" id="summary-delivery">₺0.00</span>
+</div>
+<div class="flex items-center gap-2 bg-primary/5 p-3 rounded-lg border border-primary/10">
+<span class="material-symbols-outlined text-primary text-xl">schedule</span>
+<span class="text-sm font-bold text-primary uppercase tracking-wider">Tahmini Teslimat: 25-35 dk</span>
+</div>
+</div>
+<div class="pt-6 border-t border-outline-variant/20 flex justify-between items-end">
+<span class="text-sm font-bold text-on-surface uppercase tracking-[0.2em]">Toplam</span>
+<span class="text-3xl font-black text-white tracking-tighter" id="summary-total">₺0.00</span>
+</div>
+<button id="confirm-btn" onclick="confirmOrder()"
+  class="primary-gradient w-full py-5 rounded-full text-on-primary font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(253,118,26,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 disabled:opacity-40 disabled:pointer-events-none disabled:transform-none">
+  SİPARİŞİ ONAYLA
+  <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center gap-2 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-sm">shield</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Güvenli Ödeme 256-bit SSL</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-neutral-950 w-full py-12 mt-auto border-t border-white/5">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 w-full font-['Inter'] text-sm uppercase tracking-widest">
+<div class="text-lg font-bold text-white mb-6 md:mb-0">YEMEKİMNEREDE</div>
+<div class="flex gap-8 mb-6 md:mb-0">
+<a class="text-neutral-500 hover:text-white transition-colors" href="#">Hakkımızda</a>
+<a class="text-neutral-500 hover:text-white transition-colors" href="#">Kullanım Koşulları</a>
+<a class="text-neutral-500 hover:text-white transition-colors" href="#">Gizlilik Politikası</a>
+<a class="text-neutral-500 hover:text-white transition-colors" href="#">İletişim</a>
+</div>
+<div class="text-neutral-500">© 2024 YEMEKİMNEREDE. Hyper-Focus Editorial Dining.</div>
+</div>
+</footer>
+
+<script>
+  // ---- VERİ ----
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const deliveryFee      = parseFloat(localStorage.getItem('cartDeliveryFee') || '0');
+  const restaurantName   = localStorage.getItem('cartRestaurantName') || '';
+
+  // ---- KAYDET ----
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  // ---- MİKTAR DEĞİŞTİR ----
+  function changeQty(itemId, delta) {
+    const item = cart.find(c => c.id === itemId);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) cart = cart.filter(c => c.id !== itemId);
+    saveCart();
+    render();
+  }
+
+  // ---- ÜRÜN SİL ----
+  function removeItem(itemId) {
+    cart = cart.filter(c => c.id !== itemId);
+    saveCart();
+    render();
+  }
+
+  // ---- RENDER ----
+  function render() {
+    const container   = document.getElementById('cart-items-container');
+    const badge       = document.getElementById('item-count-badge');
+    const navBadge    = document.getElementById('nav-cart-badge');
+    const subtotalEl  = document.getElementById('summary-subtotal');
+    const deliveryEl  = document.getElementById('summary-delivery');
+    const totalEl     = document.getElementById('summary-total');
+    const confirmBtn  = document.getElementById('confirm-btn');
+
+    const totalQty = cart.reduce((s, c) => s + c.qty, 0);
+    const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+    const fee      = cart.length > 0 ? deliveryFee : 0;
+    const total    = subtotal + fee;
+
+    // Nav sepet rozeti
+    navBadge.textContent = totalQty;
+    navBadge.classList.toggle('hidden', totalQty === 0);
+
+    // Başlık rozeti
+    badge.textContent = `${totalQty} Ürün`;
+
+    // Özet paneli
+    subtotalEl.textContent = `₺${subtotal.toFixed(2)}`;
+    deliveryEl.textContent = fee > 0 ? `₺${fee.toFixed(2)}` : 'Ücretsiz';
+    totalEl.textContent    = `₺${total.toFixed(2)}`;
+    confirmBtn.disabled    = cart.length === 0;
+
+    // Sepet boşsa
+    if (cart.length === 0) {
+      container.innerHTML = `
+        <div class="glass-card ghost-border rounded-xl p-16 flex flex-col items-center gap-6 text-center">
+          <span class="text-7xl">🛒</span>
+          <h3 class="text-2xl font-bold text-on-surface">Sepetiniz Boş</h3>
+          <p class="text-on-surface-variant">Henüz sepetinize ürün eklemediniz.</p>
+          <a href="restaurants.html"
+             class="primary-gradient px-8 py-3 rounded-full text-on-primary font-bold uppercase tracking-wider text-sm hover:scale-105 transition-all">
+            Restoranlara Git
+          </a>
+        </div>`;
+      return;
+    }
+
+    // Ürün kartları
+    container.innerHTML = cart.map(item => `
+      <div class="glass-card ghost-border rounded-xl p-6 flex flex-col sm:flex-row items-center gap-6 group hover:bg-surface-container-highest/60 transition-all duration-300">
+        <div class="relative overflow-hidden rounded-lg w-full sm:w-32 h-32 flex-shrink-0 bg-surface-container-highest">
+          ${item.image
+            ? `<img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy" />`
+            : `<div class="w-full h-full flex items-center justify-center text-5xl select-none">🍽️</div>`
+          }
+        </div>
+        <div class="flex-grow flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+          <div class="text-center sm:text-left">
+            <h3 class="text-xl font-bold text-on-surface tracking-tight">${item.name}</h3>
+            <p class="text-sm font-medium text-on-surface-variant uppercase tracking-wider mt-1">
+              ${restaurantName || 'Restoran'}
+            </p>
+            <p class="text-xs text-on-surface-variant mt-0.5">Birim: ₺${item.price.toFixed(2)}</p>
+          </div>
+          <div class="flex items-center gap-6">
+            <!-- Miktar kontrol -->
+            <div class="flex items-center bg-surface-container-highest rounded-full px-4 py-2 border border-outline-variant/10">
+              <button onclick="changeQty('${item.id}', -1)"
+                      class="hover:text-primary transition-colors active:scale-90">
+                <span class="material-symbols-outlined text-sm">remove</span>
+              </button>
+              <span class="mx-4 font-bold w-4 text-center">${item.qty}</span>
+              <button onclick="changeQty('${item.id}', 1)"
+                      class="hover:text-primary transition-colors active:scale-90">
+                <span class="material-symbols-outlined text-sm">add</span>
+              </button>
+            </div>
+            <!-- Satır toplamı -->
+            <div class="text-xl font-bold text-primary min-w-[80px] text-right">
+              ₺${(item.price * item.qty).toFixed(2)}
+            </div>
+            <!-- Sil butonu -->
+            <button onclick="removeItem('${item.id}')"
+                    class="p-2 text-on-surface-variant hover:text-error transition-colors active:scale-90"
+                    title="Ürünü kaldır">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ---- SİPARİŞİ ONAYLA ----
+  function confirmOrder() {
+    if (cart.length === 0) return;
+
+    // Sipariş objesi oluştur
+    const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+    const fee = cart.length > 0 ? deliveryFee : 0;
+    const newOrder = {
+      id: 'ORD-' + Date.now(),
+      placedAt: Date.now(),
+      date: new Date().toLocaleString('tr-TR'),
+      restaurantName: restaurantName || 'Restoran',
+      items: cart.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price, image: i.image || null })),
+      subtotal: subtotal,
+      deliveryFee: fee,
+      total: subtotal + fee,
+      status: 'Hazırlanıyor'
+    };
+
+    // localStorage.orders'a ekle
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders.unshift(newOrder);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // Sepeti temizle
+    localStorage.removeItem('cart');
+    localStorage.removeItem('cartDeliveryFee');
+    localStorage.removeItem('cartRestaurantName');
+    cart = [];
+
+    // Başarı modalı
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm';
+    overlay.innerHTML = `
+      <div class="glass-card ghost-border rounded-2xl p-12 flex flex-col items-center gap-6
+                  text-center max-w-sm mx-4 shadow-[0_0_60px_rgba(255,145,83,0.3)]">
+        <div class="text-6xl">✅</div>
+        <h2 class="text-2xl font-black text-white tracking-tight">Siparişiniz Alındı!</h2>
+        <p class="text-on-surface-variant leading-relaxed">
+          Siparişiniz başarıyla oluşturuldu.<br/>Hazırlanmaya başlandı.
+        </p>
+        <div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+          <div class="bg-primary h-full rounded-full" style="width:100%;transition:width 2.5s linear"></div>
+        </div>
+        <p class="text-xs text-on-surface-variant">Siparişlerim sayfasına yönlendiriliyorsunuz…</p>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    setTimeout(() => { window.location.href = 'orders.html'; }, 2800);
+  }
+
+  // ---- BAŞLAT ----
+  render();
+</script>
+</body></html>
+

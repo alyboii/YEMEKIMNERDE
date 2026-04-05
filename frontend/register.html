@@ -1,68 +1,264 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kayıt Ol — YEMEKİMNEREDE</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-orange-50 flex items-center justify-center min-h-screen">
-  <div class="bg-white rounded-2xl shadow-md p-8 w-full max-w-md">
-    <h1 class="text-2xl font-bold text-orange-600 mb-6 text-center">🍔 Kayıt Ol</h1>
-    <div id="hata" class="hidden bg-red-100 text-red-700 rounded-lg p-3 mb-4 text-sm"></div>
-    <form id="kayitForm" class="space-y-4">
-      <div class="flex gap-3">
-        <input id="ad" type="text" placeholder="Ad" required
-          class="w-1/2 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-        <input id="soyad" type="text" placeholder="Soyad" required
-          class="w-1/2 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-      </div>
-      <input id="email" type="email" placeholder="E-posta" required
-        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-      <input id="telefon" type="tel" placeholder="Telefon (+90...)"
-        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-      <input id="sifre" type="password" placeholder="Şifre" required
-        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-      <button type="submit"
-        class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 font-semibold">
-        Kayıt Ol
-      </button>
-    </form>
-    <p class="text-center text-sm text-gray-500 mt-4">
-      Zaten hesabın var mı? <a href="login.html" class="text-orange-500 hover:underline">Giriş Yap</a>
-    </p>
-  </div>
 
-  <script>
-    const API = 'https://api.yemekimnerede.com/v1';
-
-    document.getElementById('kayitForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const hataDiv = document.getElementById('hata');
-      hataDiv.classList.add('hidden');
-
-      const body = {
-        ad: document.getElementById('ad').value,
-        soyad: document.getElementById('soyad').value,
-        email: document.getElementById('email').value,
-        sifre: document.getElementById('sifre').value,
-        telefon: document.getElementById('telefon').value,
-      };
-
-      try {
-        const res = await fetch(`${API}/auth/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.hata || 'Kayıt başarısız');
-        window.location.href = 'login.html';
-      } catch (err) {
-        hataDiv.textContent = err.message;
-        hataDiv.classList.remove('hidden');
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#000000",
+                    "secondary-container": "#924c00",
+                    "surface-container-highest": "#262626",
+                    "on-surface": "#ffffff",
+                    "tertiary-fixed": "#febb28",
+                    "surface-dim": "#0e0e0e",
+                    "primary-dim": "#fd761a",
+                    "error-container": "#b92902",
+                    "on-primary-container": "#3f1700",
+                    "on-tertiary": "#614400",
+                    "on-error-container": "#ffd2c8",
+                    "surface-container-low": "#131313",
+                    "secondary-dim": "#ec872a",
+                    "tertiary": "#ffcd72",
+                    "on-primary-fixed": "#000000",
+                    "primary-container": "#ff7a23",
+                    "on-primary-fixed-variant": "#4e1e00",
+                    "tertiary-container": "#febb28",
+                    "on-background": "#ffffff",
+                    "on-surface-variant": "#adaaaa",
+                    "primary": "#ff9153",
+                    "secondary-fixed-dim": "#ffb379",
+                    "on-tertiary-container": "#563b00",
+                    "on-secondary-fixed": "#542900",
+                    "inverse-on-surface": "#565554",
+                    "tertiary-fixed-dim": "#efad16",
+                    "tertiary-dim": "#efad16",
+                    "secondary-fixed": "#ffc69d",
+                    "background": "#0e0e0e",
+                    "surface-tint": "#ff9153",
+                    "surface-bright": "#2c2c2c",
+                    "surface-container": "#1a1919",
+                    "surface": "#0e0e0e",
+                    "primary-fixed": "#ff7a23",
+                    "on-error": "#450900",
+                    "on-tertiary-fixed-variant": "#614400",
+                    "on-tertiary-fixed": "#3c2900",
+                    "on-secondary-fixed-variant": "#7e4000",
+                    "outline-variant": "#494847",
+                    "inverse-surface": "#fcf8f8",
+                    "inverse-primary": "#9e4400",
+                    "secondary": "#fd9436",
+                    "on-secondary-container": "#fff6f2",
+                    "error": "#ff7351",
+                    "primary-fixed-dim": "#f06c0b",
+                    "surface-variant": "#262626",
+                    "on-primary": "#511f00",
+                    "surface-container-high": "#201f1f",
+                    "error-dim": "#d53d18",
+                    "outline": "#777575",
+                    "on-secondary": "#4b2400"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
       }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(38, 38, 38, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .gradient-primary {
+        background: linear-gradient(135deg, #ff9153 0%, #fd761a 100%);
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #494847;
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopNavBar (Shared Component) -->
+<!-- Suppression Logic: Suppressed for Focused Transactional (Registration) Task -->
+<main class="flex-grow flex flex-col md:flex-row h-screen">
+<!-- Left Side: Hero Brand Canvas (40%) -->
+<section class="hidden md:flex md:w-2/5 relative overflow-hidden bg-surface-container-lowest">
+<div class="absolute inset-0 z-10 bg-gradient-to-tr from-black via-black/80 to-transparent"></div>
+<!-- Food Collage / Grid -->
+<div class="absolute inset-0 grid grid-cols-2 gap-4 p-4 opacity-40 scale-110">
+<div class="space-y-4">
+<img class="w-full h-80 object-cover rounded-lg" data-alt="Close-up of a rustic artisanal pizza with melting mozzarella and fresh basil leaves on a dark wooden board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRubQyFNPOtSyCkXIV6JbLwMjZPbzceqdiJxOkU8DUWqbwtRbYCQJaqWpabNTtuWtpsW0o2oH2pLcYO2N8xbE-SnICVK9GqEcB_W0p4ZGQYWtEM_xZi5FX1d1cXXe-lnsa9v6cR4Zc8ix9stlakXr-nj_n1Z-caztmuS6LVFMiJ_r-kvp2Omdf--BYFexPFFsw4TAUvQzZ5Xifp3W1u6r_dppzpw7pUif0aLfnNbfO5b0LksPehQkBpCsIcuv0uTGfUhKvtZL6hn0"/>
+<img class="w-full h-64 object-cover rounded-lg" data-alt="Vibrant healthy salad bowl with salmon, avocado, and fresh greens under soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBORTdY_j6m-8278PzUA-SBK0v3vT4aoPWPhS0GPIEwKkZWaBOKIo7nERyP82e8AQyo26TLa6TD_dcXPdV4tsMCL8xt7Q3UWcfGS9DGohpBzP5W8vkTbUvx4MiEOqCIfb-JKPHRRtEW-xfWhcPN_PYOBwFnedRbBj_WsiC6nTS7UxLhZQqckMIiBrVFKiea81qgL251xDabZUXhIAEw608UMp1_lKkK_6A1bfoXsTk_UpjI_Q8HWVjWsdCQyMI843aMUV6XwAXk8A4"/>
+<img class="w-full h-96 object-cover rounded-lg" data-alt="Stack of golden fluffy pancakes with dripping maple syrup and berries in an editorial food style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDlSgBe3o9OhwMPAJrOL7SN2cEoclKtEdhXfWjGYXdui_0zio_sEcRsiPxrwuR5W5XmYX6CMYovjNVKsZD5SPYks8ezqrE2pnAQ7uuRP1qUkLE-TODBZ0x6JQTSNEHChrBxEIgKGBFndKO4Oljdy3nnjy63kY3dVS2NiF2Ny__A6EwHbbM4-dAWj0-IHSSlVaktrGC5RTFwjas5fhFySLtIOdfbZVEked7GVjqC0Gq5j_IdoM5__xRlfGej5SBMQt5zX9N6edqXHk"/>
+</div>
+<div class="space-y-4 -mt-12">
+<img class="w-full h-96 object-cover rounded-lg" data-alt="Grilled meat skewers with vibrant vegetables served on a dark stone plate with smoke texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvzfkzAL0Mx9y_5G1w7U2gncd72M0yOZySITXdGxT3aACraaIrSJuF6SY29Zq4EB5CusI02xQiYaUYsdR_sKZShOyGKSl1_dT-QYIuT3FmfE9wbGmeVU9WzolbkBJ3klFheKbDnmFQwEVm4IXSzAHQyAYK91-nC1L4h2MzPoJYHkBxiVoxRHL_VgndJX8wr6lZbD58BbP1EqPFg_MRQOmWbzMC0NOJd6aCwmHqyakpEj8l0HVbofMZAZnUwoH43apfShliEmMm8Gk"/>
+<img class="w-full h-64 object-cover rounded-lg" data-alt="Sleek close-up of colorful sushi rolls arranged on a black slate tray with ginger and wasabi" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-JXkYRMCgRIDMUPKVmY07bo4J4cdemVphszp2n2CCXR78suOq_7MZvVRc-M7Gej5WEPeovqd_kR2vN6cfw01aBbN2vGeBhmgL869ZrRMbpe3pNVSoYm8PJomyYccnJema5DSw_aZfmOQYKKNcfIzAJ8yudpwggOB5KPAtdZEWDtCOcR4lk4n4WjMY_eGOyjB8FlEDkuO6_GekCEP633G0bvYLaDztfmIfZNm3jjYeDU9Hqy0v-V3x-bui0qnWYlw2SCkPLQ9wqJg"/>
+<img class="w-full h-80 object-cover rounded-lg" data-alt="Gourmet bowl of steaming ramen with pork belly and soft-boiled egg in a moody dark setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACx3p4_7ILJK1g9uB677DWgZrCR8Pw8bK1lHXCf0Rkd4w57a4VATr56pajtqn0QBp5GTLvZcp7DtHfa85IIRS2FY0fvdP3w0H2Kdif8t_-k0j9UQlpmnLSc6nc3ZrCl6ywh496KAqxcqCp59WuEzc9FQw1prqoimT0dR0ErMTK2Hh-EiiBOn5tUfh8ePsCOucIKpLA-6jUgbyWOTy-SVTjTww6FSr8vRxNx6gFWjSiPnHdfahECyyopnA5-8GqA1RVdY7inVIq7RQ"/>
+</div>
+</div>
+<!-- Content Overlay -->
+<div class="relative z-20 flex flex-col justify-between h-full p-12 lg:p-16">
+<div>
+<h1 class="text-3xl font-black tracking-tighter text-white">YEMEKİMNEREDE</h1>
+</div>
+<div class="max-w-xs">
+<div class="w-12 h-1 gradient-primary mb-6 rounded-full"></div>
+<h2 class="text-4xl lg:text-5xl font-black leading-tight text-white tracking-tight">
+                        Binlerce Restoran Seni Bekliyor
+                    </h2>
+<p class="mt-6 text-on-surface-variant font-medium">
+                        Şehrin en iyi lezzetlerini keşfetmeye hazır mısın? Üyeliğini oluştur ve gurme yolculuğuna başla.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Right Side: Registration Form (60%) -->
+<section class="w-full md:w-3/5 bg-[#0a0a0a] flex items-center justify-center p-6 md:p-12 lg:p-24 overflow-y-auto custom-scrollbar">
+<div class="w-full max-w-2xl">
+<!-- Top Brand Mobile Only -->
+<div class="md:hidden mb-12 text-center">
+<h1 class="text-2xl font-black tracking-tighter text-primary">YEMEKİMNEREDE</h1>
+</div>
+<!-- Registration Glass Card -->
+<div class="glass-card p-8 md:p-12 rounded-xl border border-white/5 shadow-2xl relative overflow-hidden">
+<!-- Subtle Glow Ornament -->
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-[100px] rounded-full"></div>
+<!-- Step Indicators -->
+<div class="flex gap-2 mb-10 justify-center">
+<div class="h-1 w-8 rounded-full bg-primary shadow-[0_0_8px_rgba(255,145,83,0.5)]"></div>
+<div class="h-1 w-8 rounded-full bg-surface-container-highest"></div>
+<div class="h-1 w-8 rounded-full bg-surface-container-highest"></div>
+</div>
+<header class="mb-10 text-center md:text-left">
+<h3 class="text-4xl font-bold text-on-surface tracking-tight mb-2">Hesap Oluştur</h3>
+<p class="text-on-surface-variant font-medium">Birkaç adımda ücretsiz üye ol</p>
+</header>
+<form class="space-y-6">
+<!-- Grid 2-Column Ad Soyad -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Ad</label>
+<input id="regAd" class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Can" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Soyad</label>
+<input id="regSoyad" class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="Yılmaz" type="text"/>
+</div>
+</div>
+<!-- Full Width Email -->
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">E-posta</label>
+<input id="regEmail" class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="ornek@mail.com" type="email"/>
+</div>
+<!-- Phone with Prefix -->
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Telefon</label>
+<div class="flex">
+<span class="bg-surface-container-highest flex items-center px-4 rounded-l-lg text-on-surface-variant font-bold text-sm border-r border-white/5">+90</span>
+<input id="regTelefon" class="w-full bg-surface-container-high border-none rounded-r-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="5XX XXX XX XX" type="tel"/>
+</div>
+</div>
+<!-- Grid 2-Column Password -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Şifre</label>
+<div class="relative">
+<input id="regSifre" class="w-full bg-surface-container-high border-none rounded-lg p-4 pr-12 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="••••••••" type="password"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer text-xl">visibility</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant ml-1">Şifre Tekrar</label>
+<input class="w-full bg-surface-container-high border-none rounded-lg p-4 text-on-surface placeholder:text-neutral-600 focus:ring-1 focus:ring-primary/50 transition-all outline-none" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="pt-4 flex flex-col gap-6">
+<button class="w-full gradient-primary py-5 rounded-full text-on-primary font-bold tracking-tight text-lg shadow-[0_20px_40px_rgba(253,118,26,0.3)] hover:scale-[1.02] active:scale-95 transition-all" type="submit">
+                                Kayıt Ol
+                            </button>
+<div class="flex items-center justify-center gap-2 text-sm">
+<span class="text-on-surface-variant">Zaten üye misin?</span>
+<a class="text-primary font-bold hover:underline decoration-2 underline-offset-4" href="login.html">Giriş Yap</a>
+</div>
+</div>
+</form>
+<!-- Policy Footer -->
+<p class="mt-8 text-[10px] text-center text-neutral-600 leading-relaxed max-w-md mx-auto">
+                        Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası'nı kabul etmiş sayılırsınız. Kişisel verileriniz 6698 sayılı KVKK kapsamında işlenmektedir.
+                    </p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-neutral-950 w-full py-8 mt-auto border-t border-white/5 flex flex-col md:flex-row justify-between items-center px-12 gap-4">
+<p class="font-['Inter'] text-[10px] uppercase tracking-widest text-neutral-500">
+            © 2024 YEMEKİMNEREDE. Bütün hakları saklıdır.
+        </p>
+<div class="flex gap-8">
+<a class="font-['Inter'] text-[10px] uppercase tracking-widest text-neutral-600 hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Hakkımızda</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-widest text-neutral-600 hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Yardım</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-widest text-neutral-600 hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Gizlilik</a>
+<a class="font-['Inter'] text-[10px] uppercase tracking-widest text-neutral-600 hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">İletişim</a>
+</div>
+</footer>
+<script>
+const API = 'https://yemekimnerde-production.up.railway.app/v1';
+document.querySelector('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Kayıt yapılıyor...';
+  try {
+    const res = await fetch(`${API}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ad: document.getElementById('regAd').value,
+        soyad: document.getElementById('regSoyad').value,
+        email: document.getElementById('regEmail').value,
+        telefon: '+90' + document.getElementById('regTelefon').value,
+        sifre: document.getElementById('regSifre').value,
+      }),
     });
-  </script>
-</body>
-</html>
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.hata || 'Kayıt başarısız');
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('kullaniciId', data.kullanici._id);
+    window.location.href = 'index.html';
+  } catch (err) {
+    alert(err.message);
+    btn.disabled = false;
+    btn.textContent = 'Kayıt Ol';
+  }
+});
+</script>
+</body></html>
