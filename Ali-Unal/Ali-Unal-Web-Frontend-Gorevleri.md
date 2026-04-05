@@ -1,6 +1,6 @@
 # Ali Ünal — Web Frontend Görevleri
 
-**Video:** *(YouTube linki buraya eklenecek)*
+**Video:** https://youtu.be/BbBZRq8Duk0
 
 **Konu:** Kayıt, giriş ve profil yönetimi sayfaları
 
