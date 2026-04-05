@@ -1,20 +1,26 @@
 const express = require('express');
 const router = express.Router();
+const Order = require('../models/Order'); // Az önce oluşturduğun sipariş modeli
 
-// POST /v1/orders — Sipariş oluştur
-router.post('/', (req, res) => {
-    res.status(201).json({ message: "Sipariş oluşturuldu" });
+// Yeni sipariş oluştur (Veritabanına yazar)
+router.post('/', async (req, res) => {
+    try {
+        const newOrder = new Order(req.body);
+        const savedOrder = await newOrder.save();
+        res.status(201).json({ message: "Sipariş başarıyla alındı", order: savedOrder });
+    } catch (err) {
+        res.status(500).json({ error: "Sipariş oluşturulamadı", details: err.message });
+    }
 });
 
-// GET /v1/orders — Sipariş geçmişi
-router.get('/', (req, res) => {
-    res.status(200).json({ message: "Sipariş geçmişi getirildi" });
-});
-
-// DELETE /v1/orders/:orderId — Sipariş iptal
-router.delete('/:orderId', (req, res) => {
-    const { orderId } = req.params;
-    res.status(200).json({ message: `Sipariş (${orderId}) iptal edildi` });
+// Siparişleri getir (Veritabanından okur)
+router.get('/', async (req, res) => {
+    try {
+        const orders = await Order.find();
+        res.status(200).json(orders);
+    } catch (err) {
+        res.status(500).json({ error: "Siparişler getirilemedi", details: err.message });
+    }
 });
 
 module.exports = router;
