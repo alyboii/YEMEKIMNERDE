@@ -293,7 +293,27 @@
   function confirmOrder() {
     if (cart.length === 0) return;
 
-    // localStorage temizle
+    // Sipariş objesi oluştur
+    const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+    const fee = cart.length > 0 ? deliveryFee : 0;
+    const newOrder = {
+      id: 'ORD-' + Date.now(),
+      placedAt: Date.now(),
+      date: new Date().toLocaleString('tr-TR'),
+      restaurantName: restaurantName || 'Restoran',
+      items: cart.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price, image: i.image || null })),
+      subtotal: subtotal,
+      deliveryFee: fee,
+      total: subtotal + fee,
+      status: 'Hazırlanıyor'
+    };
+
+    // localStorage.orders'a ekle
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders.unshift(newOrder);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    // Sepeti temizle
     localStorage.removeItem('cart');
     localStorage.removeItem('cartDeliveryFee');
     localStorage.removeItem('cartRestaurantName');
@@ -313,11 +333,11 @@
         <div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
           <div class="bg-primary h-full rounded-full" style="width:100%;transition:width 2.5s linear"></div>
         </div>
-        <p class="text-xs text-on-surface-variant">Ana sayfaya yönlendiriliyorsunuz…</p>
+        <p class="text-xs text-on-surface-variant">Siparişlerim sayfasına yönlendiriliyorsunuz…</p>
       </div>`;
     document.body.appendChild(overlay);
 
-    setTimeout(() => { window.location.href = 'index.html'; }, 2800);
+    setTimeout(() => { window.location.href = 'orders.html'; }, 2800);
   }
 
   // ---- BAŞLAT ----
