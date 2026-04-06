@@ -1,6 +1,6 @@
 # REST API Görev Dağılımı
 
-**REST API Adresi:** [https://yemekimnerde-production.up.railway.app/v1](https://yemekimnerde-production.up.railway.app/v1)
+**REST API Adresi:** [https://yemekimnerde-production.up.railway.app/v1](https://yemekimnerde-production.up.railway.app/v)
 
 Bu dokümanda, proje ekibindeki her üyenin geliştirmekten sorumlu olduğu REST API metotları listelenmektedir.
 
