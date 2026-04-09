@@ -1,6 +1,6 @@
 # Ali Ünal — REST API Görevleri
 
-**Video:** https://youtu.be/BbBZRq8Duk0
+**Video:** https://youtu.be/QzSKj2LZsYE
 
 **API Base URL:** `https://yemekimnerde-production.up.railway.app`
 
