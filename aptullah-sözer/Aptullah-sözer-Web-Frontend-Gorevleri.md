@@ -1,6 +1,6 @@
 # Abdullah Sözer — Web Frontend Görevleri
 
-**Video:** *(YouTube linki buraya eklenecek)*
+**Video:** *((https://youtu.be/1zJpyWvb4qc))*
 
 **Konu:** Sepet ve Sipariş yönetimi sayfaları
 
