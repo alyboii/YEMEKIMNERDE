@@ -1,9 +1,6 @@
 # 🖥️ Web Frontend Görevleri — Cemal & Tarlan
 
-> **Proje:** YEMEKİMNEREDE  
-> **Teknoloji Stack:** HTML5 · Tailwind CSS (CDN) · Vanilla JavaScript · localStorage API  
-> **Tasarım Dili:** Dark Theme · Glassmorphism · Unsplash Görseller · Material Symbols  
-> **Repo:** `frontend/` klasörü
+Youtube Linki--->https://youtu.be/49ndZdnrarU
 
 ---
 
