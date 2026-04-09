@@ -13,7 +13,6 @@ app.use('/v1/auth', require('./routes/auth'));
 app.use('/v1/users', require('./routes/users'));
 // Cemal Tarlan'ın route'ları
 app.use('/v1/restaurants', require('./routes/restaurants'));
-app.use('/v1/menu-items', require('./routes/menuItems'));
 // Abdullah'ın route'ları buraya eklenecek:
  app.use('/v1/cart', require('./routes/cart'));
  app.use('/v1/orders', require('./routes/orders'));
