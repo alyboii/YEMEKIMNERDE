@@ -1,6 +1,6 @@
 # 🖥️ Web Frontend Görevleri — Cemal & Tarlan
 
-Youtube Linki--->https://youtu.be/49ndZdnrarU
+Youtube Linki---> https://youtu.be/ccOXan6cbUs
 
 ---
 
