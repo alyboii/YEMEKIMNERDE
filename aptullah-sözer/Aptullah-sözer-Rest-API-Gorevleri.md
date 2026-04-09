@@ -1,6 +1,6 @@
 # Abdullah Sözer — REST API Görevleri
 
-**Video:** *(YouTube linki buraya eklenecek)*
+**Video:** *(https://youtu.be/uZ8LTEq6V6M)*
 
 **Konu:** Sepet (Cart) ve Sipariş (Orders) Yönetimi
 
