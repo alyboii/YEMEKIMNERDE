@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — YEMEKİMNEREDE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: #0a0a0a; color: #e5e5e5; }
+    .brand-font { font-family: 'Bebas Neue', sans-serif; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 2px; }
+
+    .sidebar-link { transition: all 0.2s; }
+    .sidebar-link:hover { color: #f97316; }
+    .sidebar-link.active { color: #f97316; border-left: 3px solid #f97316; padding-left: 13px; }
+
+    .menu-card { background: #161616; border: 1px solid #222; transition: transform 0.2s, border-color 0.2s; }
+    .menu-card:hover { transform: translateY(-2px); border-color: #f97316; }
+
+    .tag-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
+    .tag-vegan    { background: #14532d; color: #4ade80; }
+    .tag-bestseller { background: #78350f; color: #fbbf24; }
+    .tag-sweet    { background: #581c87; color: #d8b4fe; }
+    .tag-healthy  { background: #164e63; color: #67e8f9; }
+    .tag-spicy    { background: #7f1d1d; color: #fca5a5; }
+    .tag-default  { background: #1f1f1f; color: #a3a3a3; }
+
+    .form-input {
+      background: #111; border: 1px solid #2a2a2a; color: #e5e5e5;
+      border-radius: 8px; padding: 10px 14px; font-size: 14px; width: 100%;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: #f97316; }
+    .form-input::placeholder { color: #444; }
+
+    .btn-primary {
+      background: #f97316; color: #000; font-weight: 700; font-size: 12px;
+      letter-spacing: 0.1em; text-transform: uppercase; border: none;
+      border-radius: 8px; padding: 12px 20px; cursor: pointer;
+      transition: background 0.2s; width: 100%;
+    }
+    .btn-primary:hover { background: #ea6c0a; }
+    .btn-outline {
+      background: transparent; color: #e5e5e5; font-weight: 600; font-size: 12px;
+      letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid #2a2a2a;
+      border-radius: 8px; padding: 10px 18px; cursor: pointer;
+      transition: border-color 0.2s; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-outline:hover { border-color: #f97316; color: #f97316; }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #161616; border: 1px solid #2a2a2a;
+      border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap-12;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.4s, transform 0.4s;
+      z-index: 999; min-width: 260px; }
+    .toast.hidden { opacity: 0; transform: translateY(12px); pointer-events: none; }
+
+    .section-active { display: block; }
+    .section-hidden { display: none; }
+
+    select.form-input option { background: #111; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="w-52 flex-shrink-0 bg-[#0d0d0d] border-r border-[#1a1a1a] flex flex-col py-6 px-4">
+    <!-- Logo -->
+    <div class="mb-8 px-2">
+      <p class="brand-font text-orange-500 text-2xl leading-none">The Noir</p>
+      <p class="brand-font text-orange-500 text-2xl leading-none">Concierge</p>
+      <p class="text-[10px] text-neutral-500 tracking-widest uppercase mt-1">Restaurant Admin</p>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex flex-col gap-1 flex-1">
+      <button onclick="goster('restoranlar')" id="nav-restoranlar"
+        class="sidebar-link active text-left text-xs font-semibold tracking-widest uppercase py-3 px-4 rounded-lg flex items-center gap-3">
+        <span>▦</span> Restoranlar
+      </button>
+      <button onclick="goster('menu')" id="nav-menu"
+        class="sidebar-link text-neutral-500 text-left text-xs font-semibold tracking-widest uppercase py-3 px-4 rounded-lg flex items-center gap-3">
+        <span>✕</span> Menü
+      </button>
+      <button onclick="goster('ayarlar')" id="nav-ayarlar"
+        class="sidebar-link text-neutral-500 text-left text-xs font-semibold tracking-widest uppercase py-3 px-4 rounded-lg flex items-center gap-3">
+        <span>⚙</span> Ayarlar
+      </button>
+    </nav>
+
+    <!-- Alt buton -->
+    <button onclick="restoranEkleModalAc()"
+      class="mt-4 bg-orange-500 hover:bg-orange-600 text-black text-xs font-bold uppercase tracking-wider rounded-xl py-3 px-4 flex items-center gap-2 transition-colors">
+      <span class="text-base font-bold">+</span> Restoran Ekle
+    </button>
+  </aside>
+
+  <!-- ─── MAIN ─── -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Topbar -->
+    <header class="bg-[#0d0d0d] border-b border-[#1a1a1a] px-8 py-4 flex items-center justify-between flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <span class="text-orange-500 brand-font text-xl tracking-wide">Yemekim Nerde</span>
+      </div>
+      <div class="flex-1 max-w-sm mx-8">
+        <input id="menuArama" type="text" placeholder="Search menu items..."
+          class="form-input text-sm" oninput="menuAramaYap()" />
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="text-neutral-400 hover:text-orange-500 text-lg">🔔</button>
+        <button onclick="cikisYap()" class="w-8 h-8 rounded-full bg-[#1f1f1f] border border-[#2a2a2a] flex items-center justify-center text-sm hover:border-orange-500 transition-colors">👤</button>
+      </div>
+    </header>
+
+    <!-- İçerik alanı -->
+    <div class="flex-1 overflow-y-auto">
+
+      <!-- ══════════════ RESTORANLAR BÖLÜMÜ ══════════════ -->
+      <section id="bolum-restoranlar" class="section-active p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-white">Restoranlar</h1>
+            <p id="restoranSayisi" class="text-xs text-neutral-500 uppercase tracking-wider mt-1">Yükleniyor...</p>
+          </div>
+          <button onclick="restoranEkleModalAc()" class="btn-outline">
+            <span>+</span> Restoran Ekle
+          </button>
+        </div>
+
+        <div id="restoranYukleniyor" class="text-center text-neutral-600 py-16">Yükleniyor...</div>
+        <div id="restoranGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- ══════════════ MENÜ BÖLÜMÜ ══════════════ -->
+      <section id="bolum-menu" class="section-hidden p-8">
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <h1 id="menuBaslik" class="text-2xl font-bold text-white">Menü Yönetimi</h1>
+            <p id="menuAlt" class="text-xs text-neutral-500 uppercase tracking-wider mt-1">Restoran seçin</p>
+          </div>
+          <div class="flex gap-3">
+            <button class="btn-outline">
+              <span>≡</span> Filtrele
+            </button>
+            <button onclick="yemekEkleFormuAc()" class="btn-primary" style="width:auto; padding: 10px 18px;">
+              + Yemek Ekle
+            </button>
+          </div>
+        </div>
+
+        <!-- Restoran seçici (menü bölümü için) -->
+        <div class="mb-6">
+          <select id="menuRestoranSec" class="form-input" style="width:280px" onchange="restoranMenusuYukle()">
+            <option value="">-- Restoran seçin --</option>
+          </select>
+        </div>
+
+        <div class="flex gap-6">
+          <!-- Kart grid -->
+          <div class="flex-1">
+            <div id="menuYukleniyor" class="text-center text-neutral-600 py-16 hidden">Yükleniyor...</div>
+            <div id="menuYok" class="text-center text-neutral-600 py-16">Restoran seçerek menüyü görüntüleyin.</div>
+            <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+          </div>
+
+          <!-- Yemek ekleme formu -->
+          <div id="yemekEkleFormu" class="hidden w-80 flex-shrink-0">
+            <div class="bg-[#111] border border-[#222] rounded-2xl p-6 sticky top-0">
+              <h2 class="text-lg font-bold text-white mb-1">Add Food Item</h2>
+              <p class="text-xs text-neutral-500 uppercase tracking-wider mb-5">New Menu Entry</p>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Item Name</label>
+                  <input id="yeniAd" type="text" placeholder="e.g. Truffle Infused Risotto" class="form-input" />
+                </div>
+                <div class="flex gap-3">
+                  <div class="flex-1">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Price (₺)</label>
+                    <input id="yeniFiyat" type="number" placeholder="0.00" class="form-input" />
+                  </div>
+                  <div class="flex-1">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Category</label>
+                    <select id="yeniKategori" class="form-input">
+                      <option>Ana Yemek</option>
+                      <option>Başlangıç</option>
+                      <option>Tatlı</option>
+                      <option>İçecek</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Image URL</label>
+                  <input id="yeniGorsel" type="text" placeholder="https://unsplash.com/..." class="form-input" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Labels & Tags</label>
+                  <div id="etiketler" class="flex flex-wrap gap-2 mb-2"></div>
+                  <div class="flex gap-2">
+                    <input id="yeniEtiket" type="text" placeholder="Add tag..." class="form-input flex-1" onkeydown="if(event.key==='Enter'){etiketEkle();}" />
+                    <button onclick="etiketEkle()" class="w-8 h-10 bg-[#1f1f1f] border border-[#2a2a2a] rounded-lg text-orange-500 font-bold hover:border-orange-500 transition-colors flex-shrink-0">+</button>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Description</label>
+                  <textarea id="yeniAciklama" placeholder="Describe the flavors, texture, and preparation..." rows="3" class="form-input resize-none"></textarea>
+                </div>
+                <button onclick="yemekKaydet()" class="btn-primary">Confirm & Publish Item</button>
+                <button onclick="yemekEkleFormuKapat()" class="btn-outline w-full justify-center">İptal</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════ AYARLAR BÖLÜMÜ ══════════════ -->
+      <section id="bolum-ayarlar" class="section-hidden p-8">
+        <h1 class="text-2xl font-bold text-white mb-6">Ayarlar</h1>
+        <div class="bg-[#111] border border-[#222] rounded-2xl p-6 max-w-md">
+          <p class="text-sm text-neutral-400">Çıkış yapmak veya hesabınızı yönetmek için:</p>
+          <button onclick="cikisYap()" class="btn-primary mt-4" style="width:auto;padding:10px 24px;">
+            Çıkış Yap
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ─── RESTORAN EKLEME MODALİ ─── -->
+  <div id="restoranModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+    <div class="bg-[#111] border border-[#222] rounded-2xl p-7 w-full max-w-lg">
+      <h2 class="text-lg font-bold text-white mb-1">Yeni Restoran Ekle</h2>
+      <p class="text-xs text-neutral-500 uppercase tracking-wider mb-5">New Restaurant Entry</p>
+      <div class="space-y-4">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Restoran Adı</label>
+          <input id="rAd" type="text" class="form-input" placeholder="The Noir Bistro" />
+        </div>
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Mutfak Türü</label>
+            <input id="rMutfak" type="text" class="form-input" placeholder="İtalyan, Türk..." />
+          </div>
+          <div class="flex-1">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Şehir</label>
+            <input id="rSehir" type="text" class="form-input" placeholder="İstanbul" />
+          </div>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Adres</label>
+          <input id="rAdres" type="text" class="form-input" placeholder="Bağcılar Cad. No:12" />
+        </div>
+        <div class="flex gap-3">
+          <div class="flex-1">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Enlem</label>
+            <input id="rEnlem" type="number" step="any" class="form-input" placeholder="41.01" />
+          </div>
+          <div class="flex-1">
+            <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Boylam</label>
+            <input id="rBoylam" type="number" step="any" class="form-input" placeholder="28.97" />
+          </div>
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1 block">Görsel URL (opsiyonel)</label>
+          <input id="rGorsel" type="text" class="form-input" placeholder="https://..." />
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button onclick="restoranKaydet()" class="btn-primary">Kaydet</button>
+          <button onclick="restoranModalKapat()" class="btn-outline flex-1 justify-center">İptal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TOAST ─── -->
+  <div id="toast" class="toast hidden">
+    <span id="toastIcon" class="text-lg mr-3">✅</span>
+    <div>
+      <p id="toastBaslik" class="text-sm font-semibold text-white"></p>
+      <p id="toastAlt" class="text-xs text-neutral-500 mt-0.5"></p>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://api.yemekimnerede.com/v1';
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'login.html';
+
+    const authHeader = () => ({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` });
+
+    let aktifEtiketler = [];
+    let tumMenuItems = [];
+
+    // ── Navigasyon ──
+    function goster(bolum) {
+      ['restoranlar', 'menu', 'ayarlar'].forEach(b => {
+        document.getElementById(`bolum-${b}`).className = 'section-hidden p-8';
+        document.getElementById(`nav-${b}`).className = 'sidebar-link text-neutral-500 text-left text-xs font-semibold tracking-widest uppercase py-3 px-4 rounded-lg flex items-center gap-3';
+      });
+      document.getElementById(`bolum-${bolum}`).className = 'section-active p-8';
+      document.getElementById(`nav-${bolum}`).className = 'sidebar-link active text-left text-xs font-semibold tracking-widest uppercase py-3 px-4 rounded-lg flex items-center gap-3';
+
+      if (bolum === 'restoranlar') restoranlarYukle();
+      if (bolum === 'menu') menuRestoranlariniDoldur();
+    }
+
+    // ── Toast ──
+    function toastGoster(baslik, alt = '', basarili = true) {
+      document.getElementById('toastIcon').textContent = basarili ? '✅' : '❌';
+      document.getElementById('toastBaslik').textContent = baslik;
+      document.getElementById('toastAlt').textContent = alt;
+      const el = document.getElementById('toast');
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3500);
+    }
+
+    // ── RESTORANLAR ──
+    async function restoranlarYukle() {
+      document.getElementById('restoranYukleniyor').classList.remove('hidden');
+      document.getElementById('restoranGrid').innerHTML = '';
+      try {
+        const res = await fetch(`${API}/restaurants`);
+        const liste = await res.json();
+        document.getElementById('restoranSayisi').textContent = `${liste.length} Restoran Aktif`;
+        document.getElementById('restoranYukleniyor').classList.add('hidden');
+        liste.forEach(r => restoranKartEkle(r));
+      } catch {
+        document.getElementById('restoranYukleniyor').textContent = 'Yüklenemedi.';
+      }
+    }
+
+    function restoranKartEkle(r) {
+      const grid = document.getElementById('restoranGrid');
+      const gorsel = r.gorselUrl
+        ? `<img src="${r.gorselUrl}" class="w-full h-32 object-cover" />`
+        : `<div class="w-full h-32 bg-[#1a1a1a] flex items-center justify-center text-4xl">🍽️</div>`;
+
+      const kart = document.createElement('div');
+      kart.className = 'menu-card rounded-2xl overflow-hidden';
+      kart.innerHTML = `
+        ${gorsel}
+        <div class="p-4">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-semibold text-white text-sm">${r.ad}</h3>
+              <p class="text-xs text-neutral-500 mt-0.5">${r.mutfakTuru} · ${r.konum?.sehir || ''}</p>
+            </div>
+            <span class="text-orange-500 text-xs font-bold">⭐ ${(r.puan||0).toFixed(1)}</span>
+          </div>
+          <div class="flex gap-2 mt-3">
+            <button onclick="restoranMenusunuGor('${r._id}','${r.ad}')"
+              class="flex-1 text-[11px] font-bold uppercase tracking-wider text-orange-500 border border-orange-500/30 rounded-lg py-1.5 hover:bg-orange-500/10 transition-colors">
+              Menüyü Gör >
+            </button>
+            <button onclick="restoranSil('${r._id}', this)"
+              class="w-8 h-8 flex items-center justify-center bg-[#1f1f1f] rounded-lg text-red-500 hover:bg-red-500/10 transition-colors text-sm">
+              🗑
+            </button>
+          </div>
+        </div>`;
+      grid.appendChild(kart);
+    }
+
+    function restoranMenusunuGor(id, ad) {
+      document.getElementById('menuRestoranSec').value = id;
+      goster('menu');
+      restoranMenusuYukle();
+    }
+
+    async function restoranSil(id, btn) {
+      if (!confirm('Bu restoranı pasif yapmak istediğinizden emin misiniz?')) return;
+      const res = await fetch(`${API}/restaurants/${id}`, { method: 'DELETE', headers: authHeader() });
+      if (res.ok) { btn.closest('.menu-card').remove(); toastGoster('Restoran pasif yapıldı', ''); }
+      else toastGoster('Silinemedi', '', false);
+    }
+
+    // ── RESTORAN EKLEME ──
+    function restoranEkleModalAc() { document.getElementById('restoranModal').classList.remove('hidden'); }
+    function restoranModalKapat() { document.getElementById('restoranModal').classList.add('hidden'); }
+
+    async function restoranKaydet() {
+      const veri = {
+        ad: document.getElementById('rAd').value,
+        mutfakTuru: document.getElementById('rMutfak').value,
+        gorselUrl: document.getElementById('rGorsel').value,
+        konum: {
+          adres: document.getElementById('rAdres').value,
+          sehir: document.getElementById('rSehir').value,
+          enlem: parseFloat(document.getElementById('rEnlem').value) || 0,
+          boylam: parseFloat(document.getElementById('rBoylam').value) || 0,
+        }
+      };
+      if (!veri.ad || !veri.mutfakTuru || !veri.konum.sehir) {
+        toastGoster('Ad, mutfak türü ve şehir zorunlu', '', false); return;
+      }
+      const res = await fetch(`${API}/restaurants`, { method:'POST', headers: authHeader(), body: JSON.stringify(veri) });
+      if (res.ok) {
+        const yeni = await res.json();
+        restoranModalKapat();
+        restoranKartEkle(yeni);
+        toastGoster('Restoran eklendi', 'Inventory changes saved automatically.');
+        ['rAd','rMutfak','rSehir','rAdres','rEnlem','rBoylam','rGorsel'].forEach(id => document.getElementById(id).value = '');
+      } else toastGoster('Eklenemedi', '', false);
+    }
+
+    // ── MENÜ ──
+    async function menuRestoranlariniDoldur() {
+      const sec = document.getElementById('menuRestoranSec');
+      if (sec.options.length > 1) return;
+      const res = await fetch(`${API}/restaurants`);
+      const liste = await res.json();
+      liste.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r._id; opt.textContent = r.ad;
+        sec.appendChild(opt);
+      });
+    }
+
+    async function restoranMenusuYukle() {
+      const id = document.getElementById('menuRestoranSec').value;
+      if (!id) return;
+
+      const secilen = document.getElementById('menuRestoranSec').selectedOptions[0]?.text || '';
+      document.getElementById('menuBaslik').textContent = secilen + ' — Menü';
+      document.getElementById('menuYukleniyor').classList.remove('hidden');
+      document.getElementById('menuGrid').innerHTML = '';
+      document.getElementById('menuYok').classList.add('hidden');
+
+      try {
+        const res = await fetch(`${API}/restaurants/${id}`);
+        const { menu } = await res.json();
+        tumMenuItems = menu || [];
+        document.getElementById('menuAlt').textContent = `${tumMenuItems.length} Items Active`;
+        document.getElementById('menuYukleniyor').classList.add('hidden');
+        menuGoster(tumMenuItems);
+      } catch {
+        document.getElementById('menuYukleniyor').classList.add('hidden');
+      }
+    }
+
+    function menuGoster(liste) {
+      const grid = document.getElementById('menuGrid');
+      grid.innerHTML = '';
+      if (!liste.length) { document.getElementById('menuYok').textContent = 'Bu restorana henüz menü eklenmemiş.'; document.getElementById('menuYok').classList.remove('hidden'); return; }
+      document.getElementById('menuYok').classList.add('hidden');
+      liste.forEach(item => menuKartEkle(item));
+    }
+
+    function menuKartEkle(item) {
+      const grid = document.getElementById('menuGrid');
+      const gorsel = item.gorselUrl
+        ? `<img src="${item.gorselUrl}" class="w-full h-40 object-cover" />`
+        : `<div class="w-full h-40 bg-[#1a1a1a] flex items-center justify-center text-5xl">🍴</div>`;
+
+      const etiketHTML = (item.etiketler||[]).map(e => `<span class="tag-badge ${etiketRenk(e)}">${e}</span>`).join('');
+
+      const kart = document.createElement('div');
+      kart.className = 'menu-card rounded-2xl overflow-hidden';
+      kart.innerHTML = `
+        <div class="relative">
+          ${gorsel}
+          <div class="absolute top-3 left-3 flex gap-1">${etiketHTML}</div>
+          <button onclick="menuItemSil('${item._id}', this)"
+            class="absolute top-3 right-3 w-7 h-7 bg-black/60 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-500/20 text-xs">🗑</button>
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between items-start mb-1">
+            <h3 class="font-bold text-white text-base">${item.ad}</h3>
+            <span class="text-orange-500 font-bold text-base ml-2">${item.fiyat}₺</span>
+          </div>
+          ${item.aciklama ? `<p class="text-xs text-neutral-500 mb-2 line-clamp-2">${item.aciklama}</p>` : ''}
+          <button class="text-[11px] font-bold uppercase tracking-wider text-orange-400 hover:text-orange-300 transition-colors">
+            Edit Details >
+          </button>
+        </div>`;
+      grid.appendChild(kart);
+    }
+
+    function etiketRenk(e) {
+      const map = { vegan:'tag-vegan', bestseller:'tag-bestseller', sweet:'tag-sweet', tatlı:'tag-sweet', healthy:'tag-healthy', sağlıklı:'tag-healthy', spicy:'tag-spicy', acılı:'tag-spicy' };
+      return map[e.toLowerCase()] || 'tag-default';
+    }
+
+    async function menuItemSil(id, btn) {
+      if (!confirm('Bu menü öğesini kaldırmak istediğinizden emin misiniz?')) return;
+      const res = await fetch(`${API}/restaurants/menu-items/${id}`, { method:'DELETE', headers: authHeader() });
+      if (res.ok) { btn.closest('.menu-card').remove(); toastGoster('Menü öğesi kaldırıldı', ''); }
+      else toastGoster('Silinemedi', '', false);
+    }
+
+    function menuAramaYap() {
+      const aranan = document.getElementById('menuArama').value.toLowerCase();
+      if (!aranan) { menuGoster(tumMenuItems); return; }
+      menuGoster(tumMenuItems.filter(i => i.ad.toLowerCase().includes(aranan) || (i.etiketler||[]).some(e => e.toLowerCase().includes(aranan))));
+    }
+
+    // ── YEMEK EKLEME FORMU ──
+    function yemekEkleFormuAc() {
+      const id = document.getElementById('menuRestoranSec').value;
+      if (!id) { toastGoster('Önce restoran seçin', '', false); return; }
+      document.getElementById('yemekEkleFormu').classList.remove('hidden');
+    }
+    function yemekEkleFormuKapat() { document.getElementById('yemekEkleFormu').classList.add('hidden'); aktifEtiketler = []; guncelleEtiketler(); }
+
+    function etiketEkle() {
+      const inp = document.getElementById('yeniEtiket');
+      const deger = inp.value.trim();
+      if (!deger || aktifEtiketler.includes(deger)) return;
+      aktifEtiketler.push(deger);
+      inp.value = '';
+      guncelleEtiketler();
+    }
+
+    function etiketKaldir(e) {
+      aktifEtiketler = aktifEtiketler.filter(x => x !== e);
+      guncelleEtiketler();
+    }
+
+    function guncelleEtiketler() {
+      document.getElementById('etiketler').innerHTML = aktifEtiketler
+        .map(e => `<span class="tag-badge tag-default flex items-center gap-1">${e} <button onclick="etiketKaldir('${e}')" class="ml-1 opacity-60 hover:opacity-100">✕</button></span>`)
+        .join('');
+    }
+
+    async function yemekKaydet() {
+      const id = document.getElementById('menuRestoranSec').value;
+      const veri = {
+        ad: document.getElementById('yeniAd').value,
+        fiyat: parseFloat(document.getElementById('yeniFiyat').value),
+        kategori: document.getElementById('yeniKategori').value,
+        gorselUrl: document.getElementById('yeniGorsel').value,
+        aciklama: document.getElementById('yeniAciklama').value,
+        etiketler: aktifEtiketler,
+      };
+      if (!veri.ad || isNaN(veri.fiyat)) { toastGoster('Ad ve fiyat zorunlu', '', false); return; }
+
+      const res = await fetch(`${API}/restaurants/${id}/menu`, { method:'POST', headers: authHeader(), body: JSON.stringify(veri) });
+      if (res.ok) {
+        const yeni = await res.json();
+        tumMenuItems.push(yeni);
+        menuKartEkle(yeni);
+        yemekEkleFormuKapat();
+        document.getElementById('menuAlt').textContent = `${tumMenuItems.length} Items Active`;
+        toastGoster('Menu Updated', 'Inventory changes saved automatically.');
+        ['yeniAd','yeniFiyat','yeniGorsel','yeniAciklama'].forEach(id => document.getElementById(id).value = '');
+      } else toastGoster('Eklenemedi', '', false);
+    }
+
+    function cikisYap() { localStorage.clear(); window.location.href = 'login.html'; }
+
+    // Başlangıçta restoranları yükle
+    restoranlarYukle();
+  </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+{
+  "info": {
+    "_postman_id": "cemal-tarlan-restaurants-001",
+    "name": "YEMEKİMNEREDE – Restaurants API",
+    "description": "Restoran & Menü Yönetimi rotaları.\nBase URL: {{baseUrl}}\nKorumalı rotalar için Authorization header'ına Bearer {{token}} eklemeyi unutmayın.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "JWT_TOKENINIZI_BURAYA_GIRIN",
+      "type": "string"
+    },
+    {
+      "key": "restaurantId",
+      "value": "RESTORAN_ID_BURAYA",
+      "type": "string"
+    },
+    {
+      "key": "itemId",
+      "value": "MENU_ITEM_ID_BURAYA",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1 – Restoran Ekleme",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Burger House\",\n  \"category\": \"Burger\",\n  \"description\": \"Özenle seçilmiş malzemelerle hazırlanan gurme burgerler.\",\n  \"location\": {\n    \"address\": \"Bağcılar Mah. Lezzet Sk. No:5, İstanbul\",\n    \"lat\": 41.0082,\n    \"lng\": 28.9784\n  },\n  \"workingHours\": {\n    \"open\": \"10:00\",\n    \"close\": \"23:00\"\n  },\n  \"minOrder\": 80,\n  \"deliveryFee\": 15\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/restaurants",
+          "host": ["{{baseUrl}}"],
+          "path": ["restaurants"]
+        },
+        "description": "Yeni bir restoranı sisteme ekler.\n**Gerekli alanlar:** name, category, location, workingHours\n**Yetkilendirme:** Bearer Token (Admin)"
+      },
+      "response": [
+        {
+          "name": "201 Created – Başarılı",
+          "status": "Created", "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"_id\": \"664f1a2b3c4d5e6f7a8b9c0d\",\n  \"name\": \"Burger House\",\n  \"category\": \"Burger\",\n  \"isActive\": true,\n  \"rating\": 0,\n  \"menu\": [],\n  \"createdAt\": \"2026-04-05T10:00:00.000Z\"\n}"
+        },
+        {
+          "name": "400 Bad Request – Eksik Alan",
+          "status": "Bad Request", "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"hata\": \"name, category ve location alanları zorunludur\" }"
+        }
+      ]
+    },
+    {
+      "name": "2 – Restoran Listeleme",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/restaurants?sort=rating&category=Burger&page=1&limit=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["restaurants"],
+          "query": [
+            { "key": "sort",     "value": "rating",  "description": "Sıralama: rating | az | distance" },
+            { "key": "category", "value": "Burger",  "description": "Filtre: Burger | Sushi | Pizza | Kebap | Asya | Meksika | Akdeniz" },
+            { "key": "page",     "value": "1",       "description": "Sayfa numarası" },
+            { "key": "limit",    "value": "10",      "description": "Sayfa başına kayıt sayısı" }
+          ]
+        },
+        "description": "Tüm aktif restoranları listeler.\n**Query Params (opsiyonel):** sort, category, page, limit\n**Yetkilendirme:** Bearer Token"
+      },
+      "response": [
+        {
+          "name": "200 OK – Başarılı",
+          "status": "OK", "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"toplam\": 7,\n  \"sayfa\": 1,\n  \"restoranlar\": [\n    { \"_id\": \"664f1a2b3c4d5e6f7a8b9c0d\", \"name\": \"Burger House\", \"category\": \"Burger\", \"rating\": 4.8, \"deliveryTime\": \"20-30 dk\", \"minOrder\": 80, \"deliveryFee\": 15, \"isActive\": true },\n    { \"_id\": \"664f1a2b3c4d5e6f7a8b9c1e\", \"name\": \"Sushi Palace\", \"category\": \"Sushi\", \"rating\": 4.9, \"deliveryTime\": \"30-45 dk\", \"minOrder\": 150, \"deliveryFee\": 20, \"isActive\": true }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "3 – Restoran Detay Getirme",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["restaurants", "{{restaurantId}}"]
+        },
+        "description": "Belirli bir restoranın tüm bilgilerini, menüsünü ve kullanıcı yorumlarını döner.\n**Path Param:** restaurantId\n**Yetkilendirme:** Bearer Token"
+      },
+      "response": [
+        {
+          "name": "200 OK – Başarılı",
+          "status": "OK", "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"_id\": \"664f1a2b3c4d5e6f7a8b9c0d\",\n  \"name\": \"Burger House\",\n  \"category\": \"Burger\",\n  \"rating\": 4.8,\n  \"reviewCount\": 1240,\n  \"deliveryTime\": \"20-30 dk\",\n  \"minOrder\": 80,\n  \"deliveryFee\": 15,\n  \"workingHours\": { \"open\": \"10:00\", \"close\": \"23:00\" },\n  \"menu\": [\n    { \"_id\": \"664f2a3b4c5d6e7f8a9b0c1d\", \"name\": \"Classic Smash Burger\", \"price\": 185, \"category\": \"Burgerler\", \"tags\": [\"Popüler\"] }\n  ],\n  \"yorumlar\": [\n    { \"kullanici\": \"Ahmet Y.\", \"puan\": 5, \"yorum\": \"Harika lezzet!\", \"tarih\": \"2026-03-20\" }\n  ]\n}"
+        },
+        {
+          "name": "404 Not Found",
+          "status": "Not Found", "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"hata\": \"Restoran bulunamadı\" }"
+        }
+      ]
+    },
+    {
+      "name": "4 – Restoran Güncelleme",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Burger House Premium\",\n  \"workingHours\": {\n    \"open\": \"09:00\",\n    \"close\": \"24:00\"\n  },\n  \"deliveryFee\": 12,\n  \"minOrder\": 90\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["restaurants", "{{restaurantId}}"]
+        },
+        "description": "Mevcut bir restoranın bilgilerini günceller (partial update).\n**Path Param:** restaurantId\n**Yetkilendirme:** Bearer Token (Admin / Restoran Sahibi)"
+      },
+      "response": [
+        {
+          "name": "200 OK – Güncellendi",
+          "status": "OK", "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"_id\": \"664f1a2b3c4d5e6f7a8b9c0d\",\n  \"name\": \"Burger House Premium\",\n  \"deliveryFee\": 12,\n  \"minOrder\": 90,\n  \"workingHours\": { \"open\": \"09:00\", \"close\": \"24:00\" },\n  \"updatedAt\": \"2026-04-05T12:30:00.000Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "5 – Restoran Silme",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/restaurants/{{restaurantId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["restaurants", "{{restaurantId}}"]
+        },
+        "description": "Restoranı pasife alır (soft delete, isActive: false).\n**Path Param:** restaurantId\n**Yetkilendirme:** Bearer Token (Admin)"
+      },
+      "response": [
+        {
+          "name": "200 OK – Pasife Alındı",
+          "status": "OK", "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"mesaj\": \"Restoran (664f1a2b3c4d5e6f7a8b9c0d) pasife alındı\" }"
+        },
+        {
+          "name": "404 Not Found",
+          "status": "Not Found", "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"hata\": \"Restoran bulunamadı\" }"
+        }
+      ]
+    },
+    {
+      "name": "6 – Menüye Yemek Ekleme",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Classic Smash Burger\",\n  \"description\": \"200gr dana eti, çedar peyniri, özel sos, turşu, domates, marul\",\n  \"price\": 185,\n  \"category\": \"Burgerler\",\n  \"imageUrl\": \"https://example.com/images/smash-burger.jpg\",\n  \"tags\": [\"Popüler\", \"Et\"],\n  \"isAvailable\": true\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/restaurants/{{restaurantId}}/menu",
+          "host": ["{{baseUrl}}"],
+          "path": ["restaurants", "{{restaurantId}}", "menu"]
+        },
+        "description": "İlgili restorana yeni bir yemek veya içecek ekler.\n**Gerekli alanlar:** name, price, category\n**Yetkilendirme:** Bearer Token (Admin / Restoran Sahibi)"
+      },
+      "response": [
+        {
+          "name": "201 Created – Menüye Eklendi",
+          "status": "Created", "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"_id\": \"664f2a3b4c5d6e7f8a9b0c1d\",\n  \"restaurantId\": \"664f1a2b3c4d5e6f7a8b9c0d\",\n  \"name\": \"Classic Smash Burger\",\n  \"price\": 185,\n  \"category\": \"Burgerler\",\n  \"tags\": [\"Popüler\", \"Et\"],\n  \"isAvailable\": true,\n  \"createdAt\": \"2026-04-05T11:00:00.000Z\"\n}"
+        },
+        {
+          "name": "400 Bad Request – Eksik Alan",
+          "status": "Bad Request", "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"hata\": \"name, price ve category alanları zorunludur\" }"
+        }
+      ]
+    },
+    {
+      "name": "7 – Menüden Yemek Silme",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/menu-items/{{itemId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["menu-items", "{{itemId}}"]
+        },
+        "description": "Bir yemeği menüden kalıcı olarak kaldırır.\n**Path Param:** itemId\n**Yetkilendirme:** Bearer Token (Admin / Restoran Sahibi)"
+      },
+      "response": [
+        {
+          "name": "200 OK – Silindi",
+          "status": "OK", "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"mesaj\": \"Menü öğesi (664f2a3b4c5d6e7f8a9b0c1d) silindi\" }"
+        },
+        {
+          "name": "404 Not Found",
+          "status": "Not Found", "code": 404,
+          "_postman_previewlanguage": "json",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{ \"hata\": \"Menü öğesi bulunamadı\" }"
+        }
+      ]
+    }
+  ]
+}

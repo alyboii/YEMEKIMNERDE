@@ -1,0 +1,1233 @@
+openapi: 3.0.3
+info:
+  title: YEMEKİMNEREDE API
+  description: |
+    YEMEKİMNEREDE uygulaması için RESTful API.
+
+    ## Özellikler
+    - Kullanıcı kaydı ve kimlik doğrulama
+    - Kullanıcı profil yönetimi
+    - Restoran ve menü yönetimi
+    - Sipariş oluşturma ve takibi
+    - JWT tabanlı kimlik doğrulama
+  version: 1.0.0
+  contact:
+    name: xKRALTR Ekibi
+    email: destek@yemekimnerede.com
+
+servers:
+  - url: https://api.yemekimnerede.com/v1
+    description: Üretim sunucusu
+  - url: http://localhost:3000/v1
+    description: Geliştirme sunucusu
+
+tags:
+  - name: auth
+    description: Kimlik doğrulama işlemleri
+  - name: users
+    description: Kullanıcı profil ve adres yönetimi
+  - name: restaurants
+    description: Restoran yönetimi
+  - name: menu
+    description: Menü yönetimi
+  - name: orders
+    description: Sipariş yönetimi
+
+paths:
+
+  # ──────────── AUTH (Ali Ünal) ────────────
+
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Kayıt Olma
+      description: Yeni kullanıcıların sisteme üye olmasını sağlar. Kullanıcı e-posta adresi ve şifre belirleyerek hesap oluşturur.
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KayitInput'
+            examples:
+              ornek:
+                summary: Örnek kayıt
+                value:
+                  ad: Ahmet
+                  soyad: Yılmaz
+                  email: ahmet@ornek.com
+                  sifre: Gizli123!
+                  telefon: "+905551234567"
+      responses:
+        '201':
+          description: Kullanıcı başarıyla oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kullanici'
+        '400':
+          $ref: '#/components/responses/GecersizIstek'
+        '409':
+          description: E-posta adresi zaten kullanımda
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hata'
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Giriş Yapma
+      description: Kullanıcıların e-posta ve şifre bilgileri ile sisteme giriş yapmasını sağlar. Bilgiler doğru ise JWT token döner.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GirisInput'
+            examples:
+              ornek:
+                summary: Örnek giriş
+                value:
+                  email: ahmet@ornek.com
+                  sifre: Gizli123!
+      responses:
+        '200':
+          description: Giriş başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenYaniti'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+
+  # ──────────── USERS (Ali Ünal) ────────────
+
+  /users/{kullaniciId}:
+    get:
+      tags:
+        - users
+      summary: Profil Görüntüleme
+      description: Kullanıcının kendi profil bilgilerini görmesini sağlar. Kullanıcı adı, e-posta ve telefon gibi bilgiler görüntülenir.
+      operationId: getKullanici
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/KullaniciId'
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kullanici'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+    put:
+      tags:
+        - users
+      summary: Profil Güncelleme
+      description: Kullanıcının profil bilgilerini değiştirmesini sağlar. Kullanıcı adını, e-posta adresini veya telefon numarasını güncelleyebilir.
+      operationId: updateKullanici
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/KullaniciId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KullaniciGuncelleInput'
+      responses:
+        '200':
+          description: Kullanıcı başarıyla güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kullanici'
+        '400':
+          $ref: '#/components/responses/GecersizIstek'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+    delete:
+      tags:
+        - users
+      summary: Hesap Silme
+      description: Kullanıcının kendi hesabını sistemden kaldırmasını sağlar.
+      operationId: deleteKullanici
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/KullaniciId'
+      responses:
+        '204':
+          description: Hesap başarıyla silindi
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+  /users/{kullaniciId}/password:
+    put:
+      tags:
+        - users
+      summary: Şifre Güncelleme
+      description: Kullanıcının mevcut şifresini girerek yeni bir şifre belirlemesini sağlar.
+      operationId: updateSifre
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/KullaniciId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SifreGuncelleInput'
+      responses:
+        '200':
+          description: Şifre başarıyla güncellendi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mesaj:
+                    type: string
+                    example: "Şifre başarıyla güncellendi"
+        '400':
+          $ref: '#/components/responses/GecersizIstek'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+
+  /users/{kullaniciId}/addresses/{adresId}:
+    delete:
+      tags:
+        - users
+      summary: Adres Silme
+      description: Kullanıcının kayıtlı teslimat adreslerinden birini silmesini sağlar.
+      operationId: deleteAdres
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/KullaniciId'
+        - name: adresId
+          in: path
+          required: true
+          description: Adresin benzersiz kimliği
+          schema:
+            type: string
+            format: uuid
+          example: "adr-789"
+      responses:
+        '204':
+          description: Adres başarıyla silindi
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+  # ──────────── RESTAURANTS (Cemal Tarlan) ────────────
+
+  /restaurants:
+    post:
+      tags:
+        - restaurants
+      summary: Restoran Ekleme
+      description: Sisteme yeni bir restoran kaydı oluşturur.
+      operationId: addRestoran
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestoranInput'
+            examples:
+              ornek:
+                summary: Örnek restoran
+                value:
+                  ad: "Güzel Lezzetler"
+                  kategori: "Türk Mutfağı"
+                  calismaSaatleri: "09:00-22:00"
+                  adres: "Atatürk Cad. No:5, Isparta"
+                  telefon: "+902461234567"
+      responses:
+        '201':
+          description: Restoran başarıyla oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restoran'
+        '400':
+          $ref: '#/components/responses/GecersizIstek'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+
+    get:
+      tags:
+        - restaurants
+      summary: Restoran Listeleme
+      description: Sistemdeki tüm aktif restoranları listeler. Kategoriye ve konuma göre filtreleme yapılabilir.
+      operationId: listRestoranlar
+      parameters:
+        - name: kategori
+          in: query
+          description: Restoran kategorisine göre filtrele
+          required: false
+          schema:
+            type: string
+            example: "Türk Mutfağı"
+        - $ref: '#/components/parameters/SayfaParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestoranListesi'
+
+  /restaurants/{restoranId}:
+    get:
+      tags:
+        - restaurants
+      summary: Restoran Detay Getirme
+      description: Belirli bir restoranın adını, kategorisini, çalışma saatlerini ve menüsünü görüntüler.
+      operationId: getRestoran
+      parameters:
+        - $ref: '#/components/parameters/RestoranId'
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restoran'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+    put:
+      tags:
+        - restaurants
+      summary: Restoran Güncelleme
+      description: Restoran adı, kategori ve çalışma saatleri gibi bilgileri günceller.
+      operationId: updateRestoran
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RestoranId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestoranInput'
+      responses:
+        '200':
+          description: Restoran başarıyla güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restoran'
+        '400':
+          $ref: '#/components/responses/GecersizIstek'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+    delete:
+      tags:
+        - restaurants
+      summary: Restoran Silme
+      description: Restoranı ve ilgili tüm menü öğelerini sistemden kaldırır.
+      operationId: deleteRestoran
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RestoranId'
+      responses:
+        '204':
+          description: Restoran başarıyla silindi
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+  # ──────────── MENU (Cemal Tarlan) ────────────
+
+  /restaurants/{restoranId}/menu:
+    post:
+      tags:
+        - menu
+      summary: Menüye Yemek Ekleme
+      description: Restoranın menüsüne yeni bir yemek/ürün ekler.
+      operationId: addMenuItem
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RestoranId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuItemInput'
+            examples:
+              ornek:
+                summary: Örnek yemek
+                value:
+                  ad: "Adana Kebap"
+                  aciklama: "Acılı kıyma kebap, pilav ve salata ile"
+                  fiyat: 180.00
+                  kategori: "Ana Yemek"
+      responses:
+        '201':
+          description: Yemek menüye başarıyla eklendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+        '400':
+          $ref: '#/components/responses/GecersizIstek'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+  /restaurants/{restoranId}/menu/{urunId}:
+    delete:
+      tags:
+        - menu
+      summary: Menüden Yemek Silme
+      description: Bir ürünü restoranın menüsünden kaldırır.
+      operationId: deleteMenuItem
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RestoranId'
+        - name: urunId
+          in: path
+          required: true
+          description: Menü ürününün benzersiz kimliği
+          schema:
+            type: string
+            format: uuid
+          example: "urun-456"
+      responses:
+        '204':
+          description: Ürün menüden başarıyla kaldırıldı
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+  # ──────────── ORDERS (Abdullah Sözer) ────────────
+
+  /orders:
+    post:
+      tags:
+        - orders
+      summary: Sipariş Oluşturma
+      description: Kullanıcının sepetindeki ürünlerden yeni bir sipariş oluşturur ve ödeme sürecini başlatır.
+      operationId: createSiparis
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiparisInput'
+      responses:
+        '201':
+          description: Sipariş başarıyla oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Siparis'
+        '400':
+          $ref: '#/components/responses/GecersizIstek'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+
+    get:
+      tags:
+        - orders
+      summary: Sipariş Listeleme
+      description: Kullanıcının geçmiş ve aktif siparişlerini listeler.
+      operationId: listSiparisler
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: durum
+          in: query
+          description: Sipariş durumuna göre filtrele
+          required: false
+          schema:
+            type: string
+            enum: [beklemede, hazirlaniyor, yolda, teslim_edildi, iptal]
+        - $ref: '#/components/parameters/SayfaParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiparisListesi'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+
+  /orders/{siparisId}:
+    get:
+      tags:
+        - orders
+      summary: Sipariş Detay Görüntüleme
+      description: Belirli bir siparişin içeriğini, durumunu ve tahmini teslimat süresini gösterir.
+      operationId: getSiparis
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SiparisId'
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Siparis'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+  /orders/{siparisId}/cancel:
+    post:
+      tags:
+        - orders
+      summary: Sipariş İptal Etme
+      description: Kullanıcının henüz hazırlanmaya başlanmamış bir siparişi iptal etmesini sağlar.
+      operationId: cancelSiparis
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SiparisId'
+      responses:
+        '200':
+          description: Sipariş başarıyla iptal edildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Siparis'
+        '400':
+          description: Sipariş iptal edilemez (zaten hazırlanmaya başlandı)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hata'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+  /orders/{siparisId}/status:
+    put:
+      tags:
+        - orders
+      summary: Sipariş Durumu Güncelleme
+      description: Restoran veya kurye tarafından siparişin durumunu günceller (örn. hazırlanıyor, yolda, teslim edildi).
+      operationId: updateSiparisDurum
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SiparisId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - durum
+              properties:
+                durum:
+                  type: string
+                  enum: [hazirlaniyor, yolda, teslim_edildi]
+                  example: "hazirlaniyor"
+      responses:
+        '200':
+          description: Sipariş durumu güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Siparis'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+  /cart:
+    get:
+      tags:
+        - orders
+      summary: Sepet Görüntüleme
+      description: Kullanıcının aktif sepetindeki ürünleri ve toplam tutarı gösterir.
+      operationId: getSepet
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sepet'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+
+    post:
+      tags:
+        - orders
+      summary: Sepete Ürün Ekleme
+      description: Kullanıcının sepetine belirli bir restoranın menüsünden ürün ekler.
+      operationId: addSepet
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SepetItemInput'
+      responses:
+        '200':
+          description: Ürün sepete eklendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sepet'
+        '400':
+          $ref: '#/components/responses/GecersizIstek'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+
+  /cart/{urunId}:
+    delete:
+      tags:
+        - orders
+      summary: Sepetten Ürün Çıkarma
+      description: Kullanıcının sepetinden belirli bir ürünü kaldırır.
+      operationId: removeFromSepet
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: urunId
+          in: path
+          required: true
+          description: Sepetten çıkarılacak ürünün kimliği
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ürün sepetten çıkarıldı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sepet'
+        '401':
+          $ref: '#/components/responses/Yetkisiz'
+        '404':
+          $ref: '#/components/responses/Bulunamadi'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token ile kimlik doğrulama.
+
+  parameters:
+    KullaniciId:
+      name: kullaniciId
+      in: path
+      required: true
+      description: Kullanıcının benzersiz kimliği
+      schema:
+        type: string
+        format: uuid
+      example: "usr-123"
+
+    RestoranId:
+      name: restoranId
+      in: path
+      required: true
+      description: Restoranın benzersiz kimliği
+      schema:
+        type: string
+        format: uuid
+      example: "rst-456"
+
+    SiparisId:
+      name: siparisId
+      in: path
+      required: true
+      description: Siparişin benzersiz kimliği
+      schema:
+        type: string
+        format: uuid
+      example: "ord-789"
+
+    SayfaParam:
+      name: sayfa
+      in: query
+      description: Sayfa numarası
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    LimitParam:
+      name: limit
+      in: query
+      description: Sayfa başına kayıt sayısı
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  schemas:
+    Kullanici:
+      type: object
+      required:
+        - id
+        - ad
+        - soyad
+        - email
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Kullanıcının benzersiz kimliği
+          example: "usr-123"
+        ad:
+          type: string
+          description: Kullanıcının adı
+          example: "Ahmet"
+        soyad:
+          type: string
+          description: Kullanıcının soyadı
+          example: "Yılmaz"
+        email:
+          type: string
+          format: email
+          description: Kullanıcının e-posta adresi
+          example: "ahmet@ornek.com"
+        telefon:
+          type: string
+          description: Telefon numarası
+          example: "+905551234567"
+        olusturmaTarihi:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2026-01-15T10:00:00Z"
+
+    KayitInput:
+      type: object
+      required:
+        - ad
+        - soyad
+        - email
+        - sifre
+      properties:
+        ad:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Ahmet"
+        soyad:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Yılmaz"
+        email:
+          type: string
+          format: email
+          example: "ahmet@ornek.com"
+        sifre:
+          type: string
+          format: password
+          minLength: 8
+          example: "Gizli123!"
+        telefon:
+          type: string
+          example: "+905551234567"
+
+    GirisInput:
+      type: object
+      required:
+        - email
+        - sifre
+      properties:
+        email:
+          type: string
+          format: email
+          example: "ahmet@ornek.com"
+        sifre:
+          type: string
+          format: password
+          example: "Gizli123!"
+
+    TokenYaniti:
+      type: object
+      required:
+        - token
+        - kullanici
+      properties:
+        token:
+          type: string
+          description: JWT erişim token'ı
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        gecerlilikSuresi:
+          type: integer
+          description: Token geçerlilik süresi (saniye)
+          example: 3600
+        kullanici:
+          $ref: '#/components/schemas/Kullanici'
+
+    KullaniciGuncelleInput:
+      type: object
+      properties:
+        ad:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Ahmet"
+        soyad:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Yılmaz"
+        email:
+          type: string
+          format: email
+          example: "yeni@ornek.com"
+        telefon:
+          type: string
+          example: "+905559876543"
+
+    SifreGuncelleInput:
+      type: object
+      required:
+        - mevcutSifre
+        - yeniSifre
+      properties:
+        mevcutSifre:
+          type: string
+          format: password
+          example: "EskiSifre123!"
+        yeniSifre:
+          type: string
+          format: password
+          minLength: 8
+          example: "YeniSifre456!"
+
+    Restoran:
+      type: object
+      required:
+        - id
+        - ad
+        - kategori
+        - adres
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Restoranın benzersiz kimliği
+          example: "rst-456"
+        ad:
+          type: string
+          description: Restoranın adı
+          example: "Güzel Lezzetler"
+        kategori:
+          type: string
+          description: Yemek kategorisi
+          example: "Türk Mutfağı"
+        calismaSaatleri:
+          type: string
+          description: Çalışma saatleri
+          example: "09:00-22:00"
+        adres:
+          type: string
+          description: Restoranın adresi
+          example: "Atatürk Cad. No:5, Isparta"
+        telefon:
+          type: string
+          description: İletişim numarası
+          example: "+902461234567"
+        aktif:
+          type: boolean
+          description: Restoranın aktif olup olmadığı
+          default: true
+        olusturmaTarihi:
+          type: string
+          format: date-time
+          readOnly: true
+
+    RestoranInput:
+      type: object
+      required:
+        - ad
+        - kategori
+        - adres
+      properties:
+        ad:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "Güzel Lezzetler"
+        kategori:
+          type: string
+          example: "Türk Mutfağı"
+        calismaSaatleri:
+          type: string
+          example: "09:00-22:00"
+        adres:
+          type: string
+          minLength: 5
+          example: "Atatürk Cad. No:5, Isparta"
+        telefon:
+          type: string
+          example: "+902461234567"
+
+    RestoranListesi:
+      type: object
+      properties:
+        veri:
+          type: array
+          items:
+            $ref: '#/components/schemas/Restoran'
+        sayfalama:
+          $ref: '#/components/schemas/Sayfalama'
+
+    MenuItem:
+      type: object
+      required:
+        - id
+        - ad
+        - fiyat
+        - kategori
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Menü öğesinin benzersiz kimliği
+          example: "urun-456"
+        ad:
+          type: string
+          description: Yemeğin adı
+          example: "Adana Kebap"
+        aciklama:
+          type: string
+          description: Yemeğin açıklaması
+          example: "Acılı kıyma kebap, pilav ve salata ile"
+        fiyat:
+          type: number
+          format: float
+          description: Fiyat (TL)
+          minimum: 0
+          example: 180.00
+        kategori:
+          type: string
+          description: Yemek kategorisi
+          example: "Ana Yemek"
+        resimUrl:
+          type: string
+          format: uri
+          description: Yemek görseli
+          example: "https://cdn.yemekimnerede.com/adana.jpg"
+        aktif:
+          type: boolean
+          default: true
+
+    MenuItemInput:
+      type: object
+      required:
+        - ad
+        - fiyat
+        - kategori
+      properties:
+        ad:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "Adana Kebap"
+        aciklama:
+          type: string
+          maxLength: 500
+          example: "Acılı kıyma kebap, pilav ve salata ile"
+        fiyat:
+          type: number
+          format: float
+          minimum: 0
+          example: 180.00
+        kategori:
+          type: string
+          example: "Ana Yemek"
+        resimUrl:
+          type: string
+          format: uri
+
+    Siparis:
+      type: object
+      required:
+        - id
+        - kullaniciId
+        - restoranId
+        - urunler
+        - toplamTutar
+        - durum
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "ord-789"
+        kullaniciId:
+          type: string
+          format: uuid
+          example: "usr-123"
+        restoranId:
+          type: string
+          format: uuid
+          example: "rst-456"
+        urunler:
+          type: array
+          items:
+            $ref: '#/components/schemas/SiparisItem'
+        toplamTutar:
+          type: number
+          format: float
+          description: Toplam sipariş tutarı (TL)
+          example: 360.00
+        durum:
+          type: string
+          enum: [beklemede, hazirlaniyor, yolda, teslim_edildi, iptal]
+          example: "beklemede"
+        teslimatAdresi:
+          $ref: '#/components/schemas/Adres'
+        olusturmaTarihi:
+          type: string
+          format: date-time
+          readOnly: true
+
+    SiparisInput:
+      type: object
+      required:
+        - restoranId
+        - urunler
+        - teslimatAdresi
+      properties:
+        restoranId:
+          type: string
+          format: uuid
+          example: "rst-456"
+        urunler:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - urunId
+              - adet
+            properties:
+              urunId:
+                type: string
+                format: uuid
+              adet:
+                type: integer
+                minimum: 1
+        teslimatAdresi:
+          $ref: '#/components/schemas/Adres'
+
+    SiparisItem:
+      type: object
+      properties:
+        urunId:
+          type: string
+          format: uuid
+        urunAdi:
+          type: string
+          example: "Adana Kebap"
+        adet:
+          type: integer
+          example: 2
+        birimFiyat:
+          type: number
+          format: float
+          example: 180.00
+        toplamFiyat:
+          type: number
+          format: float
+          example: 360.00
+
+    SiparisListesi:
+      type: object
+      properties:
+        veri:
+          type: array
+          items:
+            $ref: '#/components/schemas/Siparis'
+        sayfalama:
+          $ref: '#/components/schemas/Sayfalama'
+
+    Sepet:
+      type: object
+      properties:
+        kullaniciId:
+          type: string
+          format: uuid
+          example: "usr-123"
+        restoranId:
+          type: string
+          format: uuid
+          nullable: true
+          example: "rst-456"
+        urunler:
+          type: array
+          items:
+            $ref: '#/components/schemas/SiparisItem'
+        araToplam:
+          type: number
+          format: float
+          example: 360.00
+
+    SepetItemInput:
+      type: object
+      required:
+        - restoranId
+        - urunId
+        - adet
+      properties:
+        restoranId:
+          type: string
+          format: uuid
+          example: "rst-456"
+        urunId:
+          type: string
+          format: uuid
+          example: "urun-456"
+        adet:
+          type: integer
+          minimum: 1
+          example: 2
+
+    Adres:
+      type: object
+      required:
+        - sokak
+        - sehir
+        - postaKodu
+      properties:
+        sokak:
+          type: string
+          example: "Atatürk Cad. No:12"
+        sehir:
+          type: string
+          example: "Isparta"
+        postaKodu:
+          type: string
+          example: "32000"
+        ilce:
+          type: string
+          example: "Merkez"
+
+    Sayfalama:
+      type: object
+      properties:
+        sayfa:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        toplamSayfa:
+          type: integer
+          example: 5
+        toplamKayit:
+          type: integer
+          example: 95
+
+    Hata:
+      type: object
+      required:
+        - kod
+        - mesaj
+      properties:
+        kod:
+          type: string
+          description: Hata kodu
+          example: "GECERSIZ_ISTEK"
+        mesaj:
+          type: string
+          description: Hata mesajı
+          example: "Geçersiz e-posta formatı"
+        detaylar:
+          type: array
+          items:
+            type: object
+            properties:
+              alan:
+                type: string
+                example: "email"
+              mesaj:
+                type: string
+                example: "E-posta formatı geçersiz"
+
+  responses:
+    GecersizIstek:
+      description: Geçersiz istek
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Hata'
+          example:
+            kod: "GECERSIZ_ISTEK"
+            mesaj: "İstek parametreleri geçersiz"
+
+    Yetkisiz:
+      description: Yetkisiz erişim - geçerli bir JWT token gereklidir
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Hata'
+          example:
+            kod: "YETKISIZ"
+            mesaj: "Kimlik doğrulama başarısız"
+
+    Bulunamadi:
+      description: İstenen kaynak bulunamadı
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Hata'
+          example:
+            kod: "BULUNAMADI"
+            mesaj: "İstenen kaynak bulunamadı"

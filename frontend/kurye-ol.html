@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kurye Ol — YEMEKİMNEREDE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: { extend: {
+      colors: {
+        "primary": "#ff9153", "primary-container": "#ff7a23",
+        "surface": "#0e0e0e", "surface-container": "#1a1919", "surface-container-high": "#201f1f",
+        "surface-container-highest": "#262626", "on-surface": "#ffffff", "on-surface-variant": "#adaaaa",
+        "on-primary-fixed": "#000000", "outline-variant": "#494847"
+      },
+      fontFamily: { headline: ["Inter"], body: ["Inter"] }
+    }}
+  }
+</script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .glass-card { background: rgba(38,38,38,0.5); backdrop-filter: blur(20px); border: 1px solid rgba(73,72,71,0.2); }
+  .stat-card { background: rgba(255,145,83,0.08); border: 1px solid rgba(255,145,83,0.2); }
+  .step-line::after { content:''; position:absolute; left:50%; top:100%; width:2px; height:40px; background: linear-gradient(to bottom, #ff9153, transparent); transform:translateX(-50%); }
+  input, select, textarea { outline: none; }
+  input:focus, select:focus, textarea:focus { ring: none; border-color: #ff9153 !important; box-shadow: 0 0 0 3px rgba(255,145,83,0.15); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-neutral-900/60 backdrop-blur-xl rounded-full mt-4 mx-auto w-[95%] max-w-7xl shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+  <a href="index.html" class="text-2xl font-black tracking-tighter text-white">🍔 YEMEKİMNEREDE</a>
+  <div class="hidden md:flex items-center gap-8">
+    <a class="text-neutral-400 hover:text-white transition-colors" href="index.html">Ana Sayfa</a>
+    <a class="text-neutral-400 hover:text-white transition-colors" href="restaurants.html">Restoranlar</a>
+    <a class="text-neutral-400 hover:text-white transition-colors" href="kampanyalar.html">Kampanyalar</a>
+    <a class="text-orange-500 font-semibold" href="kurye-ol.html">Kurye Ol</a>
+  </div>
+  <div class="flex items-center gap-4" id="navAuth">
+    <button onclick="window.location.href='login.html'" class="text-white font-medium hover:text-orange-500 transition-colors">Giriş Yap</button>
+    <button onclick="window.location.href='register.html'" class="bg-orange-500 text-black px-6 py-2.5 rounded-full font-bold hover:bg-orange-400 transition-all">Kayıt Ol</button>
+  </div>
+</nav>
+<script>
+  (function(){
+    if(localStorage.getItem('token')){
+      document.getElementById('navAuth').innerHTML=`
+        <button onclick="window.location.href='profile.html'" class="text-white font-medium hover:text-orange-500 transition-colors">Profilim</button>
+        <button onclick="localStorage.clear();window.location.reload();" class="bg-orange-500 text-black px-6 py-2.5 rounded-full font-bold">Çıkış</button>`;
+    }
+  })();
+</script>
+
+<main>
+
+  <!-- HERO -->
+  <section class="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden">
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(255,145,83,0.12) 0%, transparent 70%);"></div>
+    <div class="container mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+      <div>
+        <span class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest text-orange-400 bg-orange-500/10 rounded-full uppercase">🛵 Kurye Partneri</span>
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-8">
+          Kendi<br/><span style="background: linear-gradient(135deg,#ff9153,#ff7a23); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Patronun</span><br/>Sen Ol
+        </h1>
+        <p class="text-xl text-on-surface-variant mb-10 max-w-lg leading-relaxed">
+          Kendi saatlerini belirle, istediğin zaman çalış. YEMEKİMNEREDE kurye ağına katıl, her teslimatından kazan.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="#basvur" class="bg-gradient-to-r from-orange-500 to-orange-600 text-black font-black px-10 py-5 rounded-full text-lg hover:scale-105 active:scale-95 transition-all shadow-[0_20px_40px_rgba(255,145,83,0.3)]">
+            Hemen Başvur
+          </a>
+          <a href="#nasil-calisir" class="border border-white/10 text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-white/5 transition-all">
+            Nasıl Çalışır?
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="stat-card rounded-2xl p-8 text-center">
+          <div class="text-5xl font-black text-orange-400 mb-2">₺120+</div>
+          <div class="text-on-surface-variant text-sm">Saatlik Ortalama Kazanç</div>
+        </div>
+        <div class="stat-card rounded-2xl p-8 text-center">
+          <div class="text-5xl font-black text-orange-400 mb-2">500+</div>
+          <div class="text-on-surface-variant text-sm">Aktif Kurye Partner</div>
+        </div>
+        <div class="stat-card rounded-2xl p-8 text-center">
+          <div class="text-5xl font-black text-orange-400 mb-2">7/24</div>
+          <div class="text-on-surface-variant text-sm">Esnek Çalışma Saati</div>
+        </div>
+        <div class="stat-card rounded-2xl p-8 text-center">
+          <div class="text-5xl font-black text-orange-400 mb-2">%98</div>
+          <div class="text-on-surface-variant text-sm">Kurye Memnuniyeti</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NASIL ÇALIŞIR -->
+  <section id="nasil-calisir" class="py-24 px-8 max-w-7xl mx-auto">
+    <div class="text-center mb-20">
+      <h2 class="text-5xl font-black tracking-tighter mb-4">Nasıl Çalışır?</h2>
+      <p class="text-on-surface-variant text-lg">3 adımda kurye olmaya başla</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="glass-card rounded-2xl p-10 text-center relative">
+        <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-2xl font-black text-black mx-auto mb-6">1</div>
+        <h3 class="text-2xl font-black mb-4">Başvurunu Yap</h3>
+        <p class="text-on-surface-variant">Aşağıdaki formu doldur. 24 saat içinde seni arayalım ve hesabını aktifleştirelim.</p>
+      </div>
+      <div class="glass-card rounded-2xl p-10 text-center">
+        <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-2xl font-black text-black mx-auto mb-6">2</div>
+        <h3 class="text-2xl font-black mb-4">Kurye Uygulamasını İndir</h3>
+        <p class="text-on-surface-variant">Kurye paneline giriş yap. Siparişleri canlı haritada takip et, müsait olduğunda sil başına geç.</p>
+      </div>
+      <div class="glass-card rounded-2xl p-10 text-center">
+        <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-2xl font-black text-black mx-auto mb-6">3</div>
+        <h3 class="text-2xl font-black mb-4">Teslim Et, Kazan</h3>
+        <p class="text-on-surface-variant">Her başarılı teslimat sonrası anında ödeme. Haftalık bonus ve prim sistemiyle daha fazla kazan.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- AVANTAJLAR -->
+  <section class="py-20 px-8 max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <h2 class="text-5xl font-black tracking-tighter mb-4">Neden YEMEKİMNEREDE?</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card rounded-2xl p-8 flex gap-6 items-start">
+        <div class="w-14 h-14 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">💰</div>
+        <div>
+          <h4 class="text-xl font-black mb-2">Anında Ödeme</h4>
+          <p class="text-on-surface-variant">Her teslimatın ücreti aynı gün hesabına yatar. Haftalık toplu ödeme seçeneği de mevcut.</p>
+        </div>
+      </div>
+      <div class="glass-card rounded-2xl p-8 flex gap-6 items-start">
+        <div class="w-14 h-14 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🕐</div>
+        <div>
+          <h4 class="text-xl font-black mb-2">Esnek Saatler</h4>
+          <p class="text-on-surface-variant">Sabah mı akşam mı? Hafta sonu mu? Tamamen sana bırakıyoruz. Müsait olduğunda çalış.</p>
+        </div>
+      </div>
+      <div class="glass-card rounded-2xl p-8 flex gap-6 items-start">
+        <div class="w-14 h-14 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🎁</div>
+        <div>
+          <h4 class="text-xl font-black mb-2">Prim & Bonus</h4>
+          <p class="text-on-surface-variant">Yoğun saatlerde bonus ödemeler, aylık en iyi kurye ödülü ve özel hediye çekleri.</p>
+        </div>
+      </div>
+      <div class="glass-card rounded-2xl p-8 flex gap-6 items-start">
+        <div class="w-14 h-14 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🛡️</div>
+        <div>
+          <h4 class="text-xl font-black mb-2">Sigorta Güvencesi</h4>
+          <p class="text-on-surface-variant">Tüm kurye partnerlerimiz iş kazası sigortası kapsamındadır. Güvenle çalış.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BAŞVURU FORMU -->
+  <section id="basvur" class="py-24 px-8 max-w-3xl mx-auto">
+    <div class="glass-card rounded-3xl p-10 md:p-16">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-black tracking-tighter mb-3">Başvuru Formu</h2>
+        <p class="text-on-surface-variant">Formu doldur, 24 saat içinde seni arayalım.</p>
+      </div>
+      <form id="kuryeForm" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-xs font-black uppercase tracking-widest text-on-surface-variant mb-2">Ad</label>
+            <input id="kAd" type="text" placeholder="Adın" required class="w-full bg-surface-container-high border border-outline-variant/30 rounded-xl px-5 py-4 text-white placeholder-neutral-600 focus:border-orange-500 transition-colors"/>
+          </div>
+          <div>
+            <label class="block text-xs font-black uppercase tracking-widest text-on-surface-variant mb-2">Soyad</label>
+            <input id="kSoyad" type="text" placeholder="Soyadın" required class="w-full bg-surface-container-high border border-outline-variant/30 rounded-xl px-5 py-4 text-white placeholder-neutral-600 focus:border-orange-500 transition-colors"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-black uppercase tracking-widest text-on-surface-variant mb-2">Telefon</label>
+          <input id="kTelefon" type="tel" placeholder="05XX XXX XX XX" required class="w-full bg-surface-container-high border border-outline-variant/30 rounded-xl px-5 py-4 text-white placeholder-neutral-600 focus:border-orange-500 transition-colors"/>
+        </div>
+        <div>
+          <label class="block text-xs font-black uppercase tracking-widest text-on-surface-variant mb-2">Şehir</label>
+          <select id="kSehir" required class="w-full bg-surface-container-high border border-outline-variant/30 rounded-xl px-5 py-4 text-white focus:border-orange-500 transition-colors">
+            <option value="" disabled selected class="bg-neutral-900">Şehir seç...</option>
+            <option value="istanbul" class="bg-neutral-900">İstanbul</option>
+            <option value="ankara" class="bg-neutral-900">Ankara</option>
+            <option value="izmir" class="bg-neutral-900">İzmir</option>
+            <option value="bursa" class="bg-neutral-900">Bursa</option>
+            <option value="antalya" class="bg-neutral-900">Antalya</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-black uppercase tracking-widest text-on-surface-variant mb-2">Araç Tipi</label>
+          <div class="grid grid-cols-3 gap-3">
+            <label class="cursor-pointer">
+              <input type="radio" name="arac" value="bisiklet" class="hidden peer"/>
+              <div class="peer-checked:border-orange-500 peer-checked:bg-orange-500/10 border border-outline-variant/30 rounded-xl p-4 text-center transition-all">
+                <div class="text-2xl mb-1">🚲</div>
+                <div class="text-xs font-bold">Bisiklet</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="arac" value="motorsiklet" class="hidden peer" checked/>
+              <div class="peer-checked:border-orange-500 peer-checked:bg-orange-500/10 border border-outline-variant/30 rounded-xl p-4 text-center transition-all">
+                <div class="text-2xl mb-1">🛵</div>
+                <div class="text-xs font-bold">Motorsiklet</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="arac" value="araba" class="hidden peer"/>
+              <div class="peer-checked:border-orange-500 peer-checked:bg-orange-500/10 border border-outline-variant/30 rounded-xl p-4 text-center transition-all">
+                <div class="text-2xl mb-1">🚗</div>
+                <div class="text-xs font-bold">Araba</div>
+              </div>
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-black font-black py-5 rounded-full text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-[0_20px_40px_rgba(255,145,83,0.3)]">
+          Başvuruyu Gönder
+        </button>
+        <p class="text-center text-xs text-on-surface-variant">Başvurunu aldıktan sonra 24 saat içinde seni arayacağız.</p>
+      </form>
+      <div id="successMsg" class="hidden text-center py-12">
+        <div class="text-6xl mb-6">🎉</div>
+        <h3 class="text-3xl font-black mb-3">Başvurun Alındı!</h3>
+        <p class="text-on-surface-variant">24 saat içinde <strong class="text-white" id="msgTelefon"></strong> numaralı telefonundan seni arayacağız.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="w-full py-10 px-8 bg-neutral-950 border-t border-white/5">
+  <div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+    <div class="text-lg font-black text-white">🍔 YEMEKİMNEREDE</div>
+    <div class="flex gap-8 text-xs uppercase tracking-widest text-neutral-500">
+      <a href="index.html" class="hover:text-white transition-colors">Ana Sayfa</a>
+      <a href="restaurants.html" class="hover:text-white transition-colors">Restoranlar</a>
+      <a href="kampanyalar.html" class="hover:text-white transition-colors">Kampanyalar</a>
+      <a href="kurye-ol.html" class="hover:text-white transition-colors text-orange-500">Kurye Ol</a>
+    </div>
+    <p class="text-xs text-neutral-600">© 2026 YEMEKİMNEREDE.</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('kuryeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const tel = document.getElementById('kTelefon').value;
+    document.getElementById('kuryeForm').classList.add('hidden');
+    document.getElementById('successMsg').classList.remove('hidden');
+    document.getElementById('msgTelefon').textContent = tel;
+  });
+</script>
+</body>
+</html>
