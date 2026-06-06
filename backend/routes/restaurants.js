@@ -3,6 +3,20 @@ const router = express.Router();
 const Restoran = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
 const authMiddleware = require('../middleware/auth');
+const redis = require('redis');
+
+// Redis Client Başlatma (Sadece URL varsa çalışır, yoksa hata fırlatmaz)
+let redisClient;
+(async () => {
+  if (process.env.REDIS_URL) {
+    redisClient = redis.createClient({ url: process.env.REDIS_URL });
+    redisClient.on('error', (err) => console.log('Redis Client Hatası', err));
+    await redisClient.connect();
+    console.log('Redis Cache sistemine bağlanıldı.');
+  } else {
+    console.log('Uyarı: REDIS_URL bulunamadı, cache devre dışı.');
+  }
+})();
 
 // ─────────────────────────────────────────────
 // 1. RESTORAN EKLEME
@@ -33,11 +47,28 @@ router.post('/', authMiddleware, async (req, res) => {
 // ─────────────────────────────────────────────
 // 2. RESTORAN LİSTELEME
 // GET /v1/restaurants
-// Aktif restoranlar puana göre sıralı gelir
+// Aktif restoranlar puana göre sıralı gelir (Redis Cache Destekli)
 // ─────────────────────────────────────────────
 router.get('/', async (req, res) => {
   try {
+    // 1. Önce Redis Cache'e (Önbelleğe) bak
+    if (redisClient) {
+      const cachedData = await redisClient.get('restoranlar_listesi');
+      if (cachedData) {
+        console.log('Veri Redis Cache\'den (Önbellekten) saniyeler içinde getirildi!');
+        return res.json(JSON.parse(cachedData));
+      }
+    }
+
+    // 2. Cache'de yoksa veya Redis kapalıysa MongoDB'ye git
+    console.log('Veri MongoDB\'den alınıyor...');
     const restoranlar = await Restoran.find({ aktif: true }).sort({ puan: -1 });
+
+    // 3. Veriyi MongoDB'den aldıktan sonra bir dahaki sefere hızlı olması için Redis'e kaydet (1 saatliğine)
+    if (redisClient) {
+      await redisClient.setEx('restoranlar_listesi', 3600, JSON.stringify(restoranlar));
+    }
+
     res.json(restoranlar);
   } catch (err) {
     res.status(500).json({ hata: err.message });

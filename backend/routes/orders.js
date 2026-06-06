@@ -1,13 +1,59 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order'); // Az önce oluşturduğun sipariş modeli
+const amqp = require('amqplib');
 
-// Yeni sipariş oluştur (Veritabanına yazar)
+let amqpChannel;
+
+// RabbitMQ Bağlantısı ve İşçi (Worker) Kurulumu
+(async () => {
+  if (process.env.RABBITMQ_URL) {
+    try {
+      const connection = await amqp.connect(process.env.RABBITMQ_URL);
+      amqpChannel = await connection.createChannel();
+      const queue = 'order_queue';
+
+      await amqpChannel.assertQueue(queue, { durable: true });
+      console.log('RabbitMQ Kuyruğuna (order_queue) bağlanıldı.');
+
+      // WORKER (İşçi): Kuyruğu dinle ve arkada MongoDB'ye kaydet
+      amqpChannel.consume(queue, async (msg) => {
+        if (msg !== null) {
+          try {
+            const orderData = JSON.parse(msg.content.toString());
+            const newOrder = new Order(orderData);
+            await newOrder.save();
+            console.log('İşçi (Worker) 1 siparişi kuyruktan alıp DB\\'ye kaydetti!');
+            amqpChannel.ack(msg); // Mesajı kuyruktan başarılı diye sil
+          } catch (err) {
+            console.error('İşçi siparişi kaydederken hata aldı:', err);
+            // Hata olursa tekrar kuyruğa koymuyoruz (basitlik için), istersen reject eklenebilir.
+          }
+        }
+      });
+    } catch (err) {
+      console.log('RabbitMQ Bağlantı Hatası:', err);
+    }
+  } else {
+    console.log('Uyarı: RABBITMQ_URL bulunamadı, siparişler direkt DB\\'ye yazılacak.');
+  }
+})();
+
+// Yeni sipariş oluştur (RabbitMQ Kuyruğuna Atar)
 router.post('/', async (req, res) => {
     try {
-        const newOrder = new Order(req.body);
-        const savedOrder = await newOrder.save();
-        res.status(201).json({ message: "Sipariş başarıyla alındı", order: savedOrder });
+        if (amqpChannel) {
+            // RabbitMQ varsa: DB'ye yazmak yerine kuyruğa at ve anında cevap dön (Süper Hızlı)
+            const orderData = Buffer.from(JSON.stringify(req.body));
+            amqpChannel.sendToQueue('order_queue', orderData, { persistent: true });
+            console.log('Sipariş alındı, kuyruğa (order_queue) gönderildi.');
+            res.status(201).json({ message: "Siparişiniz alındı ve kuyruğa eklendi. (Arka planda işleniyor)" });
+        } else {
+            // RabbitMQ yoksa: Klasik yöntem (Direkt DB'ye yaz)
+            const newOrder = new Order(req.body);
+            const savedOrder = await newOrder.save();
+            res.status(201).json({ message: "Sipariş başarıyla alındı", order: savedOrder });
+        }
     } catch (err) {
         res.status(500).json({ error: "Sipariş oluşturulamadı", details: err.message });
     }
