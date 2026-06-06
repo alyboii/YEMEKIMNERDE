@@ -48,10 +48,19 @@ const LoginScreen = ({ navigation }) => {
 
     setIsSubmitting(true);
     try {
-      // 1. Admin girişi kontrolü
+      // 1. Admin girişi — gerçek API'ye giriş yapıp TOKEN al, sonra panele geç
+      //    (Token olmadan restoran ekleme/silme gibi işlemler 401 verir)
       if (email.toLowerCase().trim() === 'admin@mail.com') {
+        const adminResult = await login({
+          email: 'admin@mail.com',
+          sifre: password,
+        });
         setIsSubmitting(false);
-        navigation.replace('AdminDashboard');
+        if (adminResult.success) {
+          navigation.replace('AdminDashboard');
+        } else {
+          Alert.alert('Admin Girişi Başarısız', adminResult.error || 'Şifre hatalı.');
+        }
         return;
       }
 
@@ -64,8 +73,8 @@ const LoginScreen = ({ navigation }) => {
       setIsSubmitting(false);
 
       if (result.success) {
-        // 3. Başarılı giriş — Profil ekranına yönlendir
-        navigation.replace('Profile');
+        // 3. Başarılı giriş — Ana sayfaya (restoran listesi) yönlendir
+        navigation.replace('Home');
       } else {
         // 4. API'den dönen hata mesajını göster
         Alert.alert('Giriş Başarısız', result.error || 'E-posta veya şifre hatalı.');

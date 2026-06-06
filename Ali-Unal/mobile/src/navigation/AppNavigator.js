@@ -11,6 +11,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import OnboardingScreen from '../screens/auth/OnboardingScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
+import HomeScreen from '../screens/HomeScreen';
+import DetailScreen from '../screens/DetailScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import AddressesScreen from '../screens/profile/AddressesScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
@@ -35,6 +37,9 @@ const AppNavigator = () => {
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+        {/* Ana uygulama akışı (restoran listesi + detay) */}
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Detail" component={DetailScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Addresses" component={AddressesScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />

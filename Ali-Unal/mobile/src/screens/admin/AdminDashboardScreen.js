@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────
 // Admin Dashboard — API Bağlantılı Yönetim Paneli
-// Siparişler, Restoranlar, Menü Yönetimi
+// Siparişler, Restoranlar (Ekle/Güncelle/Sil/Detay), Menü Yönetimi
+// Backend ile TAM UYUMLU: mutfakTuru + konum{enlem,boylam,adres,sehir}
 // ─────────────────────────────────────────────
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -35,6 +36,18 @@ const TABS = [
   { key: 'restaurants', label: '🍽️ Restoranlar' },
 ];
 
+// ─── Boş restoran formu (backend'in beklediği alanlar) ───
+const BOS_FORM = {
+  ad: '',
+  mutfakTuru: '',
+  sehir: 'İstanbul',
+  adres: '',
+  enlem: '41.0082',
+  boylam: '28.9784',
+  gorselUrl: '',
+  calismaSaatleri: [], // gizli — güncellemede mevcut saatleri korumak için
+};
+
 const AdminDashboardScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('orders');
   const [orders, setOrders] = useState([]);
@@ -42,12 +55,15 @@ const AdminDashboardScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // ─── Modal state (Restoran Ekleme) ───
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [newRestoran, setNewRestoran] = useState({ ad: '', kategori: '', calismaSaatleri: '', adres: '', telefon: '' });
+  // ─── Restoran Formu (Ekle/Güncelle ortak) ───
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [editingId, setEditingId] = useState(null); // null = ekleme, dolu = güncelleme
+  const [form, setForm] = useState(BOS_FORM);
 
-  // ─── Modal state (Menü Yönetimi) ───
-  const [selectedRestaurantForMenu, setSelectedRestaurantForMenu] = useState(null);
+  // ─── Menü Yönetimi (Detay) ───
+  const [menuRestaurant, setMenuRestaurant] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [menuLoading, setMenuLoading] = useState(false);
   const [newMenuItem, setNewMenuItem] = useState({ ad: '', aciklama: '', fiyat: '', kategori: '' });
 
   // ════════════════════════════════════════════
@@ -116,23 +132,72 @@ const AdminDashboardScreen = ({ navigation }) => {
   };
 
   // ════════════════════════════════════════════
-  // Restoran İşlemleri
+  // Restoran İşlemleri (Ekle / Güncelle / Sil)
   // ════════════════════════════════════════════
-  const addRestoran = async () => {
-    if (!newRestoran.ad) { Alert.alert('Uyarı', 'Restoran adı giriniz.'); return; }
+
+  // Yeni ekleme formunu aç
+  const openAddForm = () => {
+    setEditingId(null);
+    setForm(BOS_FORM);
+    setShowFormModal(true);
+  };
+
+  // Mevcut restoranı düzenleme formunu aç (alanları doldur)
+  const openEditForm = (r) => {
+    setEditingId(r._id || r.id);
+    setForm({
+      ad: r.ad || '',
+      mutfakTuru: r.mutfakTuru || '',
+      sehir: r.konum?.sehir || 'İstanbul',
+      adres: r.konum?.adres || '',
+      enlem: String(r.konum?.enlem ?? '41.0082'),
+      boylam: String(r.konum?.boylam ?? '28.9784'),
+      gorselUrl: r.gorselUrl || '',
+      calismaSaatleri: r.calismaSaatleri || [],
+    });
+    setShowFormModal(true);
+  };
+
+  // Formu kaydet — editingId varsa PUT (güncelle), yoksa POST (ekle)
+  const saveRestoran = async () => {
+    if (!form.ad.trim() || !form.mutfakTuru.trim() || !form.adres.trim() || !form.sehir.trim()) {
+      Alert.alert('Eksik Bilgi', 'Ad, mutfak türü, adres ve şehir zorunludur.');
+      return;
+    }
+
+    // Backend'in beklediği yapı
+    const payload = {
+      ad: form.ad.trim(),
+      mutfakTuru: form.mutfakTuru.trim(),
+      gorselUrl: form.gorselUrl.trim(),
+      calismaSaatleri: form.calismaSaatleri || [],
+      konum: {
+        enlem: parseFloat(form.enlem) || 41.0082,
+        boylam: parseFloat(form.boylam) || 28.9784,
+        adres: form.adres.trim(),
+        sehir: form.sehir.trim(),
+      },
+    };
+
     try {
-      await api.post('/restaurants', newRestoran);
-      Alert.alert('Başarılı', `"${newRestoran.ad}" eklendi!`);
-      setShowAddModal(false);
-      setNewRestoran({ ad: '', kategori: '', calismaSaatleri: '', adres: '', telefon: '' });
+      if (editingId) {
+        await api.put(`/restaurants/${editingId}`, payload);
+        Alert.alert('Başarılı', `"${payload.ad}" güncellendi!`);
+      } else {
+        await api.post('/restaurants', payload);
+        Alert.alert('Başarılı', `"${payload.ad}" eklendi!`);
+      }
+      setShowFormModal(false);
+      setEditingId(null);
+      setForm(BOS_FORM);
       fetchRestaurants();
     } catch (e) {
-      Alert.alert('Hata', e.message || 'Restoran eklenemedi.');
+      Alert.alert('Hata', e.message || 'İşlem başarısız.');
     }
   };
 
   const deleteRestoran = (id, ad) => {
-    Alert.alert('Emin misin?', `"${ad}" silinecek.`, [
+    Alert.alert('Emin misin?', `"${ad}" silinecek (pasife alınacak).`, [
       { text: 'Vazgeç', style: 'cancel' },
       {
         text: 'Sil', style: 'destructive', onPress: async () => {
@@ -149,25 +214,49 @@ const AdminDashboardScreen = ({ navigation }) => {
   };
 
   // ════════════════════════════════════════════
-  // Menü İşlemleri
+  // Menü İşlemleri (Detay: GET /restaurants/:id → restoran + menu)
   // ════════════════════════════════════════════
+  const openMenu = async (r) => {
+    const id = r._id || r.id;
+    setMenuRestaurant(r);
+    setMenuItems([]);
+    setMenuLoading(true);
+    try {
+      const res = await api.get(`/restaurants/${id}`);
+      setMenuRestaurant(res.data?.restoran || r);
+      setMenuItems(res.data?.menu || []);
+    } catch (e) {
+      Alert.alert('Hata', e.message || 'Menü yüklenemedi.');
+    } finally {
+      setMenuLoading(false);
+    }
+  };
+
+  const refreshMenu = async () => {
+    const id = menuRestaurant?._id || menuRestaurant?.id;
+    if (!id) return;
+    try {
+      const res = await api.get(`/restaurants/${id}`);
+      setMenuItems(res.data?.menu || []);
+    } catch (e) {
+      console.warn('Menü yenilenemedi:', e.message || e);
+    }
+  };
+
   const addMenuItem = async () => {
     if (!newMenuItem.ad || !newMenuItem.fiyat) {
       Alert.alert('Uyarı', 'Ad ve fiyat zorunludur.');
       return;
     }
+    const id = menuRestaurant?._id || menuRestaurant?.id;
     try {
-      await api.post(`/restaurants/${selectedRestaurantForMenu._id || selectedRestaurantForMenu.id}/menu`, {
+      await api.post(`/restaurants/${id}/menu`, {
         ...newMenuItem,
-        fiyat: parseFloat(newMenuItem.fiyat)
+        fiyat: parseFloat(newMenuItem.fiyat),
       });
       Alert.alert('Başarılı', `"${newMenuItem.ad}" menüye eklendi!`);
       setNewMenuItem({ ad: '', aciklama: '', fiyat: '', kategori: '' });
-      fetchRestaurants(); // Refresh restaurants to get updated menu
-      
-      // Update selected restaurant locally to show new item instantly
-      const res = await api.get(`/restaurants/${selectedRestaurantForMenu._id || selectedRestaurantForMenu.id}`);
-      setSelectedRestaurantForMenu(res.data);
+      refreshMenu();
     } catch (e) {
       Alert.alert('Hata', e.message || 'Ürün eklenemedi.');
     }
@@ -179,14 +268,10 @@ const AdminDashboardScreen = ({ navigation }) => {
       {
         text: 'Sil', style: 'destructive', onPress: async () => {
           try {
-            const rId = selectedRestaurantForMenu._id || selectedRestaurantForMenu.id;
-            await api.delete(`/restaurants/${rId}/menu/${urunId}`);
+            // Backend route: DELETE /v1/restaurants/menu-items/:itemId
+            await api.delete(`/restaurants/menu-items/${urunId}`);
             Alert.alert('Başarılı', 'Ürün silindi.');
-            fetchRestaurants();
-            
-            // Update selected restaurant locally
-            const res = await api.get(`/restaurants/${rId}`);
-            setSelectedRestaurantForMenu(res.data);
+            refreshMenu();
           } catch (e) {
             Alert.alert('Hata', e.message || 'Ürün silinemedi.');
           }
@@ -247,36 +332,27 @@ const AdminDashboardScreen = ({ navigation }) => {
     );
   };
 
-  // Çalışma saatlerini okunabilir stringe çevir
-  const formatSaatler = (saatler) => {
-    if (!saatler) return null;
-    if (typeof saatler === 'string') return saatler;
-    if (Array.isArray(saatler)) {
-      return saatler.map(s => `${s.gun || ''}: ${s.acilis || ''}-${s.kapanis || ''}`).join(', ');
-    }
-    if (typeof saatler === 'object') {
-      return `${saatler.gun || ''}: ${saatler.acilis || ''}-${saatler.kapanis || ''}`.trim();
-    }
-    return String(saatler);
-  };
-
   const renderRestaurantCard = (r) => {
     const id = r._id || r.id;
-    const saatText = formatSaatler(r.calismaSaatleri);
+    const sehir = r.konum?.sehir || '';
+    const adres = r.konum?.adres || '';
     return (
       <View key={id} style={s.card}>
         <View style={s.cardHeader}>
           <Text style={s.cardId}>{r.ad}</Text>
           <View style={[s.badge, { backgroundColor: 'rgba(0,230,118,0.1)', borderColor: '#00E676' }]}>
-            <Text style={[s.badgeText, { color: '#00E676' }]}>{r.kategori || 'Genel'}</Text>
+            <Text style={[s.badgeText, { color: '#00E676' }]}>{r.mutfakTuru || 'Genel'}</Text>
           </View>
         </View>
-        {r.adres && <Text style={s.cardDesc}>📍 {typeof r.adres === 'object' ? JSON.stringify(r.adres) : r.adres}</Text>}
-        {saatText && <Text style={s.cardSubDesc}>🕐 {saatText}</Text>}
-        {r.telefon && <Text style={s.cardSubDesc}>📞 {r.telefon}</Text>}
+        {(adres || sehir) && <Text style={s.cardDesc}>📍 {adres}{adres && sehir ? ', ' : ''}{sehir}</Text>}
+        {typeof r.puan === 'number' && <Text style={s.cardSubDesc}>⭐ {r.puan.toFixed(1)} puan</Text>}
+
         <View style={s.actions}>
-          <TouchableOpacity activeOpacity={0.7} style={[s.btnAccept, { backgroundColor: '#1f1f1f', borderWidth: 1, borderColor: '#00E676' }]} onPress={() => setSelectedRestaurantForMenu(r)}>
-            <Text style={[s.btnAcceptText, { color: '#00E676' }]}>MENÜYÜ YÖNET</Text>
+          <TouchableOpacity activeOpacity={0.7} style={[s.btnAccept, { backgroundColor: '#1f1f1f', borderWidth: 1, borderColor: '#42A5F5' }]} onPress={() => openEditForm(r)}>
+            <Text style={[s.btnAcceptText, { color: '#42A5F5' }]}>DÜZENLE</Text>
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.7} style={[s.btnAccept, { backgroundColor: '#1f1f1f', borderWidth: 1, borderColor: '#00E676' }]} onPress={() => openMenu(r)}>
+            <Text style={[s.btnAcceptText, { color: '#00E676' }]}>MENÜ</Text>
           </TouchableOpacity>
           <TouchableOpacity activeOpacity={0.7} style={s.btnReject} onPress={() => deleteRestoran(id, r.ad)}>
             <Text style={s.btnRejectText}>SİL</Text>
@@ -350,7 +426,7 @@ const AdminDashboardScreen = ({ navigation }) => {
 
           {activeTab === 'restaurants' && (
             <>
-              <TouchableOpacity activeOpacity={0.7} style={s.addBtn} onPress={() => setShowAddModal(true)}>
+              <TouchableOpacity activeOpacity={0.7} style={s.addBtn} onPress={openAddForm}>
                 <Text style={s.addBtnText}>+ YENİ RESTORAN EKLE</Text>
               </TouchableOpacity>
               {restaurants.length === 0 ? (
@@ -363,64 +439,72 @@ const AdminDashboardScreen = ({ navigation }) => {
         </ScrollView>
       )}
 
-      {/* ─── Restoran Ekleme Modal ─── */}
-      <Modal visible={showAddModal} animationType="slide" transparent>
+      {/* ─── Restoran Ekle / Güncelle Modal ─── */}
+      <Modal visible={showFormModal} animationType="slide" transparent>
         <View style={s.modalOverlay}>
-          <View style={s.modalContent}>
-            <Text style={s.modalTitle}>Yeni Restoran Ekle</Text>
+          <View style={[s.modalContent, { maxHeight: '90%' }]}>
+            <Text style={s.modalTitle}>{editingId ? 'Restoranı Güncelle' : 'Yeni Restoran Ekle'}</Text>
 
-            {[
-              { key: 'ad', placeholder: 'Restoran Adı *', icon: '🍽️' },
-              { key: 'kategori', placeholder: 'Kategori (Türk Mutfağı, Fast Food...)', icon: '🏷️' },
-              { key: 'calismaSaatleri', placeholder: 'Çalışma Saatleri (09:00-22:00)', icon: '🕐' },
-              { key: 'adres', placeholder: 'Adres', icon: '📍' },
-              { key: 'telefon', placeholder: 'Telefon', icon: '📞' },
-            ].map(field => (
-              <View key={field.key} style={s.modalInputRow}>
-                <Text style={s.modalInputIcon}>{field.icon}</Text>
-                <TextInput
-                  style={s.modalInput}
-                  placeholder={field.placeholder}
-                  placeholderTextColor="#666"
-                  value={newRestoran[field.key]}
-                  onChangeText={v => setNewRestoran(prev => ({ ...prev, [field.key]: v }))}
-                />
-              </View>
-            ))}
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {[
+                { key: 'ad', placeholder: 'Restoran Adı *', icon: '🍽️' },
+                { key: 'mutfakTuru', placeholder: 'Mutfak Türü (Türk, İtalyan...) *', icon: '🏷️' },
+                { key: 'sehir', placeholder: 'Şehir *', icon: '🏙️' },
+                { key: 'adres', placeholder: 'Adres *', icon: '📍' },
+                { key: 'gorselUrl', placeholder: 'Görsel URL (https://...)', icon: '🖼️' },
+                { key: 'enlem', placeholder: 'Enlem (örn 41.0082)', icon: '🧭', keyboardType: 'numeric' },
+                { key: 'boylam', placeholder: 'Boylam (örn 28.9784)', icon: '🧭', keyboardType: 'numeric' },
+              ].map(field => (
+                <View key={field.key} style={s.modalInputRow}>
+                  <Text style={s.modalInputIcon}>{field.icon}</Text>
+                  <TextInput
+                    style={s.modalInput}
+                    placeholder={field.placeholder}
+                    placeholderTextColor="#666"
+                    keyboardType={field.keyboardType || 'default'}
+                    autoCapitalize="none"
+                    value={form[field.key]}
+                    onChangeText={v => setForm(prev => ({ ...prev, [field.key]: v }))}
+                  />
+                </View>
+              ))}
+            </ScrollView>
 
             <View style={s.modalActions}>
-              <TouchableOpacity activeOpacity={0.7} style={s.modalCancelBtn} onPress={() => setShowAddModal(false)}>
+              <TouchableOpacity activeOpacity={0.7} style={s.modalCancelBtn} onPress={() => { setShowFormModal(false); setEditingId(null); }}>
                 <Text style={s.modalCancelText}>Vazgeç</Text>
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={s.modalSaveBtn} onPress={addRestoran}>
-                <Text style={s.modalSaveText}>EKLE</Text>
+              <TouchableOpacity activeOpacity={0.7} style={s.modalSaveBtn} onPress={saveRestoran}>
+                <Text style={s.modalSaveText}>{editingId ? 'GÜNCELLE' : 'EKLE'}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* ─── Menü Yönetimi Modal ─── */}
-      <Modal visible={!!selectedRestaurantForMenu} animationType="slide" transparent>
+      {/* ─── Menü Yönetimi / Detay Modal ─── */}
+      <Modal visible={!!menuRestaurant} animationType="slide" transparent>
         <View style={s.modalOverlay}>
           <View style={[s.modalContent, { maxHeight: '90%' }]}>
             <View style={s.modalHeaderRow}>
-              <Text style={[s.modalTitle, { marginBottom: 0 }]}>{selectedRestaurantForMenu?.ad} Menüsü</Text>
-              <TouchableOpacity onPress={() => setSelectedRestaurantForMenu(null)}>
+              <Text style={[s.modalTitle, { marginBottom: 0 }]}>{menuRestaurant?.ad} Menüsü</Text>
+              <TouchableOpacity onPress={() => setMenuRestaurant(null)}>
                 <Text style={s.closeIcon}>✖</Text>
               </TouchableOpacity>
             </View>
 
             <ScrollView style={{ maxHeight: 300, marginBottom: 24 }} showsVerticalScrollIndicator={false}>
-              {(!selectedRestaurantForMenu?.menu || selectedRestaurantForMenu.menu.length === 0) ? (
+              {menuLoading ? (
+                <ActivityIndicator color="#00E676" style={{ marginVertical: 20 }} />
+              ) : menuItems.length === 0 ? (
                 <Text style={s.emptyText}>Bu restorana henüz menü eklenmemiş.</Text>
               ) : (
-                selectedRestaurantForMenu.menu.map((urun) => (
+                menuItems.map((urun) => (
                   <View key={urun._id || urun.id} style={s.menuItemCard}>
                     <View style={{ flex: 1 }}>
                       <Text style={s.menuItemName}>{urun.ad}</Text>
-                      <Text style={s.menuItemDesc}>{urun.aciklama}</Text>
-                      <Text style={s.menuItemPrice}>₺{urun.fiyat}</Text>
+                      {!!urun.aciklama && <Text style={s.menuItemDesc}>{urun.aciklama}</Text>}
+                      <Text style={s.menuItemPrice}>₺{urun.fiyat}{urun.kategori ? `  ·  ${urun.kategori}` : ''}</Text>
                     </View>
                     <TouchableOpacity activeOpacity={0.7} style={s.menuItemDeleteBtn} onPress={() => deleteMenuItem(urun._id || urun.id, urun.ad)}>
                       <Text style={s.deleteIcon}>🗑️</Text>
@@ -528,6 +612,7 @@ const s = StyleSheet.create({
   modalSaveText: { color: '#000', fontSize: 15, fontWeight: '900', letterSpacing: 0.5 },
 
   // Menu Items Modal
+  sectionTitle: { color: '#666', fontSize: 12, fontWeight: '800', letterSpacing: 1, marginBottom: 12 },
   modalHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
   closeIcon: { color: '#A0A0A0', fontSize: 24 },
   menuItemCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1A1A1A', padding: 16, borderRadius: 12, marginBottom: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },

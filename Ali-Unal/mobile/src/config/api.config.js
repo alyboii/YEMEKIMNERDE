@@ -36,6 +36,12 @@ const API_CONFIG = {
     USER_ADDRESS: (kullaniciId, adresId) =>
       `/users/${kullaniciId}/addresses/${adresId}`,
     USER_ADDRESSES: (kullaniciId) => `/users/${kullaniciId}/addresses`,
+
+    // Restaurants (Restoranlar)
+    RESTAURANTS: '/restaurants',
+    RESTAURANT: (restoranId) => `/restaurants/${restoranId}`,
+    RESTAURANT_REVIEWS: (restoranId) => `/restaurants/${restoranId}/reviews`,
+    RESTAURANTS_ONERI: '/restaurants/oneri',
   },
 };
 

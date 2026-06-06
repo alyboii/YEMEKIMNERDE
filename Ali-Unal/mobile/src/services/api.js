@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as Keychain from 'react-native-keychain';
+import SecureStorage from './secureStorage';
 
 // API Base URL - Backend ekibinin hazırladığı canlı Railway sunucusu
 const BASE_URL = 'https://yemekimnerde-production.up.railway.app/v1';
@@ -17,12 +17,14 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
-      const credentials = await Keychain.getGenericPassword();
-      if (credentials) {
-        config.headers.Authorization = `Bearer ${credentials.password}`;
+      // Token, AuthService/SecureStorage ile kaydedildiği yerden okunur
+      // (httpClient ile aynı kaynak — tutarlılık için)
+      const token = await SecureStorage.getToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
-      console.error('Error fetching token from Keychain', error);
+      console.error('Token okunamadı:', error);
     }
     return config;
   },

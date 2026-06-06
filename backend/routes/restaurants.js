@@ -2,21 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Restoran = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
+const Yorum = require('../models/Yorum');
 const authMiddleware = require('../middleware/auth');
-const redis = require('redis');
-
-// Redis Client Başlatma (Sadece URL varsa çalışır, yoksa hata fırlatmaz)
-let redisClient;
-(async () => {
-  if (process.env.REDIS_URL) {
-    redisClient = redis.createClient({ url: process.env.REDIS_URL });
-    redisClient.on('error', (err) => console.log('Redis Client Hatası', err));
-    await redisClient.connect();
-    console.log('Redis Cache sistemine bağlanıldı.');
-  } else {
-    console.log('Uyarı: REDIS_URL bulunamadı, cache devre dışı.');
-  }
-})();
 
 // ─────────────────────────────────────────────
 // 1. RESTORAN EKLEME
@@ -47,29 +34,41 @@ router.post('/', authMiddleware, async (req, res) => {
 // ─────────────────────────────────────────────
 // 2. RESTORAN LİSTELEME
 // GET /v1/restaurants
-// Aktif restoranlar puana göre sıralı gelir (Redis Cache Destekli)
+// Aktif restoranlar puana göre sıralı gelir
 // ─────────────────────────────────────────────
 router.get('/', async (req, res) => {
   try {
-    // 1. Önce Redis Cache'e (Önbelleğe) bak
-    if (redisClient) {
-      const cachedData = await redisClient.get('restoranlar_listesi');
-      if (cachedData) {
-        console.log('Veri Redis Cache\'den (Önbellekten) saniyeler içinde getirildi!');
-        return res.json(JSON.parse(cachedData));
-      }
-    }
-
-    // 2. Cache'de yoksa veya Redis kapalıysa MongoDB'ye git
-    console.log('Veri MongoDB\'den alınıyor...');
     const restoranlar = await Restoran.find({ aktif: true }).sort({ puan: -1 });
-
-    // 3. Veriyi MongoDB'den aldıktan sonra bir dahaki sefere hızlı olması için Redis'e kaydet (1 saatliğine)
-    if (redisClient) {
-      await redisClient.setEx('restoranlar_listesi', 3600, JSON.stringify(restoranlar));
-    }
-
     res.json(restoranlar);
+  } catch (err) {
+    res.status(500).json({ hata: err.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+// 2b. "SANA ÖZEL" SUNUCU TARAFI SIRALAMA
+// POST /v1/restaurants/oneri
+// Body: { tercihler: { "Türk": 2, "Japon": 1 } }  (mutfak türü → ilgi)
+// Sıralama hesabı SUNUCUDA yapılır: skor = puan + (mutfak ilgisi)
+// ─────────────────────────────────────────────
+router.post('/oneri', async (req, res) => {
+  try {
+    const prefs =
+      req.body && typeof req.body.tercihler === 'object' && req.body.tercihler
+        ? req.body.tercihler
+        : {};
+
+    const RATING_W = 1.0;
+    const CUISINE_W = 1.5;
+    const skor = (r) => (r.puan || 0) * RATING_W + (prefs[r.mutfakTuru] || 0) * CUISINE_W;
+
+    const restoranlar = await Restoran.find({ aktif: true });
+    const sirali = restoranlar
+      .map((r) => ({ r, s: skor(r) }))
+      .sort((a, b) => b.s - a.s)
+      .map((x) => x.r);
+
+    res.json(sirali);
   } catch (err) {
     res.status(500).json({ hata: err.message });
   }
@@ -94,7 +93,70 @@ router.get('/:restaurantId', async (req, res) => {
       aktif: true,
     });
 
-    res.json({ restoran, menu });
+    // Restorana ait kullanıcı yorumları (en yeni önce)
+    const yorumlar = await Yorum.find({ restoran: req.params.restaurantId }).sort({
+      createdAt: -1,
+    });
+
+    res.json({ restoran, menu, yorumlar });
+  } catch (err) {
+    res.status(500).json({ hata: err.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+// 3b. RESTORAN YORUMLARINI LİSTELEME
+// GET /v1/restaurants/:restaurantId/reviews
+// ─────────────────────────────────────────────
+router.get('/:restaurantId/reviews', async (req, res) => {
+  try {
+    const yorumlar = await Yorum.find({ restoran: req.params.restaurantId }).sort({
+      createdAt: -1,
+    });
+    res.json(yorumlar);
+  } catch (err) {
+    res.status(500).json({ hata: err.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+// 3c. RESTORANA YORUM EKLEME (giriş gerekli)
+// POST /v1/restaurants/:restaurantId/reviews
+// Body: { puan: 1-5, yorum: "..." }
+// Yeni yorum sonrası restoranın ortalama puanı güncellenir.
+// ─────────────────────────────────────────────
+router.post('/:restaurantId/reviews', authMiddleware, async (req, res) => {
+  try {
+    const { puan, yorum } = req.body;
+
+    if (puan === undefined || puan < 1 || puan > 5) {
+      return res.status(400).json({ hata: 'Puan 1 ile 5 arasında olmalıdır' });
+    }
+
+    const restoran = await Restoran.findById(req.params.restaurantId);
+    if (!restoran || !restoran.aktif) {
+      return res.status(404).json({ hata: 'Restoran bulunamadı' });
+    }
+
+    const ad = req.kullanici
+      ? `${req.kullanici.ad} ${req.kullanici.soyad}`.trim()
+      : 'Anonim';
+
+    const yeniYorum = await Yorum.create({
+      restoran: restoran._id,
+      kullanici: req.kullanici?._id,
+      ad,
+      puan,
+      yorum: yorum || '',
+    });
+
+    // Ortalama puanı yeniden hesapla ve restorana yaz
+    const hepsi = await Yorum.find({ restoran: restoran._id });
+    const ortalama = hepsi.reduce((s, y) => s + y.puan, 0) / hepsi.length;
+    restoran.puan = Math.round(ortalama * 10) / 10;
+    await restoran.save();
+
+    res.status(201).json(yeniYorum);
   } catch (err) {
     res.status(500).json({ hata: err.message });
   }

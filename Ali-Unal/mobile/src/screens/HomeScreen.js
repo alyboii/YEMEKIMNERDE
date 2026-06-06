@@ -1,9 +1,10 @@
 // ─────────────────────────────────────────────
 // Ana Sayfa — Stitch Design (Uber Style)
 // Yemekim Nerede - Neon Green Dark Mode
+// Gerçek veri: GET /v1/restaurants (RestaurantService)
 // ─────────────────────────────────────────────
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,71 +14,144 @@ import {
   Image,
   StatusBar,
   Dimensions,
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import COLORS from '../theme/colors';
 import TYPOGRAPHY from '../theme/typography';
 import SPACING from '../theme/spacing';
+import RestaurantService from '../services/restaurantService';
+import { loadPreferences, getPreferences, getRecommended, hasPreferences, getTopCuisine } from '../services/recommendationService';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// ─── Dummy Data ───
-const CATEGORIES = ['All Type', 'Sashimi', 'Nigiri', 'Temaki', 'Maki'];
-const POPULAR_ITEMS = [
-  {
-    id: '1',
-    title: 'Nigiri Sushi',
-    desc: 'Fresh assorted fish on vinegared rice.',
-    price: '$22.00',
-    rating: '4.8',
-    image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=600&auto=format&fit=crop',
-    active: false,
-  },
-  {
-    id: '2',
-    title: 'Grilled Steak',
-    desc: 'Premium beef topped with rich herb butter and green onions.',
-    price: '$35.00',
-    rating: '5.0',
-    image: 'https://images.unsplash.com/photo-1546833998-877b37c2e5c6?q=80&w=600&auto=format&fit=crop',
-    active: true,
-  },
-  {
-    id: '3',
-    title: 'Chicken Bowl',
-    desc: 'Small rice bowl topped with savory chicken and veggies.',
-    price: '$25.00',
-    rating: '4.9',
-    image: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=600&auto=format&fit=crop',
-    active: false,
-  },
-];
-const BEST_CHOICE = [
-  {
-    id: '1',
-    title: 'Pan Grilled Bratwurst',
-    desc: 'Protein-50gm, Carbs-10gm, Fats-15gm (The perfect post-workout meal).',
-    price: '$18.50',
-    calories: '320 Kcal',
-    image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?q=80&w=600&auto=format&fit=crop',
-  },
-];
-
 const HomeScreen = ({ navigation }) => {
+  // ─── State ───
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('Hepsi');
+  // Sunucudan gelen "Sana Özel" sıralaması
+  const [serverReco, setServerReco] = useState([]);
+
+  // ─── Veri Çekme ───
+  const loadRestaurants = useCallback(async () => {
+    try {
+      setError(null);
+      const data = await RestaurantService.getRestaurants();
+      setRestaurants(data);
+    } catch (e) {
+      setError(e?.message || 'Restoranlar yüklenemedi. Bağlantını kontrol et.');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadRestaurants();
+  }, [loadRestaurants]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadRestaurants();
+  };
+
+  // Sunucu tarafı "Sana Özel" sıralamasını, kayıtlı tercihlerle getir
+  const fetchReco = useCallback(async () => {
+    try {
+      const data = await RestaurantService.getRecommendedRestaurants(getPreferences());
+      setServerReco(data);
+    } catch (e) {
+      setServerReco([]); // hata → istemci yedeğine düşülür
+    }
+  }, []);
+
+  // Açılışta kalıcı tercihleri yükle
+  useEffect(() => {
+    loadPreferences();
+  }, []);
+
+  // Ekran her odaklandığında (örn. Detay'dan dönünce) öneriyi tazele
+  useFocusEffect(
+    useCallback(() => {
+      fetchReco();
+    }, [fetchReco])
+  );
+
+  // ─── Kategoriler (gerçek mutfak türlerinden üretilir) ───
+  const categories = [
+    'Hepsi',
+    ...Array.from(new Set(restaurants.map((r) => r.category).filter(Boolean))),
+  ];
+
+  // ─── Seçili kategoriye göre filtrele ───
+  const filtered =
+    selectedCategory === 'Hepsi'
+      ? restaurants
+      : restaurants.filter((r) => r.category === selectedCategory);
+
+  // Popüler = en yüksek puanlı ilk 5 (API zaten puana göre sıralı döndürüyor)
+  const populer = filtered.slice(0, 5);
+
+  // "Sana Özel" = sunucu önerisi (varsa), yoksa istemci yedeği. Kategoriye göre süzülür.
+  const recoBase = serverReco.length ? serverReco : getRecommended(restaurants);
+  const recommended = (
+    selectedCategory === 'Hepsi'
+      ? recoBase
+      : recoBase.filter((r) => r.category === selectedCategory)
+  ).slice(0, 5);
+  const recoSubtitle = hasPreferences()
+    ? `${getTopCuisine()} sevdiğini fark ettik · senin için seçtik`
+    : 'En beğenilenlerle başla — gezdikçe kişiselleşir';
+
+  // ─── Yatay restoran kartı (Sana Özel + Popüler bölümlerinde paylaşılır) ───
+  const renderCard = (item, index) => {
+    const active = index === 0;
+    return (
+      <TouchableOpacity
+        key={item.id}
+        style={[styles.popularCard, active && styles.popularCardActive]}
+        activeOpacity={0.9}
+        onPress={() => navigation.navigate('Detail', { id: item.id })}
+      >
+        <View style={styles.ratingBadge}>
+          <Text style={styles.ratingIcon}>⭐</Text>
+          <Text style={styles.ratingText}>{item.rating}</Text>
+        </View>
+
+        <Image source={{ uri: item.image }} style={[styles.popularImage, active && styles.popularImageActive]} />
+
+        <Text style={[styles.popularTitle, active && styles.popularTitleActive]} numberOfLines={1}>{item.title}</Text>
+        <Text style={styles.popularDesc} numberOfLines={2}>{item.desc}</Text>
+
+        <View style={styles.popularFooter}>
+          <Text style={styles.popularLocation} numberOfLines={1}>📍 {item.location}</Text>
+          <View style={[styles.addBtn, active && styles.addBtnActive]}>
+            <Text style={[styles.addBtnText, active && styles.addBtnTextActive]}>›</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.screen}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
 
       {/* ═══ Header ═══ */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Profile')}>
           <Text style={styles.headerIcon}>☰</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.locationContainer}>
-          <Text style={styles.locationLabel}>LOCATION</Text>
+          <Text style={styles.locationLabel}>KONUM</Text>
           <View style={styles.locationRow}>
             <Text style={styles.locationIcon}>📍</Text>
-            <Text style={styles.locationText}>Naperville, Illinois</Text>
+            <Text style={styles.locationText}>İstanbul</Text>
             <Text style={styles.locationArrow}>▼</Text>
           </View>
         </TouchableOpacity>
@@ -88,18 +162,28 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.primary}
+            colors={[COLORS.primary]}
+          />
+        }
+      >
         {/* ═══ Promo Banner ═══ */}
         <View style={styles.promoBanner}>
           <View style={styles.promoContent}>
             <View style={styles.promoCodeRow}>
-              <Text style={styles.promoCodeLabel}>USE CODE</Text>
+              <Text style={styles.promoCodeLabel}>KOD KULLAN</Text>
               <View style={styles.promoCodeBadge}>
                 <Text style={styles.promoCodeText}>FIRST50</Text>
               </View>
             </View>
-            <Text style={styles.promoTitle}>Get 50% Off Your{'\n'}First Order!</Text>
+            <Text style={styles.promoTitle}>İlk Siparişine{'\n'}%50 İndirim!</Text>
           </View>
           <Image
             source={{ uri: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop' }}
@@ -108,73 +192,104 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         {/* ═══ Category Pills ═══ */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll} contentContainerStyle={styles.categoryContainer}>
-          {CATEGORIES.map((cat, index) => (
-            <TouchableOpacity key={cat} style={[styles.categoryPill, index === 0 && styles.categoryPillActive]}>
-              <Text style={[styles.categoryPillText, index === 0 && styles.categoryPillTextActive]}>{cat}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* ═══ Horizontal Cards (Popular) ═══ */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.popularScroll} contentContainerStyle={styles.popularContainer}>
-          {POPULAR_ITEMS.map((item) => (
-            <TouchableOpacity 
-              key={item.id} 
-              style={[styles.popularCard, item.active && styles.popularCardActive]}
-              activeOpacity={0.9}
-              onPress={() => navigation.navigate('Detail', { item })}
-            >
-              <View style={styles.ratingBadge}>
-                <Text style={styles.ratingIcon}>⭐</Text>
-                <Text style={styles.ratingText}>{item.rating}</Text>
-              </View>
-              
-              <Image source={{ uri: item.image }} style={[styles.popularImage, item.active && styles.popularImageActive]} />
-              
-              <Text style={[styles.popularTitle, item.active && styles.popularTitleActive]} numberOfLines={1}>{item.title}</Text>
-              <Text style={styles.popularDesc} numberOfLines={2}>{item.desc}</Text>
-              
-              <View style={styles.popularFooter}>
-                <Text style={styles.popularPrice}>{item.price}</Text>
-                <TouchableOpacity style={[styles.addBtn, item.active && styles.addBtnActive]}>
-                  <Text style={[styles.addBtnText, item.active && styles.addBtnTextActive]}>+</Text>
+        {categories.length > 1 && (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll} contentContainerStyle={styles.categoryContainer}>
+            {categories.map((cat) => {
+              const isActive = cat === selectedCategory;
+              return (
+                <TouchableOpacity
+                  key={cat}
+                  style={[styles.categoryPill, isActive && styles.categoryPillActive]}
+                  onPress={() => setSelectedCategory(cat)}
+                >
+                  <Text style={[styles.categoryPillText, isActive && styles.categoryPillTextActive]}>{cat}</Text>
                 </TouchableOpacity>
-              </View>
+              );
+            })}
+          </ScrollView>
+        )}
+
+        {/* ═══ Yükleniyor ═══ */}
+        {loading && (
+          <View style={styles.centerBox}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+            <Text style={styles.centerText}>Restoranlar yükleniyor...</Text>
+          </View>
+        )}
+
+        {/* ═══ Hata ═══ */}
+        {!loading && error && (
+          <View style={styles.centerBox}>
+            <Text style={styles.errorIcon}>⚠️</Text>
+            <Text style={styles.centerText}>{error}</Text>
+            <TouchableOpacity style={styles.retryBtn} onPress={loadRestaurants}>
+              <Text style={styles.retryBtnText}>Tekrar Dene</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+          </View>
+        )}
 
-        {/* ═══ Best Choice (Vertical) ═══ */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Best Choice</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAllText}>See all ❯</Text>
-          </TouchableOpacity>
-        </View>
+        {/* ═══ Boş ═══ */}
+        {!loading && !error && filtered.length === 0 && (
+          <View style={styles.centerBox}>
+            <Text style={styles.errorIcon}>🍽️</Text>
+            <Text style={styles.centerText}>Bu kategoride restoran bulunamadı.</Text>
+          </View>
+        )}
 
-        {BEST_CHOICE.map((item) => (
-          <TouchableOpacity 
-            key={item.id} 
-            style={styles.bestChoiceCard} 
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('Detail', { item })}
-          >
-            <View style={styles.bestChoiceInfo}>
-              <Text style={styles.bestChoiceTitle}>{item.title}</Text>
-              <Text style={styles.bestChoiceDesc} numberOfLines={2}>{item.desc}</Text>
-              
-              <View style={styles.bestChoiceFooter}>
-                <Text style={styles.bestChoicePrice}>{item.price}</Text>
-                <View style={styles.calorieBadge}>
-                  <Text style={styles.calorieIcon}>🔥</Text>
-                  <Text style={styles.calorieText}>{item.calories}</Text>
-                </View>
+        {/* ═══ İçerik ═══ */}
+        {!loading && !error && filtered.length > 0 && (
+          <>
+            {/* ─── Sana Özel (AI Öneri) ─── */}
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionTitleCol}>
+                <Text style={styles.sectionTitle}>✨ Sana Özel</Text>
+                <Text style={styles.sectionSubtitle} numberOfLines={1}>{recoSubtitle}</Text>
               </View>
             </View>
-            <Image source={{ uri: item.image }} style={styles.bestChoiceImage} />
-          </TouchableOpacity>
-        ))}
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.popularScroll} contentContainerStyle={styles.popularContainer}>
+              {recommended.map(renderCard)}
+            </ScrollView>
+
+            {/* ─── Popüler (Yatay Kartlar) ─── */}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Popüler</Text>
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.popularScroll} contentContainerStyle={styles.popularContainer}>
+              {populer.map(renderCard)}
+            </ScrollView>
+
+            {/* ─── Tüm Restoranlar (Dikey Liste) ─── */}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Tüm Restoranlar</Text>
+              <Text style={styles.seeAllText}>{filtered.length} restoran</Text>
+            </View>
+
+            {filtered.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.bestChoiceCard}
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('Detail', { id: item.id })}
+              >
+                <Image source={{ uri: item.image }} style={styles.bestChoiceImage} />
+                <View style={styles.bestChoiceInfo}>
+                  <Text style={styles.bestChoiceTitle} numberOfLines={1}>{item.title}</Text>
+                  <Text style={styles.bestChoiceDesc} numberOfLines={1}>{item.desc}</Text>
+
+                  <View style={styles.bestChoiceFooter}>
+                    <View style={styles.calorieBadge}>
+                      <Text style={styles.calorieIcon}>⭐</Text>
+                      <Text style={styles.calorieText}>{item.rating}</Text>
+                    </View>
+                    <Text style={styles.bestChoiceLocation} numberOfLines={1}>📍 {item.location}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
 
         <View style={{ height: 100 }} />
       </ScrollView>
@@ -190,7 +305,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: SPACING.xxxl,
   },
-  
+
   // ─── Header ───
   header: {
     flexDirection: 'row',
@@ -342,14 +457,44 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
 
+  // ─── Durum Kutuları (Loading / Error / Empty) ───
+  centerBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: SPACING.screenPadding,
+    gap: SPACING.md,
+  },
+  centerText: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+  },
+  errorIcon: {
+    fontSize: 40,
+  },
+  retryBtn: {
+    marginTop: SPACING.sm,
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    borderRadius: 999,
+  },
+  retryBtnText: {
+    ...TYPOGRAPHY.label,
+    color: '#000000',
+    fontWeight: '700',
+  },
+
   // ─── Horizontal Popular Cards ───
   popularScroll: {
-    marginTop: SPACING.xxxl,
+    marginTop: SPACING.sm,
   },
   popularContainer: {
     paddingHorizontal: SPACING.screenPadding,
     gap: SPACING.md,
     paddingBottom: SPACING.lg,
+    paddingTop: SPACING.xxxl,
   },
   popularCard: {
     width: 160,
@@ -432,10 +577,11 @@ const styles = StyleSheet.create({
     borderTopColor: 'rgba(255,255,255,0.1)',
     paddingTop: SPACING.sm,
   },
-  popularPrice: {
+  popularLocation: {
     ...TYPOGRAPHY.label,
-    color: COLORS.textPrimary,
-    fontSize: 16,
+    color: COLORS.textSecondary,
+    fontSize: 11,
+    flex: 1,
   },
   addBtn: {
     width: 28,
@@ -461,7 +607,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 
-  // ─── Best Choice (Vertical) ───
+  // ─── Section Header ───
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -470,17 +616,28 @@ const styles = StyleSheet.create({
     marginTop: SPACING.lg,
     marginBottom: SPACING.md,
   },
+  sectionTitleCol: {
+    flex: 1,
+  },
   sectionTitle: {
     ...TYPOGRAPHY.h3,
     color: COLORS.textPrimary,
+  },
+  sectionSubtitle: {
+    fontSize: 12,
+    color: COLORS.primary,
+    marginTop: 2,
   },
   seeAllText: {
     ...TYPOGRAPHY.label,
     color: COLORS.textSecondary,
   },
+
+  // ─── Vertical Restaurant Card ───
   bestChoiceCard: {
     flexDirection: 'row',
     marginHorizontal: SPACING.screenPadding,
+    marginBottom: SPACING.md,
     backgroundColor: COLORS.surfaceContainer,
     borderRadius: 24,
     padding: SPACING.sm,
@@ -490,7 +647,7 @@ const styles = StyleSheet.create({
   bestChoiceInfo: {
     flex: 1,
     padding: SPACING.sm,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   bestChoiceTitle: {
     ...TYPOGRAPHY.label,
@@ -508,10 +665,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: SPACING.md,
   },
-  bestChoicePrice: {
-    ...TYPOGRAPHY.label,
-    color: COLORS.textPrimary,
-    fontSize: 16,
+  bestChoiceLocation: {
+    fontSize: 11,
+    color: COLORS.textSecondary,
+    flex: 1,
   },
   calorieBadge: {
     flexDirection: 'row',
