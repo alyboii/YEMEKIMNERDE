@@ -23,7 +23,7 @@ let amqpChannel;
             const orderData = JSON.parse(msg.content.toString());
             const newOrder = new Order(orderData);
             await newOrder.save();
-            console.log('İşçi (Worker) 1 siparişi kuyruktan alıp DB\\'ye kaydetti!');
+            console.log('İşçi (Worker) 1 siparişi kuyruktan alıp DB ye kaydetti!');
             amqpChannel.ack(msg); // Mesajı kuyruktan başarılı diye sil
           } catch (err) {
             console.error('İşçi siparişi kaydederken hata aldı:', err);
@@ -35,7 +35,7 @@ let amqpChannel;
       console.log('RabbitMQ Bağlantı Hatası:', err);
     }
   } else {
-    console.log('Uyarı: RABBITMQ_URL bulunamadı, siparişler direkt DB\\'ye yazılacak.');
+    console.log('Uyarı: RABBITMQ_URL bulunamadı, siparişler direkt DB ye yazılacak.');
   }
 })();
 
