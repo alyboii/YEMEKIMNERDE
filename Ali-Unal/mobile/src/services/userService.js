@@ -135,6 +135,35 @@ const UserService = {
    *   401 — Yetkisiz erişim
    *   404 — Adres bulunamadı
    */
+  /**
+   * Kullanıcıya yeni adres ekler.
+   * @param {string} kullaniciId - Kullanıcının benzersiz kimliği
+   * @param {object} addressData - { baslik, adres: { sokak, ilce, il, postaKodu }, telefon }
+   * @returns {Promise<object>} Yanıt objesi { kullanici }
+   */
+  async addAddress(kullaniciId, addressData) {
+    console.log('\n📍 [UserService] Yeni adres ekleniyor...');
+    console.log(`   🆔 Kullanıcı ID: ${kullaniciId}`);
+    console.log(`   📝 Adres Başlığı: ${addressData.baslik}`);
+
+    try {
+      const response = await httpClient.post(
+        API_CONFIG.ENDPOINTS.USER_ADDRESSES(kullaniciId),
+        addressData
+      );
+
+      console.log('📍 [UserService] Adres başarıyla eklendi');
+      return { success: true, data: response.data };
+    } catch (error) {
+      const errorMessage = error.message || 'Adres eklenemedi';
+      console.warn('📍 [UserService] Adres eklenirken hata:', errorMessage);
+      return { success: false, error: errorMessage };
+    }
+  },
+
+  /**
+   * Kullanıcının belirli bir adresini siler.
+   */
   async deleteAddress(kullaniciId, adresId) {
     console.log('\n📍 [UserService] Adres silme işlemi başlatılıyor...');
     console.log(`   🆔 Kullanıcı ID: ${kullaniciId}`);
@@ -150,17 +179,11 @@ const UserService = {
 
   /**
    * Kullanıcının tüm adreslerini getirir.
-   * Not: Bu bilgi genelde getUser yanıtında adresler[] dizisinde gelir.
-   * Eğer ayrı bir endpoint varsa burada kullanılır.
-   *
-   * @param {string} kullaniciId - Kullanıcının benzersiz kimliği
-   * @returns {Promise<Array>} Adresler dizisi
    */
   async getAddresses(kullaniciId) {
     console.log('\n📍 [UserService] Adresler getiriliyor...');
     console.log(`   🆔 Kullanıcı ID: ${kullaniciId}`);
 
-    // Adresler kullanıcı objesinin içinde dönüyor
     const response = await httpClient.get(
       API_CONFIG.ENDPOINTS.USER(kullaniciId)
     );
