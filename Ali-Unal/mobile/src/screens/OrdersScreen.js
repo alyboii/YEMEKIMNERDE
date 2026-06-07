@@ -25,6 +25,8 @@ const OrdersScreen = ({ navigation }) => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState('all'); // 'all', 'active', 'history'
+  const [tick, setTick] = useState(0);
 
   const fetchOrders = async () => {
     try {
@@ -42,12 +44,44 @@ const OrdersScreen = ({ navigation }) => {
     }
   };
 
+  // Siparişin verildiği andan itibaren geçen süreye göre durumunu belirle
+  const getDynamicStatus = (order) => {
+    if (order.status === 'İptal Edildi' || order.status?.toLowerCase() === 'iptal edildi') {
+      return 'İptal Edildi';
+    }
+    const orderTime = order.createdAt ? new Date(order.createdAt).getTime() : Date.now();
+    const elapsed = Date.now() - orderTime;
+
+    // 2 dakika (120 saniye) -> Teslim Edildi
+    if (elapsed >= 120000) {
+      return 'Teslim Edildi';
+    }
+    // 30 saniye -> Yolda
+    if (elapsed >= 30000) {
+      return 'Yolda';
+    }
+    return order.status || 'Hazırlanıyor';
+  };
+
   useEffect(() => {
+    let intervalId;
     const unsubscribe = navigation.addListener('focus', () => {
       setIsLoading(true);
       fetchOrders();
+      intervalId = setInterval(() => {
+        setTick((t) => t + 1);
+      }, 5000); // Her 5 saniyede bir durumu güncellemek için tetikle
     });
-    return unsubscribe;
+
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      if (intervalId) clearInterval(intervalId);
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeBlur();
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [navigation]);
 
   const handleRefresh = () => {
@@ -66,8 +100,12 @@ const OrdersScreen = ({ navigation }) => {
           style: 'destructive',
           onPress: async () => {
             try {
-              // Local state'i hızlıca güncelle
-              setOrders((prev) => prev.filter((order) => order._id !== orderId));
+              // Local state'i hızlıca "İptal Edildi" olarak güncelle
+              setOrders((prev) =>
+                prev.map((order) =>
+                  order._id === orderId ? { ...order, status: 'İptal Edildi' } : order
+                )
+              );
               await OrderService.cancelOrder(orderId);
               Alert.alert('İptal Edildi', 'Siparişiniz başarıyla iptal edildi.');
             } catch (error) {
@@ -108,6 +146,17 @@ const OrdersScreen = ({ navigation }) => {
     }
   };
 
+  const filteredOrders = orders.filter((order) => {
+    const status = getDynamicStatus(order);
+    if (activeTab === 'active') {
+      return status === 'Hazırlanıyor' || status === 'Yolda';
+    }
+    if (activeTab === 'history') {
+      return status === 'Teslim Edildi' || status === 'İptal Edildi';
+    }
+    return true; // 'all'
+  });
+
   if (isLoading && !isRefreshing) {
     return (
       <View style={styles.loaderContainer}>
@@ -130,6 +179,30 @@ const OrdersScreen = ({ navigation }) => {
           <Text style={styles.badgeText}>{orders.length} Sipariş</Text>
         </View>
       </View>
+
+      {/* ─── Tab Bar (Kategori Filtreleme) ─── */}
+      {orders.length > 0 && (
+        <View style={styles.tabBar}>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === 'all' && styles.tabButtonActive]}
+            onPress={() => setActiveTab('all')}
+          >
+            <Text style={[styles.tabText, activeTab === 'all' && styles.tabTextActive]}>Tümü</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === 'active' && styles.tabButtonActive]}
+            onPress={() => setActiveTab('active')}
+          >
+            <Text style={[styles.tabText, activeTab === 'active' && styles.tabTextActive]}>Aktif</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === 'history' && styles.tabButtonActive]}
+            onPress={() => setActiveTab('history')}
+          >
+            <Text style={[styles.tabText, activeTab === 'history' && styles.tabTextActive]}>Sipariş Geçmişi</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* ─── Orders List / Empty State ─── */}
       {orders.length === 0 ? (
@@ -167,67 +240,75 @@ const OrdersScreen = ({ navigation }) => {
             />
           }
         >
-          {orders.map((order) => {
-            const dateStr = formatDate(order.createdAt || order.placedAt);
-            const statusLower = order.status?.toLowerCase();
-            const canCancel =
-              statusLower === 'hazırlanıyor' ||
-              statusLower === 'alındı' ||
-              !statusLower; // Sadece yola çıkmamış aktif siparişler iptal edilebilir
+          {filteredOrders.length === 0 ? (
+            <View style={styles.emptyCategoryContainer}>
+              <Text style={styles.emptyCategoryIcon}>📂</Text>
+              <Text style={styles.emptyCategoryText}>
+                {activeTab === 'active'
+                  ? 'Aktif siparişiniz bulunmamaktadır.'
+                  : 'Sipariş geçmişiniz boş.'}
+              </Text>
+            </View>
+          ) : (
+            filteredOrders.map((order) => {
+              const currentStatus = getDynamicStatus(order);
+              const dateStr = formatDate(order.createdAt || order.placedAt);
+              const canCancel = currentStatus === 'Hazırlanıyor';
 
-            return (
-              <View key={order._id} style={styles.orderCard}>
-                {/* Kart Başlık Satırı */}
-                <View style={styles.cardHeader}>
-                  <View>
-                    <Text style={styles.orderIdText} numberOfLines={1}>
-                      Sipariş #{order._id?.substring(order._id.length - 8).toUpperCase() || 'BİLİNMİYOR'}
-                    </Text>
-                    <Text style={styles.dateText}>{dateStr}</Text>
-                  </View>
-                  <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) + '15', borderColor: getStatusColor(order.status) + '30' }]}>
-                    <Text style={[styles.statusText, { color: getStatusColor(order.status) }]}>
-                      {order.status || 'Hazırlanıyor'}
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Sipariş Edilen Ürünler */}
-                <View style={styles.itemsList}>
-                  {order.items?.map((item, index) => (
-                    <View key={index} style={styles.itemRow}>
-                      <Text style={styles.itemQuantity}>{item.quantity || item.qty}x</Text>
-                      <Text style={styles.itemName} numberOfLines={1}>
-                        {item.name || item.urunAd}
+              return (
+                <View key={order._id} style={styles.orderCard}>
+                  {/* Kart Başlık Satırı */}
+                  <View style={styles.cardHeader}>
+                    <View style={{ flex: 1, marginRight: 8 }}>
+                      <Text style={styles.orderIdText} numberOfLines={1}>
+                        Sipariş #{order._id?.substring(order._id.length - 8).toUpperCase() || 'BİLİNMİYOR'}
                       </Text>
-                      <Text style={styles.itemPrice}>₺{((item.price || item.fiyat) * (item.quantity || item.qty)).toFixed(2)}</Text>
+                      <Text style={styles.dateText}>{dateStr}</Text>
                     </View>
-                  ))}
-                </View>
-
-                <View style={styles.divider} />
-
-                {/* Kart Alt Satırı: Toplam & İptal */}
-                <View style={styles.cardFooter}>
-                  <View>
-                    <Text style={styles.totalLabel}>Toplam Tutar</Text>
-                    <Text style={styles.totalValue}>
-                      ₺{(order.totalAmount || order.total || 0).toFixed(2)}
-                    </Text>
+                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(currentStatus) + '15', borderColor: getStatusColor(currentStatus) + '30' }]}>
+                      <Text style={[styles.statusText, { color: getStatusColor(currentStatus) }]}>
+                        {currentStatus}
+                      </Text>
+                    </View>
                   </View>
 
-                  {canCancel && (
-                    <TouchableOpacity
-                      style={styles.cancelBtn}
-                      onPress={() => handleCancelOrder(order._id)}
-                    >
-                      <Text style={styles.cancelBtnText}>İptal Et</Text>
-                    </TouchableOpacity>
-                  )}
+                  {/* Sipariş Edilen Ürünler */}
+                  <View style={styles.itemsList}>
+                    {order.items?.map((item, index) => (
+                      <View key={index} style={styles.itemRow}>
+                        <Text style={styles.itemQuantity}>{item.quantity || item.qty}x</Text>
+                        <Text style={styles.itemName} numberOfLines={1}>
+                          {item.name || item.urunAd}
+                        </Text>
+                        <Text style={styles.itemPrice}>₺{((item.price || item.fiyat) * (item.quantity || item.qty)).toFixed(2)}</Text>
+                      </View>
+                    ))}
+                  </View>
+
+                  <View style={styles.divider} />
+
+                  {/* Kart Alt Satırı: Toplam & İptal */}
+                  <View style={styles.cardFooter}>
+                    <View>
+                      <Text style={styles.totalLabel}>Toplam Tutar</Text>
+                      <Text style={styles.totalValue}>
+                        ₺{(order.totalAmount || order.total || 0).toFixed(2)}
+                      </Text>
+                    </View>
+
+                    {canCancel && (
+                      <TouchableOpacity
+                        style={styles.cancelBtn}
+                        onPress={() => handleCancelOrder(order._id)}
+                      >
+                        <Text style={styles.cancelBtnText}>İptal Et</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
-              </View>
-            );
-          })}
+              );
+            })
+          )}
         </ScrollView>
       )}
     </SafeAreaView>
@@ -288,6 +369,39 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
 
+  // Tab Bar (Segment Control)
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  tabButtonActive: {
+    backgroundColor: COLORS.primarySurface,
+    borderColor: COLORS.primaryBorder,
+  },
+  tabText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+  },
+  tabTextActive: {
+    color: COLORS.primary,
+    fontWeight: '800',
+  },
+
   // Empty State
   emptyContainer: {
     flexGrow: 1,
@@ -321,6 +435,23 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.h4,
     color: '#000000',
     fontWeight: '800',
+  },
+
+  // Empty Category State
+  emptyCategoryContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 80,
+  },
+  emptyCategoryIcon: {
+    fontSize: 48,
+    marginBottom: SPACING.md,
+    opacity: 0.5,
+  },
+  emptyCategoryText: {
+    ...TYPOGRAPHY.body,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
   },
 
   // Order Cards
