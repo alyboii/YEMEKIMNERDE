@@ -17,6 +17,8 @@ import {
 import useAuth from '../../hooks/useAuth';
 
 const MENU_ITEMS = [
+  { id: '8', title: 'Home / Browse', icon: '🏠', screen: 'Home' },
+  { id: '7', title: 'My Orders', icon: '📦', screen: 'Orders' },
   { id: '1', title: 'Edit Profile', icon: '👤', screen: 'EditProfile' },
   { id: '2', title: 'Payment Methods', icon: '💳', screen: 'Payments' },
   { id: '3', title: 'Promotions', icon: '🏷️', screen: 'Promotions' },
@@ -51,13 +53,13 @@ const ProfileScreen = ({ navigation }) => {
       
       {/* ─── Header ─── */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerBtn}>
+        <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.headerIcon}>≡</Text>
         </TouchableOpacity>
         
         <Text style={styles.headerTitle}>YEMEKİMNERDE</Text>
         
-        <TouchableOpacity style={styles.headerBtn}>
+        <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate('Cart')}>
           <Text style={styles.headerIconBag}>🛍️</Text>
         </TouchableOpacity>
       </View>
