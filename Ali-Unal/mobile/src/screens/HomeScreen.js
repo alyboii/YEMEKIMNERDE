@@ -16,6 +16,7 @@ import {
   Dimensions,
   ActivityIndicator,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import COLORS from '../theme/colors';
@@ -138,7 +139,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.background} />
 
       {/* ═══ Header ═══ */}
@@ -293,7 +294,7 @@ const HomeScreen = ({ navigation }) => {
 
         <View style={{ height: 100 }} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

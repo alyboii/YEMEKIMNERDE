@@ -51,8 +51,8 @@ const ProfileScreen = ({ navigation }) => {
       
       {/* ─── Header ─── */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerBtn}>
-          <Text style={styles.headerIcon}>≡</Text>
+        <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.goBack()}>
+          <Text style={styles.headerIcon}>❮</Text>
         </TouchableOpacity>
         
         <Text style={styles.headerTitle}>YEMEKİMNERDE</Text>
