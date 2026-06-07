@@ -157,10 +157,15 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconButton}>
-          <Text style={styles.headerIcon}>🔔</Text>
-          <View style={styles.notificationDot} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Cart')}>
+            <Text style={styles.headerIcon}>🛍️</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <Text style={styles.headerIcon}>🔔</Text>
+            <View style={styles.notificationDot} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView

@@ -42,6 +42,15 @@ const API_CONFIG = {
     RESTAURANT: (restoranId) => `/restaurants/${restoranId}`,
     RESTAURANT_REVIEWS: (restoranId) => `/restaurants/${restoranId}/reviews`,
     RESTAURANTS_ONERI: '/restaurants/oneri',
+
+    // Cart
+    CART: '/cart',
+    CART_ITEMS: '/cart/items',
+    CART_ITEM: (itemId) => `/cart/items/${itemId}`,
+
+    // Orders
+    ORDERS: '/orders',
+    ORDER: (orderId) => `/orders/${orderId}`,
   },
 };
 

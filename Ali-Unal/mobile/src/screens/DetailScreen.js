@@ -23,6 +23,7 @@ import TYPOGRAPHY from '../theme/typography';
 import SPACING from '../theme/spacing';
 import RestaurantService from '../services/restaurantService';
 import { recordRestaurantView } from '../services/recommendationService';
+import CartService from '../services/cartService';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -90,6 +91,27 @@ const DetailScreen = ({ route, navigation }) => {
       Alert.alert('Hata', e?.message || 'Yorum eklenemedi. Giriş yapman gerekebilir.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // ─── Sepete Ekle ───
+  const handleAddToCart = async (itemName, itemPrice) => {
+    try {
+      const numericPrice = typeof itemPrice === 'number'
+        ? itemPrice
+        : parseFloat(String(itemPrice).replace(/[^\d.]/g, '')) || 0;
+
+      await CartService.addToCart(itemName, numericPrice, 1);
+      Alert.alert(
+        'Başarılı! 🎉',
+        `${itemName} sepete eklendi.`,
+        [
+          { text: 'Devam Et', style: 'cancel' },
+          { text: 'Sepete Git', onPress: () => navigation.navigate('Cart') }
+        ]
+      );
+    } catch (e) {
+      Alert.alert('Hata', e.message || 'Ürün sepete eklenirken bir hata oluştu.');
     }
   };
 
@@ -228,15 +250,24 @@ const DetailScreen = ({ route, navigation }) => {
 
                     <View style={styles.menuFooter}>
                       <Text style={styles.menuPrice}>{item.priceLabel}</Text>
-                      {item.tags.length > 0 && (
-                        <View style={styles.tagRow}>
-                          {item.tags.map((t) => (
-                            <View key={t} style={styles.tag}>
-                              <Text style={styles.tagText}>{t}</Text>
-                            </View>
-                          ))}
-                        </View>
-                      )}
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        {item.tags.length > 0 && (
+                          <View style={styles.tagRow}>
+                            {item.tags.map((t) => (
+                              <View key={t} style={styles.tag}>
+                                <Text style={styles.tagText}>{t}</Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+                        <TouchableOpacity
+                          style={styles.addBtn}
+                          onPress={() => handleAddToCart(item.title, item.price)}
+                          activeOpacity={0.7}
+                        >
+                          <Text style={styles.addBtnText}>+</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                 </View>
@@ -540,6 +571,20 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.label,
     color: COLORS.primary,
     fontSize: 15,
+  },
+  addBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addBtnText: {
+    color: '#000000',
+    fontSize: 16,
+    fontWeight: '900',
+    lineHeight: 18,
   },
   tagRow: {
     flexDirection: 'row',
