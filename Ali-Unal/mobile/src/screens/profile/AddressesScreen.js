@@ -55,12 +55,8 @@ const AddressesScreen = ({ navigation }) => {
     setSaving(true);
     const result = await addAddress({
       baslik: form.baslik.trim(),
-      adres: {
-        sokak: form.sokak.trim(),
-        ilce: form.ilce.trim(),
-        il: form.il.trim(),
-        postaKodu: form.postaKodu.trim(),
-      },
+      adres: `${form.sokak.trim()}, ${form.ilce.trim()} ${form.postaKodu.trim()}`.trim(),
+      sehir: form.il.trim(),
     });
     setSaving(false);
 
