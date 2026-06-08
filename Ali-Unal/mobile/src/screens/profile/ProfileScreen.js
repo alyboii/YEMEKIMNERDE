@@ -20,10 +20,7 @@ const MENU_ITEMS = [
   { id: '8', title: 'Ana Sayfa', icon: '🏠', screen: 'Home' },
   { id: '7', title: 'Siparişlerim', icon: '📦', screen: 'Orders' },
   { id: '1', title: 'Profili Düzenle', icon: '👤', screen: 'EditProfile' },
-  { id: '2', title: 'Ödeme Yöntemleri', icon: '💳', screen: 'Payments' },
-  { id: '3', title: 'Promosyonlar', icon: '🏷️', screen: 'Promotions' },
   { id: '4', title: 'Adresler', icon: '📍', screen: 'Addresses' },
-  { id: '5', title: 'Yardım', icon: '❓', screen: 'Help' },
   { id: '6', title: 'Ayarlar', icon: '⚙️', screen: 'Settings' },
 ];
 
