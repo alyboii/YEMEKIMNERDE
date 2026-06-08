@@ -1,0 +1,5 @@
+# iOS Appfile
+app_identifier(ENV["IOS_BUNDLE_ID"])      # örn: com.yemekimnerede.app
+apple_id(ENV["APPLE_ID"])                  # opsiyonel (API key kullanıldığında gerekmez)
+team_id(ENV["APPLE_TEAM_ID"])              # Apple Developer Team ID (10 karakter)
+itc_team_id(ENV["APPLE_TEAM_ID"])

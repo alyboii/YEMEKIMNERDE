@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const { initRedis } = require('./config/redis');
 
 const app = express();
 
@@ -23,8 +24,9 @@ app.get('/', (req, res) => {
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('MongoDB bağlantısı başarılı');
+    await initRedis(); // Redis cache'i başlat (REDIS_URL varsa)
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => console.log(`Sunucu ${PORT} portunda çalışıyor`));
   })

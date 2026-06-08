@@ -1,0 +1,7 @@
+# fastlane match — git tabanlı sertifika/profil deposu yapılandırması
+git_url(ENV["MATCH_GIT_URL"])              # örn: https://github.com/<kullanici>/certificates.git
+storage_mode("git")
+type("appstore")                            # varsayılan tip (lane'de de belirtiliyor)
+app_identifier([ENV["IOS_BUNDLE_ID"]])
+username(ENV["APPLE_ID"]) if ENV["APPLE_ID"]
+readonly(true)                              # CI sadece okur; sertifika üretimini lokalde yap

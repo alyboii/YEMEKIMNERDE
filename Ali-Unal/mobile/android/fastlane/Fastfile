@@ -1,0 +1,93 @@
+# ─────────────────────────────────────────────
+# Android Fastfile — YEMEKİMNEREDE
+# Lane'ler: test · beta (Firebase App Distribution) · deploy (Play Store)
+# Hassas veriler ENV'den okunur (asla repoya yazılmaz).
+# ─────────────────────────────────────────────
+
+default_platform(:android)
+
+# RN projesinin kök dizini (android/'in bir üstü) — npm komutları için
+PROJECT_ROOT = File.expand_path("../..", __dir__)
+
+platform :android do
+  # ───────────────────────────────────────────
+  # TEST — ESLint + Jest
+  # ───────────────────────────────────────────
+  desc "Jest testlerini ve ESLint'i çalıştırır"
+  lane :test do
+    Dir.chdir(PROJECT_ROOT) do
+      sh("npm", "ci")
+      sh("npm", "run", "lint")
+      sh("npm", "test", "--", "--ci")
+    end
+  end
+
+  # ───────────────────────────────────────────
+  # BETA — Release AAB + Firebase App Distribution
+  # ───────────────────────────────────────────
+  desc "versionCode'u artırır, imzalı AAB üretir ve Firebase App Distribution'a gönderir"
+  lane :beta do
+    # 1) Sürüm kodunu otomatik artır (fastlane-plugin-increment_version_code)
+    increment_version_code(
+      gradle_file_path: "app/build.gradle"
+    )
+
+    # 2) JS paketini hazırlamak için bağımlılıkları kur
+    Dir.chdir(PROJECT_ROOT) { sh("npm", "ci") }
+
+    # 3) Temizle
+    gradle(task: "clean", project_dir: ".")
+
+    # 4) İmzalı release AAB üret — imza bilgileri ENV'den enjekte edilir
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      project_dir: ".",
+      properties: {
+        "android.injected.signing.store.file"     => ENV.fetch("ANDROID_KEYSTORE_PATH"),
+        "android.injected.signing.store.password" => ENV.fetch("ANDROID_KEYSTORE_PASSWORD"),
+        "android.injected.signing.key.alias"      => ENV.fetch("ANDROID_KEY_ALIAS"),
+        "android.injected.signing.key.password"   => ENV.fetch("ANDROID_KEY_PASSWORD")
+      }
+    )
+
+    # 5) Firebase App Distribution'a yükle (fastlane-plugin-firebase_app_distribution)
+    firebase_app_distribution(
+      app: ENV.fetch("FIREBASE_ANDROID_APP_ID"),
+      service_credentials_file: ENV.fetch("GOOGLE_APPLICATION_CREDENTIALS"),
+      android_artifact_type: "AAB",
+      android_artifact_path: "app/build/outputs/bundle/release/app-release.aab",
+      groups: ENV.fetch("FIREBASE_TESTER_GROUPS", "beta-testers"),
+      release_notes: "Otomatik beta build — commit #{ENV['GITHUB_SHA'] || 'local'}"
+    )
+  end
+
+  # ───────────────────────────────────────────
+  # DEPLOY — Google Play (internal track, production hattı)
+  # ───────────────────────────────────────────
+  desc "İmzalı AAB üretir ve Google Play 'internal' track'e yükler"
+  lane :deploy do
+    increment_version_code(gradle_file_path: "app/build.gradle")
+    Dir.chdir(PROJECT_ROOT) { sh("npm", "ci") }
+    gradle(task: "clean", project_dir: ".")
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      project_dir: ".",
+      properties: {
+        "android.injected.signing.store.file"     => ENV.fetch("ANDROID_KEYSTORE_PATH"),
+        "android.injected.signing.store.password" => ENV.fetch("ANDROID_KEYSTORE_PASSWORD"),
+        "android.injected.signing.key.alias"      => ENV.fetch("ANDROID_KEY_ALIAS"),
+        "android.injected.signing.key.password"   => ENV.fetch("ANDROID_KEY_PASSWORD")
+      }
+    )
+    upload_to_play_store(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      json_key: ENV.fetch("GOOGLE_PLAY_JSON_KEY_PATH"),
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
