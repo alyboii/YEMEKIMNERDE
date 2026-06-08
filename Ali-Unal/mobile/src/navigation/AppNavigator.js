@@ -36,7 +36,7 @@ const AppNavigator = () => {
           animation: 'slide_from_right'
         }}
       >
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{ gestureEnabled: false }} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         {/* Ana uygulama akışı (restoran listesi + detay) */}

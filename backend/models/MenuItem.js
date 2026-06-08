@@ -7,6 +7,7 @@ const menuItemSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Restoran',
       required: true,
+      index: true,
     },
 
     ad: { type: String, required: true, trim: true },

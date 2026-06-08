@@ -21,10 +21,18 @@ app.get('/', (req, res) => {
   res.json({ mesaj: 'YEMEKİMNEREDE API çalışıyor' });
 });
 
+const { connectRabbitMQ } = require('./utils/rabbitmq');
+const { startOrderWorker } = require('./workers/orderWorker');
+
 mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
+  .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/yemekimnerede')
+  .then(async () => {
     console.log('MongoDB bağlantısı başarılı');
+    
+    // RabbitMQ'ya bağlan ve Worker'ı başlat
+    await connectRabbitMQ();
+    startOrderWorker();
+
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => console.log(`Sunucu ${PORT} portunda çalışıyor`));
   })

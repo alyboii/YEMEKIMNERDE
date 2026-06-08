@@ -38,8 +38,21 @@ router.post('/', authMiddleware, async (req, res) => {
 // ─────────────────────────────────────────────
 router.get('/', async (req, res) => {
   try {
-    const restoranlar = await Restoran.find({ aktif: true }).sort({ puan: -1 });
-    res.json(restoranlar);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [restoranlar, total] = await Promise.all([
+      Restoran.find({ aktif: true }).sort({ puan: -1 }).skip(skip).limit(limit),
+      Restoran.countDocuments({ aktif: true })
+    ]);
+
+    res.json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      data: restoranlar
+    });
   } catch (err) {
     res.status(500).json({ hata: err.message });
   }
@@ -53,21 +66,43 @@ router.get('/', async (req, res) => {
 // ─────────────────────────────────────────────
 router.post('/oneri', async (req, res) => {
   try {
-    const prefs =
-      req.body && typeof req.body.tercihler === 'object' && req.body.tercihler
-        ? req.body.tercihler
-        : {};
+    const prefs = req.body && typeof req.body.tercihler === 'object' && req.body.tercihler ? req.body.tercihler : {};
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
     const RATING_W = 1.0;
     const CUISINE_W = 1.5;
-    const skor = (r) => (r.puan || 0) * RATING_W + (prefs[r.mutfakTuru] || 0) * CUISINE_W;
 
-    const restoranlar = await Restoran.find({ aktif: true });
-    const sirali = restoranlar
-      .map((r) => ({ r, s: skor(r) }))
-      .sort((a, b) => b.s - a.s)
-      .map((x) => x.r);
+    // Convert preferences object to an array of conditions for MongoDB $switch
+    const cuisineBranches = Object.entries(prefs).map(([cuisine, weight]) => ({
+      case: { $eq: ["$mutfakTuru", cuisine] },
+      then: weight * CUISINE_W
+    }));
 
+    const pipeline = [
+      { $match: { aktif: true } },
+      {
+        $addFields: {
+          cuisineScore: cuisineBranches.length > 0 ? {
+            $switch: { branches: cuisineBranches, default: 0 }
+          } : 0
+        }
+      },
+      {
+        $addFields: {
+          totalScore: { $add: [{ $multiply: [{ $ifNull: ["$puan", 0] }, RATING_W] }, "$cuisineScore"] }
+        }
+      },
+      { $sort: { totalScore: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      { $project: { cuisineScore: 0, totalScore: 0 } } // Remove calculated scores before sending
+    ];
+
+    const sirali = await Restoran.aggregate(pipeline);
+    
+    // Aggregation doesnt easily give total count without a facet, but for recommendations, a simple array is often fine
     res.json(sirali);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -87,16 +122,11 @@ router.get('/:restaurantId', async (req, res) => {
       return res.status(404).json({ hata: 'Restoran bulunamadı' });
     }
 
-    // O restorana ait aktif menü öğelerini de getir
-    const menu = await MenuItem.find({
-      restoran: req.params.restaurantId,
-      aktif: true,
-    });
-
-    // Restorana ait kullanıcı yorumları (en yeni önce)
-    const yorumlar = await Yorum.find({ restoran: req.params.restaurantId }).sort({
-      createdAt: -1,
-    });
+    // Promise.all kullanarak sorguları paralel çalıştırıyoruz (API yanıt süresini çok hızlandırır)
+    const [menu, yorumlar] = await Promise.all([
+      MenuItem.find({ restoran: req.params.restaurantId, aktif: true }),
+      Yorum.find({ restoran: req.params.restaurantId }).sort({ createdAt: -1 })
+    ]);
 
     res.json({ restoran, menu, yorumlar });
   } catch (err) {

@@ -47,4 +47,6 @@ const restoranSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+restoranSchema.index({ aktif: 1, puan: -1 });
+
 module.exports = mongoose.model('Restoran', restoranSchema);

@@ -31,6 +31,9 @@ const OnboardingScreen = ({ navigation }) => {
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
       onPanResponderMove: (e, gesture) => {
         // Clamp the drag between 0 and MAX_SWIPE
         let newX = gesture.dx;
