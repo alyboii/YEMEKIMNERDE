@@ -1,8 +1,8 @@
 import axios from 'axios';
 import SecureStorage from './secureStorage';
 
-// API Base URL - Backend ekibinin hazırladığı canlı Railway sunucusu
-const BASE_URL = 'https://yemekimnerde-production.up.railway.app/v1';
+// API Base URL - Lokal test için (Docker'daki sunucuya bağlanır)
+const BASE_URL = 'http://localhost:3000/v1';
 
 const api = axios.create({
   baseURL: BASE_URL,

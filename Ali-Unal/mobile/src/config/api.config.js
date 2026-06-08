@@ -4,8 +4,8 @@
 // ─────────────────────────────────────────────
 
 const API_CONFIG = {
-  // Production API sunucusu
-  BASE_URL: 'https://yemekimnerde-production.up.railway.app',
+  // API Base URL - Lokal test için (Docker'daki sunucuya bağlanır)
+  BASE_URL: 'http://localhost:3000',
 
   // API versiyon prefix'i
   API_PREFIX: '/v1',
