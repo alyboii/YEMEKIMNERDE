@@ -1,6 +1,6 @@
 # ─────────────────────────────────────────────
 # docker-compose — YEMEKİMNEREDE (lokal çalıştırma)
-# backend (Node, 3000) + frontend (nginx, 80)
+# backend (Node, 3000) + frontend (nginx, 80) + redis + rabbitmq
 # Ortak ağ üzerinden haberleşirler.
 # Çalıştır:  docker compose up -d --build
 # ─────────────────────────────────────────────
@@ -14,6 +14,34 @@ services:
     # Backend, MONGO_URI / JWT_SECRET değerlerini bu dosyadan okur
     env_file:
       - ./backend/.env
+    # Redis ve RabbitMQ bağlantıları (servis adlarıyla, ağ içinden)
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - redis
+      - rabbitmq
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # ─── Redis (önbellek) ───
+  redis:
+    image: redis:alpine
+    container_name: yemekimnerede-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # ─── RabbitMQ (sipariş mesaj kuyruğu) — 15672: yönetim arayüzü ───
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: yemekimnerede-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - app-network
     restart: unless-stopped
