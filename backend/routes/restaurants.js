@@ -4,6 +4,10 @@ const Restoran = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
 const Yorum = require('../models/Yorum');
 const authMiddleware = require('../middleware/auth');
+const { cacheGet, cacheSet, cacheDel } = require('../config/redis');
+
+// Restoran listesi cache anahtarı
+const CACHE_KEY_LIST = 'restaurants:all';
 
 // ─────────────────────────────────────────────
 // 1. RESTORAN EKLEME
@@ -25,6 +29,7 @@ router.post('/', authMiddleware, async (req, res) => {
       gorselUrl: gorselUrl || '',
     });
 
+    await cacheDel(CACHE_KEY_LIST); // liste değişti → cache'i temizle
     res.status(201).json(restoran);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -38,7 +43,17 @@ router.post('/', authMiddleware, async (req, res) => {
 // ─────────────────────────────────────────────
 router.get('/', async (req, res) => {
   try {
+    // 1) Önce Redis cache'e bak
+    const cached = await cacheGet(CACHE_KEY_LIST);
+    if (cached) {
+      console.log('⚡ [Cache] restaurants:all → Redis HIT');
+      return res.json(cached);
+    }
+
+    // 2) Cache yoksa DB'den çek ve cache'e yaz (60 sn)
     const restoranlar = await Restoran.find({ aktif: true }).sort({ puan: -1 });
+    await cacheSet(CACHE_KEY_LIST, restoranlar, 60);
+    console.log('🐢 [Cache] restaurants:all → DB MISS (Redis\'e yazıldı)');
     res.json(restoranlar);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -156,6 +171,7 @@ router.post('/:restaurantId/reviews', authMiddleware, async (req, res) => {
     restoran.puan = Math.round(ortalama * 10) / 10;
     await restoran.save();
 
+    await cacheDel(CACHE_KEY_LIST); // puan değişti → cache'i temizle
     res.status(201).json(yeniYorum);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -180,6 +196,7 @@ router.put('/:restaurantId', authMiddleware, async (req, res) => {
       return res.status(404).json({ hata: 'Restoran bulunamadı' });
     }
 
+    await cacheDel(CACHE_KEY_LIST); // güncellendi → cache'i temizle
     res.json(restoran);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -202,6 +219,7 @@ router.delete('/:restaurantId', authMiddleware, async (req, res) => {
       return res.status(404).json({ hata: 'Restoran bulunamadı' });
     }
 
+    await cacheDel(CACHE_KEY_LIST); // silindi → cache'i temizle
     res.json({ mesaj: 'Restoran pasif duruma getirildi' });
   } catch (err) {
     res.status(500).json({ hata: err.message });
