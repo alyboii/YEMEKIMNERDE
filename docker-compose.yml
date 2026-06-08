@@ -1,0 +1,35 @@
+# ─────────────────────────────────────────────
+# docker-compose — YEMEKİMNEREDE (lokal çalıştırma)
+# backend (Node, 3000) + frontend (nginx, 80)
+# Ortak ağ üzerinden haberleşirler.
+# Çalıştır:  docker compose up -d --build
+# ─────────────────────────────────────────────
+
+services:
+  backend:
+    build: ./backend
+    container_name: yemekimnerede-backend
+    ports:
+      - "3000:3000"
+    # Backend, MONGO_URI / JWT_SECRET değerlerini bu dosyadan okur
+    env_file:
+      - ./backend/.env
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: yemekimnerede-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+# İki servisin birbirini görebildiği ortak köprü ağı
+networks:
+  app-network:
+    driver: bridge

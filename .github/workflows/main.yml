@@ -1,0 +1,175 @@
+name: CI/CD - YEMEKİMNEREDE Mobile
+
+# ─────────────────────────────────────────────
+# Tetikleyiciler:
+#  - main veya release/* dallarına PUSH
+#  - main veya release/* dallarına açılan/güncellenen PR
+# Not: Beta dağıtım job'ları SADECE push'ta çalışır (PR'da yalnızca test).
+# ─────────────────────────────────────────────
+on:
+  push:
+    branches:
+      - main
+      - 'release/*'
+  pull_request:
+    branches:
+      - main
+      - 'release/*'
+    types: [opened, synchronize, reopened]
+
+# RN uygulaması repo kökünde değil, bu alt klasörde:
+env:
+  WORKING_DIR: Ali-Unal/mobile
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ═══════════════════════════════════════════
+  # 1) TEST — Lint + Jest (her push ve PR'da)
+  # ═══════════════════════════════════════════
+  test:
+    name: Test (Lint + Jest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js kurulumu (+ npm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ env.WORKING_DIR }}/package-lock.json
+
+      - name: Bağımlılıklar
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Jest
+        run: npm test -- --ci
+
+  # ═══════════════════════════════════════════
+  # 2) ANDROID BETA — Firebase App Distribution
+  #    Sadece push'ta (PR'da değil)
+  # ═══════════════════════════════════════════
+  android-beta:
+    name: Android Beta (Firebase)
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}/android
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js kurulumu (+ npm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ env.WORKING_DIR }}/package-lock.json
+
+      - name: JS bağımlılıkları
+        working-directory: ${{ env.WORKING_DIR }}
+        run: npm ci
+
+      - name: Java (Temurin 17) kurulumu
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle kurulumu (+ cache)
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Ruby + Bundler (+ gem cache)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ${{ env.WORKING_DIR }}/android
+
+      - name: Keystore'u çöz (base64 → dosya)
+        run: echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/release.keystore"
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
+      - name: Firebase servis hesabı JSON'unu çöz (base64 → dosya)
+        run: echo "$GOOGLE_SERVICE_ACCOUNT_JSON" | base64 --decode > "$RUNNER_TEMP/firebase-service-account.json"
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+
+      - name: Fastlane beta
+        run: bundle exec fastlane beta
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/release.keystore
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          FIREBASE_ANDROID_APP_ID: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+          FIREBASE_TESTER_GROUPS: beta-testers
+
+  # ═══════════════════════════════════════════
+  # 3) iOS BETA — TestFlight (match)
+  #    Sadece push'ta (PR'da değil)
+  # ═══════════════════════════════════════════
+  ios-beta:
+    name: iOS Beta (TestFlight)
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}/ios
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node.js kurulumu (+ npm cache)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ env.WORKING_DIR }}/package-lock.json
+
+      - name: JS bağımlılıkları
+        working-directory: ${{ env.WORKING_DIR }}
+        run: npm ci
+
+      - name: Ruby + Bundler (+ gem cache)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ${{ env.WORKING_DIR }}/ios
+
+      - name: CocoaPods cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.WORKING_DIR }}/ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles(format('{0}/ios/Podfile.lock', env.WORKING_DIR)) }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
+      - name: Fastlane beta
+        run: bundle exec fastlane beta
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
