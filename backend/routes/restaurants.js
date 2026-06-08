@@ -4,6 +4,74 @@ const Restoran = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
 const Yorum = require('../models/Yorum');
 const authMiddleware = require('../middleware/auth');
+const { cacheGet, cacheSet, cacheDel } = require('../config/redis');
+
+// Restoran listesi cache anahtarı
+const CACHE_KEY_LIST = 'restaurants:all';
+
+// ============================================
+// MOCK API - /api/restaurants
+// ============================================
+
+// Örnek restoran veritabanı (10 adet)
+const mockRestaurants = [
+  { id: '1', ad: 'Kebapçı Celal', mutfakTuru: 'Türk', puan: 4.8, teslimatSuresi: 30, lat: 41.01, lng: 28.98, gorselUrl: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=500&q=60', aktif: true },
+  { id: '2', ad: 'Mario Pizza', mutfakTuru: 'İtalyan', puan: 4.5, teslimatSuresi: 40, lat: 41.015, lng: 28.985, gorselUrl: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=500&q=60', aktif: true },
+  { id: '3', ad: 'Burger Station', mutfakTuru: 'Fast Food', puan: 4.2, teslimatSuresi: 20, lat: 41.005, lng: 28.975, gorselUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=60', aktif: true },
+  { id: '4', ad: 'Dragon Sushi', mutfakTuru: 'Çin', puan: 4.7, teslimatSuresi: 45, lat: 41.02, lng: 28.99, gorselUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=500&q=60', aktif: true },
+  { id: '5', ad: 'Izgara Dünyası', mutfakTuru: 'Izgara', puan: 4.4, teslimatSuresi: 35, lat: 41.008, lng: 28.97, gorselUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=60', aktif: true },
+  { id: '6', ad: 'Green Life', mutfakTuru: 'Vegan', puan: 4.6, teslimatSuresi: 25, lat: 41.012, lng: 28.982, gorselUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=500&q=60', aktif: true },
+  { id: '7', ad: 'Tarihi Pideci', mutfakTuru: 'Türk', puan: 4.3, teslimatSuresi: 35, lat: 41.002, lng: 28.96, gorselUrl: 'https://images.unsplash.com/photo-1576867757603-05b134ebc379?auto=format&fit=crop&w=500&q=60', aktif: true },
+  { id: '8', ad: 'Pasta Bella', mutfakTuru: 'İtalyan', puan: 4.1, teslimatSuresi: 45, lat: 41.018, lng: 28.988, gorselUrl: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=500&q=60', aktif: false },
+  { id: '9', ad: 'Wok Master', mutfakTuru: 'Çin', puan: 4.0, teslimatSuresi: 50, lat: 41.025, lng: 28.995, gorselUrl: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=500&q=60', aktif: true },
+  { id: '10', ad: 'Vegan Bites', mutfakTuru: 'Vegan', puan: 4.9, teslimatSuresi: 20, lat: 41.007, lng: 28.977, gorselUrl: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=500&q=60', aktif: true }
+];
+
+// Basit mesafe hesaplama (haversine yerine taslak yaklasim)
+const calculateDistance = (lat1, lng1, lat2, lng2) => {
+  const dx = lat1 - lat2;
+  const dy = lng1 - lng2;
+  return Math.sqrt(dx * dx + dy * dy) * 111; // yaklaşık km
+};
+
+router.get('/api/restaurants', (req, res) => {
+  try {
+    const { userId, lat, lng, limit } = req.query;
+    const userLat = parseFloat(lat) || 41.0082;
+    const userLng = parseFloat(lng) || 28.9784;
+    const parsedLimit = parseInt(limit, 10) || 10;
+
+    // Örnek kullanıcı tercihleri (userId bazlı veritabanı okuması simülasyonu)
+    const userPref = { sevilenMutfak: 'Türk' };
+
+    let results = mockRestaurants.map(rest => {
+      const distance = calculateDistance(userLat, userLng, rest.lat, rest.lng);
+      
+      // PersonalScore hesaplama
+      let personalScore = 0;
+      if (rest.mutfakTuru === userPref.sevilenMutfak) personalScore += 10; // Mutfak uyumu
+      if (distance < 2) personalScore += 10;
+      else if (distance < 5) personalScore += 5; // Mesafe
+      
+      personalScore += rest.puan * 2; // Puan ağırlığı
+      
+      if (rest.teslimatSuresi <= 30) personalScore += 5; // Teslimat süresi
+      
+      return {
+        ...rest,
+        distance: distance.toFixed(1),
+        personalScore
+      };
+    });
+
+    results.sort((a, b) => b.personalScore - a.personalScore);
+    results = results.slice(0, parsedLimit);
+
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ hata: err.message });
+  }
+});
 
 // ─────────────────────────────────────────────
 // 1. RESTORAN EKLEME
@@ -25,6 +93,7 @@ router.post('/', authMiddleware, async (req, res) => {
       gorselUrl: gorselUrl || '',
     });
 
+    await cacheDel(CACHE_KEY_LIST); // liste değişti → cache'i temizle
     res.status(201).json(restoran);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -38,21 +107,18 @@ router.post('/', authMiddleware, async (req, res) => {
 // ─────────────────────────────────────────────
 router.get('/', async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    // 1) Önce Redis cache'e bak
+    const cached = await cacheGet(CACHE_KEY_LIST);
+    if (cached) {
+      console.log('⚡ [Cache] restaurants:all → Redis HIT');
+      return res.json(cached);
+    }
 
-    const [restoranlar, total] = await Promise.all([
-      Restoran.find({ aktif: true }).sort({ puan: -1 }).skip(skip).limit(limit),
-      Restoran.countDocuments({ aktif: true })
-    ]);
-
-    res.json({
-      total,
-      page,
-      pages: Math.ceil(total / limit),
-      data: restoranlar
-    });
+    // 2) Cache yoksa DB'den çek ve cache'e yaz (60 sn)
+    const restoranlar = await Restoran.find({ aktif: true }).sort({ puan: -1 });
+    await cacheSet(CACHE_KEY_LIST, restoranlar, 60);
+    console.log('🐢 [Cache] restaurants:all → DB MISS (Redis\'e yazıldı)');
+    res.json(restoranlar);
   } catch (err) {
     res.status(500).json({ hata: err.message });
   }
@@ -66,43 +132,21 @@ router.get('/', async (req, res) => {
 // ─────────────────────────────────────────────
 router.post('/oneri', async (req, res) => {
   try {
-    const prefs = req.body && typeof req.body.tercihler === 'object' && req.body.tercihler ? req.body.tercihler : {};
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const prefs =
+      req.body && typeof req.body.tercihler === 'object' && req.body.tercihler
+        ? req.body.tercihler
+        : {};
 
     const RATING_W = 1.0;
     const CUISINE_W = 1.5;
+    const skor = (r) => (r.puan || 0) * RATING_W + (prefs[r.mutfakTuru] || 0) * CUISINE_W;
 
-    // Convert preferences object to an array of conditions for MongoDB $switch
-    const cuisineBranches = Object.entries(prefs).map(([cuisine, weight]) => ({
-      case: { $eq: ["$mutfakTuru", cuisine] },
-      then: weight * CUISINE_W
-    }));
+    const restoranlar = await Restoran.find({ aktif: true });
+    const sirali = restoranlar
+      .map((r) => ({ r, s: skor(r) }))
+      .sort((a, b) => b.s - a.s)
+      .map((x) => x.r);
 
-    const pipeline = [
-      { $match: { aktif: true } },
-      {
-        $addFields: {
-          cuisineScore: cuisineBranches.length > 0 ? {
-            $switch: { branches: cuisineBranches, default: 0 }
-          } : 0
-        }
-      },
-      {
-        $addFields: {
-          totalScore: { $add: [{ $multiply: [{ $ifNull: ["$puan", 0] }, RATING_W] }, "$cuisineScore"] }
-        }
-      },
-      { $sort: { totalScore: -1 } },
-      { $skip: skip },
-      { $limit: limit },
-      { $project: { cuisineScore: 0, totalScore: 0 } } // Remove calculated scores before sending
-    ];
-
-    const sirali = await Restoran.aggregate(pipeline);
-    
-    // Aggregation doesnt easily give total count without a facet, but for recommendations, a simple array is often fine
     res.json(sirali);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -122,11 +166,16 @@ router.get('/:restaurantId', async (req, res) => {
       return res.status(404).json({ hata: 'Restoran bulunamadı' });
     }
 
-    // Promise.all kullanarak sorguları paralel çalıştırıyoruz (API yanıt süresini çok hızlandırır)
-    const [menu, yorumlar] = await Promise.all([
-      MenuItem.find({ restoran: req.params.restaurantId, aktif: true }),
-      Yorum.find({ restoran: req.params.restaurantId }).sort({ createdAt: -1 })
-    ]);
+    // O restorana ait aktif menü öğelerini de getir
+    const menu = await MenuItem.find({
+      restoran: req.params.restaurantId,
+      aktif: true,
+    });
+
+    // Restorana ait kullanıcı yorumları (en yeni önce)
+    const yorumlar = await Yorum.find({ restoran: req.params.restaurantId }).sort({
+      createdAt: -1,
+    });
 
     res.json({ restoran, menu, yorumlar });
   } catch (err) {
@@ -186,6 +235,7 @@ router.post('/:restaurantId/reviews', authMiddleware, async (req, res) => {
     restoran.puan = Math.round(ortalama * 10) / 10;
     await restoran.save();
 
+    await cacheDel(CACHE_KEY_LIST); // puan değişti → cache'i temizle
     res.status(201).json(yeniYorum);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -210,6 +260,7 @@ router.put('/:restaurantId', authMiddleware, async (req, res) => {
       return res.status(404).json({ hata: 'Restoran bulunamadı' });
     }
 
+    await cacheDel(CACHE_KEY_LIST); // güncellendi → cache'i temizle
     res.json(restoran);
   } catch (err) {
     res.status(500).json({ hata: err.message });
@@ -232,6 +283,7 @@ router.delete('/:restaurantId', authMiddleware, async (req, res) => {
       return res.status(404).json({ hata: 'Restoran bulunamadı' });
     }
 
+    await cacheDel(CACHE_KEY_LIST); // silindi → cache'i temizle
     res.json({ mesaj: 'Restoran pasif duruma getirildi' });
   } catch (err) {
     res.status(500).json({ hata: err.message });

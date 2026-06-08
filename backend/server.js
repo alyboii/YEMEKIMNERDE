@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const { initRedis } = require('./config/redis');
 
 const app = express();
 
@@ -11,11 +12,9 @@ app.use(express.json());
 // Routes
 app.use('/v1/auth', require('./routes/auth'));
 app.use('/v1/users', require('./routes/users'));
-// Cemal Tarlan'ın route'ları
 app.use('/v1/restaurants', require('./routes/restaurants'));
-// Abdullah'ın route'ları buraya eklenecek:
- app.use('/v1/cart', require('./routes/cart'));
- app.use('/v1/orders', require('./routes/orders'));
+app.use('/v1/cart', require('./routes/cart'));
+app.use('/v1/orders', require('./routes/orders'));
 
 app.get('/', (req, res) => {
   res.json({ mesaj: 'YEMEKİMNEREDE API çalışıyor' });
@@ -28,6 +27,9 @@ mongoose
   .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/yemekimnerede')
   .then(async () => {
     console.log('MongoDB bağlantısı başarılı');
+    
+    // Redis cache'i başlat
+    await initRedis();
     
     // RabbitMQ'ya bağlan ve Worker'ı başlat
     await connectRabbitMQ();

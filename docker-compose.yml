@@ -1,6 +1,6 @@
 # ─────────────────────────────────────────────
 # docker-compose — YEMEKİMNEREDE (lokal çalıştırma)
-# backend (Node, 3000), frontend (nginx, 80), mongodb, rabbitmq
+# backend (Node, 3000), frontend (nginx, 80), mongodb, rabbitmq, redis
 # ─────────────────────────────────────────────
 
 services:
@@ -13,6 +13,15 @@ services:
       - mongodb_data:/data/db
     networks:
       - app-network
+
+  redis:
+    image: redis:alpine
+    container_name: yemekimnerede-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -36,11 +45,13 @@ services:
     environment:
       - PORT=3000
       - MONGO_URI=mongodb://mongodb:27017/yemekimnerede
+      - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
     env_file:
       - ./backend/.env
     depends_on:
       - mongodb
+      - redis
       - rabbitmq
     networks:
       - app-network

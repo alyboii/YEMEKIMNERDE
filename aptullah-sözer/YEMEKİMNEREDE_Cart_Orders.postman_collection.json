@@ -1,0 +1,175 @@
+{
+	"info": {
+		"_postman_id": "abdullah-sozer-cart-orders",
+		"name": "YEMEKİMNEREDE - Sepet & Sipariş (Abdullah Sözer)",
+		"description": "Sepet yönetimi (görüntüleme, ekleme, güncelleme, silme) ve Sipariş yönetimi (oluşturma, geçmiş, iptal) endpointleri",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Sepeti Görüntüle",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/v1/cart",
+					"host": ["{{baseUrl}}"],
+					"path": ["v1", "cart"]
+				},
+				"description": "Sepetteki tüm ürünleri getirir"
+			}
+		},
+		{
+			"name": "2. Sepete Ürün Ekle",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Acılı Lahmacun\",\n  \"price\": 85.50,\n  \"quantity\": 2\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/v1/cart/items",
+					"host": ["{{baseUrl}}"],
+					"path": ["v1", "cart", "items"]
+				},
+				"description": "Sepete yeni bir ürün ekler"
+			},
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();",
+							"if (res.item && res.item._id) {",
+							"  pm.collectionVariables.set('cartItemId', res.item._id);",
+							"  console.log('cartItemId set edildi:', res.item._id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Sepet Ürün Adeti Güncelle",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"quantity\": 5\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/v1/cart/items/{{cartItemId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["v1", "cart", "items", "{{cartItemId}}"]
+				},
+				"description": "Sepetteki ürünün miktarını günceller"
+			}
+		},
+		{
+			"name": "4. Sepetten Ürün Çıkar",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/v1/cart/items/{{cartItemId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["v1", "cart", "items", "{{cartItemId}}"]
+				},
+				"description": "Ürünü sepetten tamamen çıkartır"
+			}
+		},
+		{
+			"name": "5. Yeni Sipariş Oluştur",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"items\": [\n    {\n      \"name\": \"Acılı Lahmacun\",\n      \"price\": 85.50,\n      \"quantity\": 5\n    }\n  ],\n  \"totalAmount\": 427.50\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/v1/orders",
+					"host": ["{{baseUrl}}"],
+					"path": ["v1", "orders"]
+				},
+				"description": "Yeni bir sipariş kaydı oluşturur"
+			}
+		},
+		{
+			"name": "6. Sipariş Geçmişi Listele",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/v1/orders",
+					"host": ["{{baseUrl}}"],
+					"path": ["v1", "orders"]
+				},
+				"description": "Tüm sipariş geçmişini listeler"
+			},
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const res = pm.response.json();",
+							"if (res && res.length > 0) {",
+							"  pm.collectionVariables.set('orderId', res[0]._id);",
+							"  console.log('orderId set edildi:', res[0]._id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Siparişi İptal Et",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/v1/orders/{{orderId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["v1", "orders", "{{orderId}}"]
+				},
+				"description": "Siparişi iptal eder (durumunu İptal Edildi olarak günceller)"
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://yemekimnerde-production.up.railway.app",
+			"type": "string"
+		},
+		{
+			"key": "cartItemId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "orderId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
