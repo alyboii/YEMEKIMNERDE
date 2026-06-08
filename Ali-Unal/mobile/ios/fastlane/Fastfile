@@ -1,0 +1,95 @@
+# ─────────────────────────────────────────────
+# iOS Fastfile — YEMEKİMNEREDE
+# Lane'ler: test · beta (match + gym + TestFlight)
+# Kod imzalama: fastlane match (git tabanlı sertifika deposu)
+# Kimlik doğrulama: App Store Connect API Key (şifresiz, CI dostu)
+# ─────────────────────────────────────────────
+
+default_platform(:ios)
+
+PROJECT_ROOT = File.expand_path("../..", __dir__)
+WORKSPACE    = "mobile.xcworkspace"
+XCODEPROJ    = "mobile.xcodeproj"
+SCHEME       = "mobile"
+
+platform :ios do
+  before_all do
+    # CI ortamında geçici keychain oluşturur; lokalde etkisizdir.
+    setup_ci
+  end
+
+  # ───────────────────────────────────────────
+  # TEST — ESLint + Jest
+  # ───────────────────────────────────────────
+  desc "Jest testlerini ve ESLint'i çalıştırır"
+  lane :test do
+    Dir.chdir(PROJECT_ROOT) do
+      sh("npm", "ci")
+      sh("npm", "run", "lint")
+      sh("npm", "test", "--", "--ci")
+    end
+  end
+
+  # ───────────────────────────────────────────
+  # BETA — match + gym + TestFlight
+  # ───────────────────────────────────────────
+  desc "Sertifikaları çeker, IPA üretir ve TestFlight'a yükler"
+  lane :beta do
+    # 1) App Store Connect API anahtarı (key_content base64 olarak ENV'de)
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("APP_STORE_CONNECT_API_KEY_ID"),
+      issuer_id: ENV.fetch("APP_STORE_CONNECT_API_ISSUER_ID"),
+      key_content: ENV.fetch("APP_STORE_CONNECT_API_KEY_CONTENT"),
+      is_key_content_base64: true,
+      in_house: false
+    )
+
+    # 2) JS bağımlılıkları + CocoaPods
+    Dir.chdir(PROJECT_ROOT) { sh("npm", "ci") }
+    cocoapods(podfile: "Podfile", try_repo_update_on_error: true)
+
+    # 3) match — App Store dağıtım sertifikası + provisioning profilini indir
+    #    (readonly: CI yeni sertifika ÜRETMEZ, sadece var olanı kullanır)
+    match(
+      type: "appstore",
+      readonly: true,
+      app_identifier: ENV.fetch("IOS_BUNDLE_ID"),
+      api_key: api_key
+    )
+
+    # 4) Build number'ı TestFlight'taki son sürümün bir fazlasına ayarla
+    latest = latest_testflight_build_number(
+      api_key: api_key,
+      app_identifier: ENV.fetch("IOS_BUNDLE_ID"),
+      initial_build_number: 0
+    )
+    increment_build_number(
+      xcodeproj: XCODEPROJ,
+      build_number: latest + 1
+    )
+
+    # 5) IPA üret
+    gym(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      configuration: "Release",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "./build",
+      output_name: "mobile.ipa",
+      export_options: {
+        provisioningProfiles: {
+          ENV.fetch("IOS_BUNDLE_ID") => "match AppStore #{ENV.fetch('IOS_BUNDLE_ID')}"
+        }
+      }
+    )
+
+    # 6) TestFlight'a yükle
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: "./build/mobile.ipa",
+      skip_waiting_for_build_processing: true,
+      changelog: "Otomatik beta build — commit #{ENV['GITHUB_SHA'] || 'local'}"
+    )
+  end
+end

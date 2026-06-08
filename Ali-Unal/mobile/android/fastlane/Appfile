@@ -1,0 +1,6 @@
+# Android Appfile
+# Play Store deploy lane'i için servis hesabı JSON yolu (ENV'den)
+json_key_file(ENV["GOOGLE_PLAY_JSON_KEY_PATH"]) if ENV["GOOGLE_PLAY_JSON_KEY_PATH"]
+
+# Uygulama paket adı (android/app/build.gradle → applicationId ile aynı)
+package_name("com.mobile")
