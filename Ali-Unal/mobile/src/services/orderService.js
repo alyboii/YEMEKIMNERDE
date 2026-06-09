@@ -16,7 +16,8 @@ const OrderService = {
   async getOrders() {
     console.log('\n📦 [OrderService] Siparişler getiriliyor...');
     const response = await httpClient.get(API_CONFIG.ENDPOINTS.ORDERS);
-    return response.data;
+    // Backend sayfalama (pagination) eklediği için siparişler data.data içinde gelir
+    return response.data?.data || response.data || [];
   },
 
   /**
