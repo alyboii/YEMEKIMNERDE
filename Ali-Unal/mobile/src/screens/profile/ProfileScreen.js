@@ -17,14 +17,11 @@ import {
 import useAuth from '../../hooks/useAuth';
 
 const MENU_ITEMS = [
-  { id: '8', title: 'Home / Browse', icon: '🏠', screen: 'Home' },
-  { id: '7', title: 'My Orders', icon: '📦', screen: 'Orders' },
-  { id: '1', title: 'Edit Profile', icon: '👤', screen: 'EditProfile' },
-  { id: '2', title: 'Payment Methods', icon: '💳', screen: 'Payments' },
-  { id: '3', title: 'Promotions', icon: '🏷️', screen: 'Promotions' },
-  { id: '4', title: 'Addresses', icon: '📍', screen: 'Addresses' },
-  { id: '5', title: 'Help', icon: '❓', screen: 'Help' },
-  { id: '6', title: 'Settings', icon: '⚙️', screen: 'Settings' },
+  { id: '8', title: 'Ana Sayfa', icon: '🏠', screen: 'Home' },
+  { id: '7', title: 'Siparişlerim', icon: '📦', screen: 'Orders' },
+  { id: '1', title: 'Profili Düzenle', icon: '👤', screen: 'EditProfile' },
+  { id: '4', title: 'Adresler', icon: '📍', screen: 'Addresses' },
+  { id: '6', title: 'Ayarlar', icon: '⚙️', screen: 'Settings' },
 ];
 
 const ProfileScreen = ({ navigation }) => {
@@ -53,8 +50,8 @@ const ProfileScreen = ({ navigation }) => {
       
       {/* ─── Header ─── */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.headerIcon}>≡</Text>
+        <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.goBack()}>
+          <Text style={styles.headerIcon}>❮</Text>
         </TouchableOpacity>
         
         <Text style={styles.headerTitle}>YEMEKİMNERDE</Text>
@@ -115,7 +112,7 @@ const ProfileScreen = ({ navigation }) => {
           >
             <View style={styles.listItemLeft}>
               <Text style={styles.listIconLogout}>🚪</Text>
-              <Text style={styles.listTitleLogout}>Logout</Text>
+              <Text style={styles.listTitleLogout}>Çıkış Yap</Text>
             </View>
             <Text style={styles.chevronLogout}>›</Text>
           </TouchableOpacity>

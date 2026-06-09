@@ -79,18 +79,18 @@ const SettingsScreen = ({ navigation }) => {
         <TouchableOpacity style={s.headerBtn} onPress={() => navigation.goBack()}>
           <Text style={s.headerIcon}>←</Text>
         </TouchableOpacity>
-        <Text style={s.headerTitle}>SETTINGS</Text>
+        <Text style={s.headerTitle}>AYARLAR</Text>
         <View style={s.headerBtnSpacer} />
       </View>
 
       <ScrollView contentContainerStyle={s.content}>
 
-        <Text style={s.sectionTitle}>PREFERENCES</Text>
+        <Text style={s.sectionTitle}>TERCİHLER</Text>
 
         <View style={s.settingItem}>
           <View>
-            <Text style={s.settingTitle}>Push Notifications</Text>
-            <Text style={s.settingDesc}>Order updates and promos</Text>
+            <Text style={s.settingTitle}>Bildirimler</Text>
+            <Text style={s.settingDesc}>Sipariş bildirimleri ve kampanyalar</Text>
           </View>
           <Switch
             value={notifications}
@@ -102,8 +102,8 @@ const SettingsScreen = ({ navigation }) => {
 
         <View style={s.settingItem}>
           <View>
-            <Text style={s.settingTitle}>Location Services</Text>
-            <Text style={s.settingDesc}>For accurate delivery tracking</Text>
+            <Text style={s.settingTitle}>Konum Servisleri</Text>
+            <Text style={s.settingDesc}>Doğru teslimat takibi için</Text>
           </View>
           <Switch
             value={location}
@@ -113,15 +113,15 @@ const SettingsScreen = ({ navigation }) => {
           />
         </View>
 
-        <Text style={[s.sectionTitle, { marginTop: 32 }]}>ACCOUNT</Text>
+        <Text style={[s.sectionTitle, { marginTop: 32 }]}>HESAP</Text>
 
         <TouchableOpacity style={s.settingItem} onPress={() => setShowPasswordModal(true)}>
-          <Text style={s.settingTitle}>Change Password</Text>
+          <Text style={s.settingTitle}>Şifreyi Değiştir</Text>
           <Text style={s.chevron}>›</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[s.settingItem, { borderBottomWidth: 0 }]} onPress={handleDeleteAccount}>
-          <Text style={[s.settingTitle, { color: '#ffb4ab' }]}>Delete Account</Text>
+          <Text style={[s.settingTitle, { color: '#ffb4ab' }]}>Hesabı Sil</Text>
           <Text style={[s.chevron, { color: '#ffb4ab' }]}>›</Text>
         </TouchableOpacity>
 

@@ -1,78 +1,66 @@
 // ─────────────────────────────────────────────
 // Secure Storage — JWT Token Yönetimi
-// react-native-keychain ile güvenli depolama
+// react-native-keychain (gerçek cihaz)
+// in-memory fallback (simülatör / keychain yok)
 // ─────────────────────────────────────────────
 
 import * as Keychain from 'react-native-keychain';
 
 const SERVICE_NAME = 'yemekimnerede_auth';
 
+// Keychain çalışmadığında bellek içi yedek (simülatör için)
+let _memoryStore = null;
+
 const SecureStorage = {
-  /**
-   * JWT token'ı cihazın güvenli deposuna kaydeder.
-   * @param {string} token - JWT access token
-   * @param {object} user  - Kullanıcı objesi (JSON olarak saklanır)
-   */
   async saveAuthData(token, user) {
+    const authData = { token, user };
+    // Her iki yere de yaz (keychain + memory)
+    _memoryStore = authData;
     try {
-      const authData = JSON.stringify({ token, user });
-      await Keychain.setGenericPassword('auth_token', authData, {
+      await Keychain.setGenericPassword('auth_token', JSON.stringify(authData), {
         service: SERVICE_NAME,
       });
-      console.log('🔐 [SecureStorage] Auth verisi güvenli depoya kaydedildi');
-      return true;
+      console.log('🔐 [SecureStorage] Keychain\'e kaydedildi');
     } catch (error) {
-      console.error('🔐 [SecureStorage] Kaydetme hatası:', error.message);
-      return false;
+      console.warn('🔐 [SecureStorage] Keychain hatası, memory store kullanılıyor:', error.message);
     }
+    return true;
   },
 
-  /**
-   * Güvenli depodan JWT token ve kullanıcı bilgisini okur.
-   * @returns {{ token: string, user: object } | null}
-   */
   async getAuthData() {
+    // Önce Keychain'i dene
     try {
-      const credentials = await Keychain.getGenericPassword({
-        service: SERVICE_NAME,
-      });
-
-      if (credentials && credentials.password) {
+      const credentials = await Keychain.getGenericPassword({ service: SERVICE_NAME });
+      if (credentials?.password) {
         const authData = JSON.parse(credentials.password);
-        console.log('🔐 [SecureStorage] Auth verisi okundu');
+        _memoryStore = authData; // memory'yi de senkronize et
+        console.log('🔐 [SecureStorage] Keychain\'den okundu');
         return authData;
       }
-
-      console.log('🔐 [SecureStorage] Kayıtlı auth verisi bulunamadı');
-      return null;
     } catch (error) {
-      console.error('🔐 [SecureStorage] Okuma hatası:', error.message);
-      return null;
+      console.warn('🔐 [SecureStorage] Keychain okunamadı:', error.message);
     }
+
+    // Memory store'a bak
+    if (_memoryStore) {
+      console.log('🔐 [SecureStorage] Memory store\'dan okundu');
+      return _memoryStore;
+    }
+
+    console.log('🔐 [SecureStorage] Kayıtlı auth verisi bulunamadı');
+    return null;
   },
 
-  /**
-   * Sadece JWT token'ı döndürür.
-   * @returns {string | null}
-   */
   async getToken() {
     const authData = await this.getAuthData();
     return authData?.token || null;
   },
 
-  /**
-   * Sadece kullanıcı objesini döndürür.
-   * @returns {object | null}
-   */
   async getUser() {
     const authData = await this.getAuthData();
     return authData?.user || null;
   },
 
-  /**
-   * Kullanıcı objesini günceller (token değişmeden).
-   * @param {object} updatedUser - Güncellenmiş kullanıcı objesi
-   */
   async updateUser(updatedUser) {
     try {
       const authData = await this.getAuthData();
@@ -88,24 +76,17 @@ const SecureStorage = {
     }
   },
 
-  /**
-   * Tüm auth verilerini güvenli depodan temizler (logout).
-   */
   async clearAuthData() {
+    _memoryStore = null;
     try {
       await Keychain.resetGenericPassword({ service: SERVICE_NAME });
-      console.log('🔐 [SecureStorage] Auth verisi temizlendi (logout)');
-      return true;
     } catch (error) {
-      console.error('🔐 [SecureStorage] Temizleme hatası:', error.message);
-      return false;
+      console.warn('🔐 [SecureStorage] Keychain temizlenemedi:', error.message);
     }
+    console.log('🔐 [SecureStorage] Auth verisi temizlendi (logout)');
+    return true;
   },
 
-  /**
-   * Auth verisi var mı kontrol eder.
-   * @returns {boolean}
-   */
   async hasAuthData() {
     const authData = await this.getAuthData();
     return authData !== null && authData.token !== undefined;

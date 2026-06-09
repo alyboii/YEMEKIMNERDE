@@ -31,6 +31,9 @@ const OnboardingScreen = ({ navigation }) => {
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
       onPanResponderMove: (e, gesture) => {
         // Clamp the drag between 0 and MAX_SWIPE
         let newX = gesture.dx;
@@ -93,15 +96,15 @@ const OnboardingScreen = ({ navigation }) => {
 
         {/* Content */}
         <View style={styles.contentContainer}>
-          <Text style={styles.titleGreen}>Hungry?</Text>
-          <Text style={styles.titleWhite}>Get It Fast</Text>
-          <Text style={styles.subtitle}>Fresh, fast, and tailored to your taste!</Text>
+          <Text style={styles.titleGreen}>Aç mısın?</Text>
+          <Text style={styles.titleWhite}>Hızlıca Getir</Text>
+          <Text style={styles.subtitle}>Taze, hızlı ve damak tadına uygun!</Text>
         </View>
 
         {/* Order Now Swipe Button */}
         <View style={styles.footer}>
           <View style={styles.orderButton}>
-            <Text style={styles.orderTextAbs}>Order Now</Text>
+            <Text style={styles.orderTextAbs}>Şimdi Sipariş Ver</Text>
             <Text style={styles.arrowsTextAbs}>❯❯❯</Text>
             
             <Animated.View

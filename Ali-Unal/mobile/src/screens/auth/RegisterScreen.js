@@ -77,8 +77,8 @@ const RegisterScreen = ({ navigation }) => {
 
             {/* Header */}
             <View style={s.header}>
-              <Text style={s.title}>Create Account</Text>
-              <Text style={s.subtitle}>Join us and start ordering</Text>
+              <Text style={s.title}>Hesap Oluştur</Text>
+              <Text style={s.subtitle}>Bize katıl ve sipariş vermeye başla</Text>
             </View>
 
             {/* Form */}
@@ -149,16 +149,16 @@ const RegisterScreen = ({ navigation }) => {
                 activeOpacity={0.9}
               >
                 <Text style={s.registerBtnText}>
-                  {isSubmitting ? 'Kayıt yapılıyor...' : 'Sign Up'}
+                  {isSubmitting ? 'Kayıt yapılıyor...' : 'Kayıt Ol'}
                 </Text>
               </TouchableOpacity>
             </View>
 
             {/* Footer */}
             <View style={s.footer}>
-              <Text style={s.footerText}>Already have an account? </Text>
+              <Text style={s.footerText}>Zaten hesabın var mı? </Text>
               <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Text style={s.loginText}>Log In</Text>
+                <Text style={s.loginText}>Giriş Yap</Text>
               </TouchableOpacity>
             </View>
           </View>

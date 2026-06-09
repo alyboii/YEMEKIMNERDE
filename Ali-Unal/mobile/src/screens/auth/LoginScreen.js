@@ -123,8 +123,8 @@ const LoginScreen = ({ navigation }) => {
           <View style={styles.card}>
             {/* Header Section */}
             <View style={styles.header}>
-              <Text style={styles.title}>Welcome back</Text>
-              <Text style={styles.subtitle}>Sign in to continue</Text>
+              <Text style={styles.title}>Tekrar Hoşgeldin</Text>
+              <Text style={styles.subtitle}>Devam etmek için giriş yap</Text>
             </View>
 
             {/* Form Section */}
@@ -134,7 +134,7 @@ const LoginScreen = ({ navigation }) => {
                 style={styles.input}
                 value={email}
                 onChangeText={setEmail}
-                placeholder="Email"
+                placeholder="E-posta"
                 placeholderTextColor="#A0A0A0"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -147,7 +147,7 @@ const LoginScreen = ({ navigation }) => {
                 style={[styles.input, { marginTop: 16 }]}
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Password"
+                placeholder="Şifre"
                 placeholderTextColor="#A0A0A0"
                 secureTextEntry
                 returnKeyType="done"
@@ -156,7 +156,7 @@ const LoginScreen = ({ navigation }) => {
 
               <View style={styles.forgotContainer}>
                 <TouchableOpacity activeOpacity={0.7}>
-                  <Text style={styles.forgotText}>Forgot Password?</Text>
+                  <Text style={styles.forgotText}>Şifremi Unuttum?</Text>
                 </TouchableOpacity>
               </View>
 
@@ -167,16 +167,16 @@ const LoginScreen = ({ navigation }) => {
                 activeOpacity={0.7}
               >
                 <Text style={styles.loginBtnText}>
-                  {isSubmitting ? 'Logging in...' : 'Log In'}
+                  {isSubmitting ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
                 </Text>
               </TouchableOpacity>
             </View>
 
             {/* Footer Section */}
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Don't have an account? </Text>
+              <Text style={styles.footerText}>Hesabın yok mu? </Text>
               <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.signupText}>Sign Up</Text>
+                <Text style={styles.signupText}>Kayıt Ol</Text>
               </TouchableOpacity>
             </View>
           </View>

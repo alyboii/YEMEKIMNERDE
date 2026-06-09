@@ -187,12 +187,19 @@ export const AuthProvider = ({ children }) => {
 
   // ─── Adres İşlemleri ───
   const addAddress = useCallback(async (addressData) => {
-    const result = await UserService.addAddress(state.user._id, addressData);
-    if (result.success && result.data?.kullanici) {
-      dispatch({ type: AUTH_ACTIONS.SET_ADDRESSES, payload: result.data.kullanici.adresler });
-      return { success: true };
+    if (!state.user?._id) return { success: false, error: 'Oturum bulunamadı' };
+    try {
+      const result = await UserService.addAddress(state.user._id, addressData);
+      if (result.success) {
+        const updatedUser = result.data?.kullanici || result.data;
+        if (updatedUser?.adresler) {
+          dispatch({ type: AUTH_ACTIONS.SET_ADDRESSES, payload: updatedUser.adresler });
+        }
+      }
+      return result;
+    } catch (error) {
+      return { success: false, error: error.message || 'Adres eklenemedi' };
     }
-    return result;
   }, [state.user?._id]);
 
   /**
