@@ -1,53 +1,47 @@
 # 📲 Mobil Frontend - Gereksinimler
 
-Bu bölüm, React Native ile geliştirilen Android mobil uygulamasının ekran ve kullanıcı deneyimi gereksinimlerini içerir. Uygulama, backend REST API'sinden (`/v1`) beslenir.
+Bu bölüm, restoran ve menü yönetimi gereksinimlerinin React Native mobil uygulamasındaki ekran ve kullanıcı deneyimi karşılıklarını içerir. Her özellik ilgili backend API ucuna bağlanır.
 
 ---
 
-### 1. Giriş Ekranı
-**Ekran:** `LoginScreen`
-**Açıklama:** Kullanıcı e-posta ve şifresiyle giriş yapar. Başarılı girişte API'den dönen JWT token cihazda saklanır ve sonraki tüm isteklerde kullanılır. Hatalı girişte kullanıcıya uyarı gösterilir.
+### 1. Restoran Ekleme (Ekran)
+**Bağlı API:** `POST /api/restaurants`
+**Açıklama:** Admin kullanıcısı için restoran ekleme formu sunulur. İsim, mutfak türü, konum ve çalışma saatleri girilir; "Kaydet" ile API'ye gönderilip yeni restoran oluşturulur.
 
 ---
 
-### 2. Ana Ekran - Restoran Listesi
-**Ekran:** `HomeScreen`
-**Açıklama:** `GET /v1/restaurants` ile gelen gerçek restoranlar (örn. Kebapçı Memo, Pizza Palace) kart şeklinde listelenir. Her kartta restoran adı, mutfak türü, puanı ve görseli yer alır.
+### 2. Restoran Listeleme (Ana Ekran)
+**Bağlı API:** `GET /api/restaurants`
+**Açıklama:** Ana ekranda restoranlar kart şeklinde listelenir. AI destekli "✨ Sana Özel" sıralaması üstte gösterilir; kullanıcının tercihlerine göre en uygun restoranlar öne çıkar. Mutfak türüne göre kategori filtreleri ve aşağı çekerek yenileme desteklenir.
 
 ---
 
-### 3. Sana Özel Bölümü
-**Ekran:** `HomeScreen`
-**Açıklama:** Ana ekranın üst kısmında "✨ Sana Özel" bölümü bulunur. Kullanıcının tercihlerine göre `POST /v1/restaurants/oneri` ucundan dönen sıralı öneri listesini gösterir.
+### 3. Restoran Detay Getirme (Detay Ekranı)
+**Bağlı API:** `GET /api/restaurants/{restaurantId}`
+**Açıklama:** Bir restorana dokunulduğunda detay ekranı açılır; restoran bilgileri, kategorilere ayrılmış menü, çalışma saatleri ve kullanıcı yorumları gösterilir.
 
 ---
 
-### 4. Kategori Filtreleri
-**Ekran:** `HomeScreen`
-**Açıklama:** Mutfak türüne göre (Türk, İtalyan, Japon, Amerikan, Çin...) filtre butonları yer alır. Bir kategoriye dokunulduğunda restoran listesi anlık olarak o mutfak türüne göre filtrelenir.
+### 4. Restoran Güncelleme (Ekran)
+**Bağlı API:** `PUT /api/restaurants/{restaurantId}`
+**Açıklama:** Admin, mevcut bir restoranın ad, kategori veya çalışma saatleri gibi bilgilerini düzenleme formu üzerinden günceller; değişiklikler API'ye kaydedilir.
 
 ---
 
-### 5. Restoran Detay Ekranı
-**Ekran:** `DetailScreen`
-**Açıklama:** Bir restorana dokunulduğunda `GET /v1/restaurants/{id}` ile detay yüklenir. Ekranda kategorilere ayrılmış menü, çalışma saatleri ve kullanıcı yorumları gösterilir.
+### 5. Restoran Silme (Ekran)
+**Bağlı API:** `DELETE /api/restaurants/{restaurantId}`
+**Açıklama:** Admin, bir restoranı "Sil" aksiyonuyla pasife alır. Pasif restoran listeden kaldırılır ve kullanıcılara gösterilmez.
 
 ---
 
-### 6. Yorum ve Puanlama
-**Ekran:** `DetailScreen`
-**Açıklama:** Kullanıcı yıldız vererek (1-5) ve metin yazarak "Değerlendir" butonuyla yorum gönderir. Yorum `POST /v1/restaurants/{id}/yorum` ile kaydedilir; yorum listesi ve ortalama puan anında güncellenir.
+### 6. Menüye Yemek Ekleme (Ekran)
+**Bağlı API:** `POST /api/restaurants/{restaurantId}/menu`
+**Açıklama:** Restoran detayında menü yönetimi ekranından yeni yemek/içecek eklenir. Görsel URL'si, fiyat ve içerik etiketleri (Vegan, Acılı vb.) girilerek menüye işlenir.
 
 ---
 
-### 7. Aşağı Çekerek Yenileme
-**Ekran:** `HomeScreen`
-**Açıklama:** Liste ekranı aşağı çekildiğinde (pull-to-refresh) restoran verileri API'den yeniden çekilir ve güncel liste gösterilir.
-
----
-
-### 8. Oturum Yönetimi
-**Ekran:** Genel
-**Açıklama:** Saklanan JWT token tüm yetkili isteklere otomatik eklenir. Token süresi dolduğunda veya çıkış yapıldığında kullanıcı tekrar giriş ekranına yönlendirilir.
+### 7. Menüden Yemek Silme (Ekran)
+**Bağlı API:** `DELETE /api/menu-items/{itemId}`
+**Açıklama:** Menü yönetimi ekranından bir yemek "Sil" aksiyonuyla kaldırılır; menü listesi anında güncellenir.
 
 ---

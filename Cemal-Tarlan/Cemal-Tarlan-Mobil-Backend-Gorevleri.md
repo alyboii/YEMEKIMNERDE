@@ -1,59 +1,47 @@
 # 📱 Mobil Backend - Gereksinimler
 
-Bu bölüm, mobil uygulamayı besleyen REST API uçlarının teknik gereksinimlerini içerir. Tüm uçlar `/v1` ön eki altında çalışır ve JSON formatında veri alışverişi yapar.
+Bu bölüm, restoran ve menü yönetimini mobil uygulamaya sunan REST API uçlarının teknik gereksinimlerini içerir.
 
 ---
 
-### 1. Kullanıcı Kaydı
-**API Metodu:** `POST /v1/auth/register`
-**Açıklama:** Yeni kullanıcının sisteme kaydını sağlar. Ad, soyad, e-posta, şifre ve telefon bilgileri alınır. Şifre veritabanına `bcrypt` ile hash'lenerek yazılır. Başarılı kayıtta kullanıcıya 7 gün geçerli bir JWT token döner.
+### 1. Restoran Ekleme
+**API Metodu:** `POST /api/restaurants`
+**Açıklama:** Yeni bir restoranın sisteme dahil edilmesini sağlar. İsim, mutfak türü, lokasyon koordinatları ve çalışma saatleri veritabanına kaydedilir.
 
 ---
 
-### 2. Kullanıcı Girişi
-**API Metodu:** `POST /v1/auth/login`
-**Açıklama:** E-posta ve şifre ile kimlik doğrulaması yapar. Bilgiler doğruysa JWT token üretilir ve mobil uygulama bu token'ı sonraki isteklerde `Authorization: Bearer <token>` başlığında kullanır.
+### 2. Restoran Listeleme
+**API Metodu:** `GET /api/restaurants`
+**Açıklama:** Restoranlar sadece alfabetik veya puana göre dizilmez. AI, kullanıcının geçmiş sipariş hızını, sevdiği mutfakları ve o anki konumunu analiz ederek kullanıcıya en uygun "Sana Özel" sıralamasını saniyeler içinde oluşturur.
 
 ---
 
-### 3. Restoran Listeleme (Cache'li)
-**API Metodu:** `GET /v1/restaurants`
-**Açıklama:** Aktif tüm restoranları döner. Performans için sonuç Redis'te 60 saniye önbelleğe alınır: ilk istek veritabanına gider (MISS), sonraki istekler Redis'ten karşılanır (HIT). Mobil ana ekrandaki restoran listesini besler.
+### 3. Restoran Detay Getirme
+**API Metodu:** `GET /api/restaurants/{restaurantId}`
+**Açıklama:** Belirli bir restoranın tüm bilgilerini, menüsünü ve kullanıcı yorumlarını detaylı olarak görüntüler.
 
 ---
 
-### 4. Restoran Detayı
-**API Metodu:** `GET /v1/restaurants/{restaurantId}`
-**Açıklama:** Seçilen restoranın bilgilerini, menü öğelerini ve kullanıcı yorumlarını tek yanıtta döner (`restoran`, `menu`, `yorumlar`). Mobil detay ekranını besler.
+### 4. Restoran Güncelleme
+**API Metodu:** `PUT /api/restaurants/{restaurantId}`
+**Açıklama:** Mevcut bir restoranın ad, kategori veya çalışma saatleri gibi dinamik bilgilerinin güncellenmesini sağlar.
 
 ---
 
-### 5. Sana Özel Öneri
-**API Metodu:** `POST /v1/restaurants/oneri`
-**Açıklama:** Kullanıcının mutfak tercihlerine (örn. `{"tercihler":{"Japon":3}}`) göre restoranları puanlayıp sıralayarak döner. Mobil ana ekrandaki "✨ Sana Özel" bölümünü besler.
+### 5. Restoran Silme
+**API Metodu:** `DELETE /api/restaurants/{restaurantId}`
+**Açıklama:** Restoranın sistemden kaldırılmasını sağlar (Veritabanında "pasif" duruma getirilir).
 
 ---
 
-### 6. Yorum ve Puan Ekleme
-**API Metodu:** `POST /v1/restaurants/{restaurantId}/yorum`
-**Açıklama:** Giriş yapmış kullanıcının bir restorana yıldız (puan) ve metin yorumu eklemesini sağlar. Yeni yorum eklendiğinde restoranın ortalama puanı yeniden hesaplanır ve restoran listesi cache'i temizlenir.
+### 6. Menüye Yemek Ekleme
+**API Metodu:** `POST /api/restaurants/{restaurantId}/menu`
+**Açıklama:** İlgili restorana yeni bir yemek veya içecek ekler. Görsel URL'si, fiyat ve içerik etiketleri (Örn: Vegan, Acılı) burada tanımlanır.
 
 ---
 
-### 7. Sipariş Oluşturma (Mesaj Kuyruğu)
-**API Metodu:** `POST /v1/orders`
-**Açıklama:** Sipariş doğrudan veritabanına yazılmaz; RabbitMQ üzerinden `orders_queue` kuyruğuna gönderilir ve istek hızlıca `202 Kuyrukta` yanıtı alır. Arka plandaki Order Worker mesajı kuyruktan okuyup siparişi veritabanına kaydeder (asenkron işleme). Kimlik doğrulama (JWT) zorunludur.
-
----
-
-### 8. Siparişleri Listeleme
-**API Metodu:** `GET /v1/orders`
-**Açıklama:** Giriş yapmış kullanıcının kendi siparişlerini, sayfalama (`page`, `limit`) destekli olarak en yeniden eskiye sıralı döner.
-
----
-
-### 9. Sipariş İptali
-**API Metodu:** `DELETE /v1/orders/{orderId}`
-**Açıklama:** Kullanıcının yalnızca kendi siparişinin durumunu "İptal Edildi" olarak günceller. Başka kullanıcının siparişine erişim engellenir.
+### 7. Menüden Yemek Silme
+**API Metodu:** `DELETE /api/menu-items/{itemId}`
+**Açıklama:** Bir yemeğin restorana ait menüden kalıcı olarak kaldırılmasını sağlar.
 
 ---
