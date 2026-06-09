@@ -1,0 +1,65 @@
+# ─────────────────────────────────────────────
+# docker-compose.ci.yml — Jenkins (CI) için bağımsız stack
+# Manuel/geliştirme stack'i ile ÇAKIŞMAZ:
+#   - Container isimleri "yemek_ci_*"
+#   - Backend host portu 3100 (manuel stack 3000'i kullanır)
+#   - Frontend host portu 8081 (manuel stack 80'i kullanır)
+#   - Backend bind-mount YOK (kod imaja gömülü) → Jenkins-in-Docker'da çalışır
+#   - .env yerine ortam değişkenleri inline verilir
+# ─────────────────────────────────────────────
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: yemek_ci_mongo
+    networks:
+      - ci-network
+
+  redis:
+    image: redis:alpine
+    container_name: yemek_ci_redis
+    networks:
+      - ci-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: yemek_ci_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - ci-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: yemek_ci_backend
+    ports:
+      - "3100:3000"
+    environment:
+      - PORT=3000
+      - MONGO_URI=mongodb://mongodb:27017/yemekimnerede
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - JWT_SECRET=ci_dummy_secret
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+    networks:
+      - ci-network
+
+  frontend:
+    build: ./frontend
+    container_name: yemek_ci_frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - ci-network
+
+networks:
+  ci-network:
+    driver: bridge

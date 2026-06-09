@@ -36,19 +36,20 @@ pipeline {
             }
         }
 
-        // 3) Docker imajlarını derle
+        // 3) Docker imajlarını derle (CI compose dosyası ile)
         stage('Build Docker Images') {
             steps {
                 echo '🐳 Docker imajları derleniyor...'
-                sh 'docker compose build'
+                sh 'docker compose -f docker-compose.ci.yml build'
             }
         }
 
-        // 4) Container'ları ayağa kaldır
+        // 4) Container'ları ayağa kaldır (önce eski CI stack'i temizle)
         stage('Deploy') {
             steps {
                 echo '🚀 Servisler başlatılıyor (docker compose up -d)...'
-                sh 'docker compose up -d'
+                sh 'docker compose -f docker-compose.ci.yml down --remove-orphans || true'
+                sh 'docker compose -f docker-compose.ci.yml up -d'
             }
         }
 
@@ -56,10 +57,11 @@ pipeline {
         stage('Health Check') {
             steps {
                 echo '🩺 Backend sağlık kontrolü yapılıyor...'
-                // Mongo bağlantısı + sunucu açılması için kısa bekleme, sonra 5 deneme
+                // Jenkins container içinden host'a host.docker.internal ile ulaşılır.
+                // Mongo bağlantısı + sunucu açılması için bekleme, sonra 6 deneme.
                 sh '''
-                    sleep 10
-                    curl --fail --retry 5 --retry-delay 5 --retry-connrefused http://localhost:3000 \
+                    sleep 15
+                    curl --fail --retry 6 --retry-delay 5 --retry-connrefused http://host.docker.internal:3100 \
                       && echo "✅ Backend ayakta ve yanıt veriyor" \
                       || (echo "❌ Backend yanıt vermedi"; exit 1)
                 '''
