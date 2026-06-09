@@ -72,18 +72,22 @@ const AdminDashboardScreen = ({ navigation }) => {
   const fetchOrders = useCallback(async () => {
     try {
       const res = await api.get('/orders');
-      setOrders(res.data?.siparisler || res.data || []);
+      const data = res.data?.siparisler || res.data;
+      setOrders(Array.isArray(data) ? data : []);
     } catch (e) {
       console.warn('Siparişler yüklenemedi:', e.message || e);
+      setOrders([]);
     }
   }, []);
 
   const fetchRestaurants = useCallback(async () => {
     try {
       const res = await api.get('/restaurants');
-      setRestaurants(res.data?.restoranlar || res.data || []);
+      const data = res.data?.restoranlar || res.data;
+      setRestaurants(Array.isArray(data) ? data : []);
     } catch (e) {
       console.warn('Restoranlar yüklenemedi:', e.message || e);
+      setRestaurants([]);
     }
   }, []);
 
