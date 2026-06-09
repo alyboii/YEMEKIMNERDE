@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { initRedis } = require('./config/redis');
+const { initRabbitMQ } = require('./config/rabbitmq');
 
 const app = express();
 
@@ -27,6 +28,7 @@ mongoose
   .then(async () => {
     console.log('MongoDB bağlantısı başarılı');
     await initRedis(); // Redis cache'i başlat (REDIS_URL varsa)
+    await initRabbitMQ(); // RabbitMQ'yu başlat (RABBITMQ_URL varsa)
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => console.log(`Sunucu ${PORT} portunda çalışıyor`));
   })

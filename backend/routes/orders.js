@@ -1,12 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order'); // Az önce oluşturduğun sipariş modeli
+const { sendToQueue } = require('../config/rabbitmq');
 
 // Yeni sipariş oluştur (Veritabanına yazar)
 router.post('/', async (req, res) => {
     try {
         const newOrder = new Order(req.body);
         const savedOrder = await newOrder.save();
+        
+        // Sipariş başarıyla kaydedildikten sonra RabbitMQ kuyruğuna at
+        await sendToQueue('new_orders_queue', { orderId: savedOrder._id, status: 'CREATED', timestamp: new Date() });
+        
         res.status(201).json({ message: "Sipariş başarıyla alındı", order: savedOrder });
     } catch (err) {
         res.status(500).json({ error: "Sipariş oluşturulamadı", details: err.message });
