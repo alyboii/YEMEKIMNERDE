@@ -67,7 +67,7 @@ const EditProfileScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.goBack()}>
           <Text style={styles.headerIcon}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>EDIT PROFILE</Text>
+        <Text style={styles.headerTitle}>PROFİLİ DÜZENLE</Text>
         <View style={styles.headerBtnSpacer} />
       </View>
 
@@ -116,7 +116,7 @@ const EditProfileScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={getLabelStyle('email')}>EMAIL ADDRESS</Text>
+              <Text style={getLabelStyle('email')}>E-POSTA ADRESİ</Text>
               <TextInput 
                 style={[getInputStyle('email'), styles.inputDisabled]}
                 value={email}
@@ -127,7 +127,7 @@ const EditProfileScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={getLabelStyle('phone')}>PHONE NUMBER</Text>
+              <Text style={getLabelStyle('phone')}>TELEFON NUMARASI</Text>
               <TextInput 
                 style={getInputStyle('phone')}
                 value={phone}
@@ -142,14 +142,7 @@ const EditProfileScreen = ({ navigation }) => {
 
           </View>
 
-          {/* ─── Security Hint ─── */}
-          <View style={styles.securityHint}>
-            <Text style={styles.shieldIcon}>🛡️</Text>
-            <View style={styles.hintTextContainer}>
-              <Text style={styles.hintTitle}>Privacy Control</Text>
-              <Text style={styles.hintDesc}>Your personal information is encrypted and never shared with third-party vendors.</Text>
-            </View>
-          </View>
+
           
         </ScrollView>
       </KeyboardAvoidingView>
@@ -163,7 +156,7 @@ const EditProfileScreen = ({ navigation }) => {
           disabled={isSaving}
         >
           <Text style={styles.saveBtnText}>
-            {isSaving ? 'SAVING...' : 'SAVE CHANGES'}
+            {isSaving ? 'KAYDEDİLİYOR...' : 'KAYDET'}
           </Text>
           {!isSaving && <Text style={styles.checkIcon}>✓</Text>}
         </TouchableOpacity>

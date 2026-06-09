@@ -154,11 +154,6 @@ const LoginScreen = ({ navigation }) => {
                 onSubmitEditing={onLogin}
               />
 
-              <View style={styles.forgotContainer}>
-                <TouchableOpacity activeOpacity={0.7}>
-                  <Text style={styles.forgotText}>Şifremi Unuttum?</Text>
-                </TouchableOpacity>
-              </View>
 
               <TouchableOpacity 
                 style={styles.loginBtn}

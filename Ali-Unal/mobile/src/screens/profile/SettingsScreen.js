@@ -37,8 +37,12 @@ const SettingsScreen = ({ navigation }) => {
     setIsSaving(false);
 
     if (result.success) {
-      Alert.alert('Başarılı ✅', 'Şifreniz güncellendi.');
-      setShowPasswordModal(false);
+      Alert.alert('Başarılı ✅', 'Şifreniz güncellendi. Lütfen tekrar giriş yapın.', [
+        { text: 'Tamam', onPress: async () => {
+            setShowPasswordModal(false);
+            await logout();
+        }}
+      ]);
       setMevcutSifre('');
       setYeniSifre('');
     } else {
